@@ -8,9 +8,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CycloMethod {
-	static private Pattern pattern = Pattern.compile("^case |^default |^default\\:|^if |^if\\(|^else |^else\\{|^for |^for\\(|^while |^while\\(");
-	static private Pattern patternCountTwice = Pattern.compile("^while |^while\\(");
-	static private Pattern patternCountAgain = Pattern.compile(".*\\|\\|.*");
+	//static private Pattern pattern = Pattern.compile("^case |^if |^if\\(|^else |^else\\{|^for |^for\\(|^while |^while\\(");
+	static private Pattern pattern = Pattern.compile("^if |^if\\(|^case |^catch |^catch\\(|\\} catch \\(|^throw |^do |^do\\{|^while |^while\\(|^for |^for\\(|^continue;|\\?.*\\:|\\|\\||\\&\\&|.*else if"); 
+	//static private Pattern patternCountTwice = Pattern.compile("^while |^while\\(");
+	//static private Pattern patternCountAgain = Pattern.compile("\\|\\||\\&\\&");
 		
 	private ArrayList<Integer> cyclos = new ArrayList<>();
 	private int woc;
@@ -20,7 +21,9 @@ public class CycloMethod {
 		
 		for(String line: method) {
 			Matcher matcher = pattern.matcher(line.trim());
-			if(matcher.find()) {
+			while(matcher.find())
+				n++;
+			/*if(matcher.find()) {
 				n++;
 				Matcher matcher2 = patternCountTwice.matcher(line.trim());
 				if(matcher2.find())
@@ -28,7 +31,7 @@ public class CycloMethod {
 				Matcher matcher3 = patternCountAgain.matcher(line.trim());
 				while(matcher3.find())
 					n++;
-			}
+			}*/
 		}
 		return n;
 	}
@@ -47,6 +50,10 @@ public class CycloMethod {
 					map.get(m).add(checkIfStart);
 					
 					int openCurly = (checkIfStart.contains("{")) ? 1 : 0;
+					
+					//System.out.println(openCurly);
+					//System.out.println(checkIfStart);
+					
 					while(openCurly == 0) {						
 						String got1stCurly = scanner.nextLine().trim();
 						openCurly += got1stCurly.contains("{") ? 1:0;
@@ -58,8 +65,10 @@ public class CycloMethod {
 					while(scanner.hasNext() && !endedMethod) {
 						String check4Curlies = scanner.nextLine();
 						map.get(m).add(check4Curlies);
+						//System.out.println(check4Curlies);
 						openCurly += check4Curlies.contains("{") ? 1:0;
-						openCurly -= check4Curlies.contains("}") ? 1:0;
+						openCurly -= (check4Curlies.contains("}") && !check4Curlies.contains("'}'"))  ? 1:0;
+						//System.out.println(openCurly);
 						if(openCurly == 0)
 							endedMethod = true;
 					}
@@ -109,12 +118,12 @@ public class CycloMethod {
 	}
 	
 	public static void main(String[] args) {
-		ArrayList<String> teste =  nameOfMethods(new File("ParsingException.java"));
+		ArrayList<String> teste =  nameOfMethods(new File("SourceCodeParser.java"));
 		
 		
 		
 		try {
-			LinkedHashMap<String, ArrayList<String>> map = getLinesOfMethods(new File("ParsingException.java"), teste);
+			LinkedHashMap<String, ArrayList<String>> map = getLinesOfMethods(new File("SourceCodeParser.java"), teste);
 			/*for(String key : map.keySet())
 				for(String s: map.get(key))
 					System.out.println(s);*/
@@ -125,6 +134,9 @@ public class CycloMethod {
 			int i = 0;
 			for(String key : cyclo.keySet()) {
 				System.out.println(key + " -> " + cyclo.get(key));
+				/*for(String s: map.get(key))
+					System.out.println(s);
+				System.out.println("------------------------------");*/
 				i += cyclo.get(key);
 			}
 			System.out.println("total " + i);
