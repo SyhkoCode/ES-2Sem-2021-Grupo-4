@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 
 public class CycloMethod {
 	//static private Pattern pattern = Pattern.compile("^case |^if |^if\\(|^else |^else\\{|^for |^for\\(|^while |^while\\(");
-	static private Pattern pattern = Pattern.compile("^if |^if\\(|^case |^catch |^catch\\(|\\} catch \\(|^throw |^do |^do\\{|^while |^while\\(|^for |^for\\(|^continue;|\\?.*\\:|\\|\\||\\&\\&|.*else if"); 
+	static private Pattern pattern = Pattern.compile("^if |^if\\(|^case |^catch |^catch\\(|\\} catch \\(|^do |^do\\{|^while |^while\\(|^for |^for\\(|^continue;|\\?.*\\:|\\|\\||\\&\\&|.*else if");
+	static private Pattern ignoreComments = Pattern.compile("\\/\\/|\\/\\*|^\\*");
 	//static private Pattern patternCountTwice = Pattern.compile("^while |^while\\(");
 	//static private Pattern patternCountAgain = Pattern.compile("\\|\\||\\&\\&");
 		
@@ -21,17 +22,18 @@ public class CycloMethod {
 		
 		for(String line: method) {
 			Matcher matcher = pattern.matcher(line.trim());
-			while(matcher.find())
-				n++;
-			/*if(matcher.find()) {
-				n++;
-				Matcher matcher2 = patternCountTwice.matcher(line.trim());
-				if(matcher2.find())
+			while(matcher.find()) {
+				Matcher comments = ignoreComments.matcher(line.trim());
+				if(comments.find()) {
+					if(line.indexOf(matcher.group()) < line.indexOf(comments.group()))
+						n++;
+				}
+				else {
 					n++;
-				Matcher matcher3 = patternCountAgain.matcher(line.trim());
-				while(matcher3.find())
-					n++;
-			}*/
+				}
+				//System.out.println(matcher.group());
+				
+			}
 		}
 		return n;
 	}
@@ -66,7 +68,7 @@ public class CycloMethod {
 						String check4Curlies = scanner.nextLine();
 						map.get(m).add(check4Curlies);
 						//System.out.println(check4Curlies);
-						openCurly += check4Curlies.contains("{") ? 1:0;
+						openCurly += (check4Curlies.contains("{") && !check4Curlies.contains("'{'")) ? 1:0;
 						openCurly -= (check4Curlies.contains("}") && !check4Curlies.contains("'}'"))  ? 1:0;
 						//System.out.println(openCurly);
 						if(openCurly == 0)
@@ -124,9 +126,12 @@ public class CycloMethod {
 		
 		try {
 			LinkedHashMap<String, ArrayList<String>> map = getLinesOfMethods(new File("SourceCodeParser.java"), teste);
-			/*for(String key : map.keySet())
+			/*for(String key : map.keySet()) {
 				for(String s: map.get(key))
-					System.out.println(s);*/
+					System.out.println(s);
+				System.out.println("------------------------------");
+			}*/
+			
 			LinkedHashMap<String, Integer> cyclo = new LinkedHashMap<>();
 			for(String key : map.keySet())
 				cyclo.put(key, nOfCyclo(map.get(key)));
@@ -140,6 +145,7 @@ public class CycloMethod {
 				i += cyclo.get(key);
 			}
 			System.out.println("total " + i);
+			
 				
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
