@@ -1,36 +1,49 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LocMethod {
+	//static private Pattern pattern = Pattern.compile("^case |^if |^if\\(|^else |^else\\{|^for |^for\\(|^while |^while\\(");
+	static private Pattern pattern = Pattern.compile("^if |^if\\(|^case |^catch |^catch\\(|\\} catch \\(|^throw |^do |^do\\{|^while |^while\\(|^for |^for\\(|^continue;|\\?.*\\:|\\|\\||\\&\\&|.*else if"); 
+		
+	private ArrayList<Integer> cyclos = new ArrayList<>();
+	private int woc;
 	
-	private static int count;
+	static public int nOfCyclo(ArrayList<String> method) {
+		int n = 1;
+		
+		for(String line: method) {
+			Matcher matcher = pattern.matcher(line.trim());
+			while(matcher.find())
+				n++;
 
-	static public LinkedHashMap<String, Integer> countLinesOfMethods(File file, ArrayList<String> methods) throws FileNotFoundException {
-		LinkedHashMap<String, Integer> map = new LinkedHashMap<>();
+		}
+		return n;
+	}
+	
+	static public LinkedHashMap<String, ArrayList<String>> getLinesOfMethods(File file, ArrayList<String> methods) throws FileNotFoundException {
+		LinkedHashMap<String, ArrayList<String>> map = new LinkedHashMap<>();
 		Scanner scanner = new Scanner(file);
 		for(String m : methods) {
-			//map.put(m, new ArrayList<String>());
+			map.put(m, new ArrayList<String>());
 			boolean foundMethod = false;
 			while(scanner.hasNext() && !foundMethod) {
 				String checkIfStart = scanner.nextLine();
 				if(checkIfStart.contains(m)) {
 					foundMethod = true;
-					count = 1;
 					boolean endedMethod = false;
-					//map.get(m).add(checkIfStart);
+					map.get(m).add(checkIfStart);
 					
 					int openCurly = (checkIfStart.contains("{")) ? 1 : 0;
 					
-
 					
 					while(openCurly == 0) {						
 						String got1stCurly = scanner.nextLine().trim();
-						count++;
 						openCurly += got1stCurly.contains("{") ? 1:0;
 						if(got1stCurly.contains("}")) {
 							endedMethod = true;
@@ -39,8 +52,7 @@ public class LocMethod {
 					}
 					while(scanner.hasNext() && !endedMethod) {
 						String check4Curlies = scanner.nextLine();
-						count++;
-						//map.get(m).add(check4Curlies);
+						map.get(m).add(check4Curlies);
 						openCurly += check4Curlies.contains("{") ? 1:0;
 						openCurly -= (check4Curlies.contains("}") && !check4Curlies.contains("'}'"))  ? 1:0;
 						if(openCurly == 0)
@@ -49,14 +61,19 @@ public class LocMethod {
 					
 				}
 			}
-			System.out.println(count);
-			map.put(m, count);
 		}			
 		scanner.close();
 		
 		return map;
 	}
 	
+	static public ArrayList<Integer> countLinesOfMethods (LinkedHashMap<String, ArrayList<String>> map) throws FileNotFoundException {
+		ArrayList<Integer> getLines = new ArrayList<Integer> ();
+		for(String key : map.keySet()) {
+			getLines.add(map.get(key).size());
+		}
+		return getLines;
+	}
 	
 	public static ArrayList<String> nameOfMethods(File file){
 		ArrayList<String> result = new ArrayList<>();
@@ -94,23 +111,20 @@ public class LocMethod {
 		return result;
 	}
 	
-	public static void main (String args[]) {
+	public static void main(String[] args) {
 		ArrayList<String> teste =  nameOfMethods(new File("SourceCodeParser.java"));
-			
+		
+		
 		try {
-			LinkedHashMap<String, Integer> map = countLinesOfMethods(new File("SourceCodeParser.java"), teste);
-			
-			int i = 0;
-			for(String key : map.keySet()) {
-				System.out.println(key + " -> " + map.get(key));
-				i++;
+			LinkedHashMap<String, ArrayList<String>> map = getLinesOfMethods(new File("SourceCodeParser.java"), teste);
+			ArrayList<Integer> lines = countLinesOfMethods(map); 
+				for (int i : lines) {
+					System.out.println(i);
+				
 			}
-			
 				
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
 	}
-	
 }
