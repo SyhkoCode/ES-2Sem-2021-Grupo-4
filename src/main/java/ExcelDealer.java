@@ -32,7 +32,7 @@ public class ExcelDealer {
 				ignoredIndexes.add(7);
 				ignoredIndexes.add(10);
 				readFile();
-				 System.out.println(getAllCellsOfRow(3));
+//				 System.out.println(getAllCellsOfRow(3));
 				 //System.out.println(getClassMethods(3,"ParsingException"));
 			} else {
 				wb = new XSSFWorkbook();
@@ -170,7 +170,6 @@ public class ExcelDealer {
 		List<String> list = new ArrayList<>();
 		for (String classname : getClasses()) {
 			List<String> aux = getClassMethods(column_index, classname);
-			//System.out.println(aux);
 			for (String str : aux) {
 				if ( !list.contains(str) || column_index == 3 )
 					list.add(str);
