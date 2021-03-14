@@ -25,23 +25,26 @@ public class ExcelDealer {
 		excel_file = filename;
 		ignoredIndexes = new ArrayList<>();
 		try {
-			if (read) {
+			if( read ) {
 				packet = OPCPackage.open(new File(excel_file));
 				wb = new XSSFWorkbook(packet);
 				sheet = wb.getSheetAt(0);
 				ignoredIndexes.add(7);
 				ignoredIndexes.add(10);
 				readFile();
+				 System.out.println(getAllCellsOfRow(3));
+				 //System.out.println(getClassMethods(3,"ParsingException"));
 			} else {
 				wb = new XSSFWorkbook();
-				List<Object[]> l = new ArrayList<>();
-				Object[] v = { "1", "Joshua Bloch", 36 };
-				Object[] v1 = { "2", "Robert martin", 42 };
-				Object[] v2 = { "3", "Bruce Eckel", 35 };
-				l.add(v);
-				l.add(v1);
-				l.add(v2);
-//				writeFile(excel_file, l);
+//		Para depois ler o ficheiro quando me mandarem as coisas
+//				List<Object[]> l = new ArrayList<>();
+//				Object[] v = { "1", "Joshua Bloch", 36 };
+//				Object[] v1 = { "2", "Robert martin", 42 };
+//				Object[] v2 = { "3", "Bruce Eckel", 35 };
+//				l.add(v);
+//				l.add(v1);
+//				l.add(v2);
+////				writeFile(excel_file, l);
 			}
 		} catch (InvalidFormatException | IOException e) {
 			e.printStackTrace();
@@ -57,20 +60,6 @@ public class ExcelDealer {
 //		//System.out.println("PACKAGES: " + getTotal(1).size());
 //		System.out.println("CLASSES: " + getClasses().size());
 //		System.out.println("MÉTODOS: " + getTotal(3).size());
-	}
-
-	public List<String> getMethods(int col_index, String name) {
-		List<String> list = new ArrayList<>();
-
-		for (int r = 0; r < sheet.getPhysicalNumberOfRows(); r++) {
-			XSSFRow row = sheet.getRow(r);
-			if (row != null) {
-				if (row.getCell(2).getStringCellValue().equals(name))
-					if (row.getCell(col_index) != null && !list.contains(row.getCell(col_index).toString()))
-						list.add(row.getCell(col_index).toString());
-			}
-		}
-		return list;
 	}
 
 	public void writeFile(String file_name, List<Object[]> values) {
@@ -93,11 +82,11 @@ public class ExcelDealer {
 
 			for (Object field : aBook) {
 				XSSFCell cell = row.createCell(columnCount++);
-				if (row.getRowNum() == 0)
+				if( row.getRowNum() == 0 )
 					cell.setCellStyle(style);
-				if (field instanceof String) {
+				if( field instanceof String ) {
 					cell.setCellValue((String) field);
-				} else if (field instanceof Integer) {
+				} else if( field instanceof Integer ) {
 					cell.setCellValue((Integer) field);
 				}
 			}
@@ -112,6 +101,22 @@ public class ExcelDealer {
 			e.printStackTrace();
 		}
 	}
+	
+////////////////////                   READING METHODS                   ////////////////////                     
+	
+	public List<String> getClassMethods(int col_index, String classname) {
+		List<String> list = new ArrayList<>();
+
+		for (int r = 0; r < sheet.getPhysicalNumberOfRows(); r++) {
+			XSSFRow row = sheet.getRow(r);
+			if (row != null) {
+				if ( row.getCell(2).getStringCellValue().equals(classname) )
+					if ( row.getCell(col_index) != null && !list.contains(row.getCell(col_index).toString()) )
+						list.add(row.getCell(col_index).toString());
+			}
+		}
+		return list;
+	}
 
 	public List<String> getClasses() {
 		List<String> list = new ArrayList<>();
@@ -119,7 +124,7 @@ public class ExcelDealer {
 		for (int r = 0; r < sheet.getPhysicalNumberOfRows(); r++) {
 			XSSFRow row = sheet.getRow(r);
 			if (row != null) {
-				if (!list.contains(row.getCell(2).toString()) && r != 0)
+				if ( !list.contains(row.getCell(2).toString()) && r != 0 )
 					list.add(row.getCell(2).toString());
 			}
 		}
@@ -130,12 +135,12 @@ public class ExcelDealer {
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
 		List<Object[]> list = new ArrayList<>();
 		for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
-			Object[] rowList = new Object[row_size - 2];
+			Object[] rowList = new Object[row_size - 2]; // -2 para ignorar as colunas dos booleans que o stor não quer
 			XSSFRow row = sheet.getRow(j);
-			if (row != null) {
+			if ( row != null ) {
 				int counter = 0;
 				for (int i = 0; i <= row_size; i++) {
-					if (!ignoredIndexes.contains(i) && counter < rowList.length) {
+					if( !ignoredIndexes.contains(i) && counter < rowList.length ) {
 						rowList[counter] = row.getCell(i);
 						counter++;
 					}
@@ -146,7 +151,7 @@ public class ExcelDealer {
 		return list;
 	}
 
-	public Object[] getHeader() {
+	public Object[] getExcelHeader() {
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
 		Object[] rowList = new Object[row_size - 2];
 		XSSFRow row = sheet.getRow(0);
@@ -161,53 +166,30 @@ public class ExcelDealer {
 		return rowList;
 	}
 
-	public List<String> getTotal(int column_index) {
+	public List<String> getAllCellsOfRow(int column_index) {
 		List<String> list = new ArrayList<>();
-
-		for (String s : getClasses()) {
-			
-			List<String> aux = getMethods(column_index, s);
+		for (String classname : getClasses()) {
+			List<String> aux = getClassMethods(column_index, classname);
+			//System.out.println(aux);
 			for (String str : aux) {
-				if (!list.contains(str))
+				if ( !list.contains(str) || column_index == 3 )
 					list.add(str);
 			}
-
 		}
 		return list;
 	}
-	
-	public int getLinesOfCode() {
-		List<String> list = getTotal(5);
+
+	public int sumLinesOfCode() {
+		List<String> list = getAllCellsOfRow(5);
 		double total = 0;
-		
-		for(int i=0;i<list.size();i++) 
+
+		for (int i = 0; i < list.size(); i++)
 			total += Double.parseDouble(list.get(i));
-		return (int)total;
+		return (int) total;
 	}
 
 	public String getExcel_file() {
 		return excel_file;
-
-	}
-
-	public void setExcel_file(String excel_file) {
-		this.excel_file = excel_file;
-	}
-
-	public OPCPackage getPacket() {
-		return packet;
-	}
-
-	public void setPacket(OPCPackage packet) {
-		this.packet = packet;
-	}
-
-	public XSSFWorkbook getWb() {
-		return wb;
-	}
-
-	public void setWb(XSSFWorkbook wb) {
-		this.wb = wb;
 	}
 
 	public static void main(String[] args) {

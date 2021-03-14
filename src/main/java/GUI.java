@@ -101,7 +101,7 @@ public class GUI extends JFrame {
 					tableModel.setRowCount(0);
 					tableModel.setColumnCount(0);
 					
-					Object[] header = dealer.getHeader();
+					Object[] header = dealer.getExcelHeader();
 					tableModel.setColumnIdentifiers(header);
 					
 					for(int i =0;i!=header.length;i++) 
@@ -111,9 +111,9 @@ public class GUI extends JFrame {
 						tableModel.addRow(row);
 					}
 					Label_Classes.setText(String.valueOf((dealer.getClasses().size())));
-					Label_Packages.setText(String.valueOf(dealer.getTotal(1).size()));
-					Label_LOC.setText(String.valueOf(dealer.getLinesOfCode()));
-					Label_Methods.setText(String.valueOf(dealer.getTotal(3).size()));
+					Label_Packages.setText(String.valueOf(dealer.getAllCellsOfRow(1).size()));
+					Label_LOC.setText(String.valueOf(dealer.sumLinesOfCode()));
+					Label_Methods.setText(String.valueOf(dealer.getAllCellsOfRow(3).size()));
 					Projeto_Label.setVisible(true);
 					NClasses_Label.setVisible(true);
 					NClasses_Packages.setVisible(true);
@@ -176,52 +176,52 @@ public class GUI extends JFrame {
 		NClasses_Label = new JLabel("Nº de Classes");
 		NClasses_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Label.setFont(new Font("Tahoma", Font.BOLD, 15));
-		NClasses_Label.setBounds(363, 583, 106, 30);
+		NClasses_Label.setBounds(349, 581, 106, 30);
 		contentPane.add(NClasses_Label);
 		NClasses_Label.setVisible(false);
 		
 		NClasses_Packages = new JLabel("Nº de Packages");
 		NClasses_Packages.setFont(new Font("Tahoma", Font.BOLD, 15));
-		NClasses_Packages.setBounds(351, 612, 118, 30);
+		NClasses_Packages.setBounds(349, 610, 118, 30);
 		contentPane.add(NClasses_Packages);
 		NClasses_Packages.setVisible(false);
 		
 		NClasses_Methods = new JLabel("Nº de Métodos");
 		NClasses_Methods.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Methods.setFont(new Font("Tahoma", Font.BOLD, 15));
-		NClasses_Methods.setBounds(511, 612, 118, 30);
+		NClasses_Methods.setBounds(497, 610, 118, 30);
 		contentPane.add(NClasses_Methods);
 		NClasses_Methods.setVisible(false);
 		
 		NClasses_LOC = new JLabel("Nº de Linhas");
 		NClasses_LOC.setFont(new Font("Tahoma", Font.BOLD, 15));
-		NClasses_LOC.setBounds(523, 583, 106, 30);
+		NClasses_LOC.setBounds(497, 581, 106, 30);
 		contentPane.add(NClasses_LOC);
 		NClasses_LOC.setVisible(false);
 		
 		Label_Classes = new JLabel("");
 		Label_Classes.setHorizontalAlignment(SwingConstants.LEFT);
 		Label_Classes.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		Label_Classes.setBounds(471, 583, 30, 30);
+		Label_Classes.setBounds(457, 581, 30, 30);
 		contentPane.add(Label_Classes);
 		Label_Classes.setVisible(false);
 		
 		
 		Label_Packages = new JLabel("");
 		Label_Packages.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		Label_Packages.setBounds(471, 612, 30, 30);
+		Label_Packages.setBounds(470, 610, 30, 30);
 		contentPane.add(Label_Packages);
 		Label_Packages.setVisible(false);
 		
 		Label_Methods = new JLabel("");
 		Label_Methods.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		Label_Methods.setBounds(624, 612, 30, 30);
+		Label_Methods.setBounds(610, 610, 30, 30);
 		contentPane.add(Label_Methods);
 		Label_Methods.setVisible(false);
 		
 		Label_LOC = new JLabel("");
 		Label_LOC.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		Label_LOC.setBounds(624, 583, 44, 30);
+		Label_LOC.setBounds(598, 581, 44, 30);
 		contentPane.add(Label_LOC);
 		Label_LOC.setVisible(false);
 	}
