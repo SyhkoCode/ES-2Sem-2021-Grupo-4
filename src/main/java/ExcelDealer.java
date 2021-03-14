@@ -32,7 +32,7 @@ public class ExcelDealer {
 				ignoredIndexes.add(7);
 				ignoredIndexes.add(10);
 				readFile();
-//				 System.out.println(getAllCellsOfRow(3));
+				//System.out.println(getAllCellsOfRow(3));
 				 //System.out.println(getClassMethods(3,"ParsingException"));
 			} else {
 				wb = new XSSFWorkbook();
