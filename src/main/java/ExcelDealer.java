@@ -41,7 +41,7 @@ public class ExcelDealer {
 				l.add(v);
 				l.add(v1);
 				l.add(v2);
-				writeFile(excel_file, l);
+//				writeFile(excel_file, l);
 			}
 		} catch (InvalidFormatException | IOException e) {
 			e.printStackTrace();
@@ -50,20 +50,13 @@ public class ExcelDealer {
 	}
 
 	public void readFile() {
-		// Primeiro argumento � a coluna do Excel e o segundo � a classe, d� para ir
-		// buscar al�m dos m�todos
-		System.out.println(getMethods(3, "ParsingException"));
-		System.out.println(getClasses());
-//		System.out.println(getHeader());
-//		System.out.println(getHeader()[0]);
-//		System.out.println(getHeader()[1]);
-//		System.out.println(getHeader()[2]);
-//		System.out.println(getHeader()[3]);
-//		System.out.println(getHeader()[4]);
-//		System.out.println(getHeader()[5]);
-//		System.out.println(getHeader()[6]);
-//		System.out.println(getHeader()[7]);
-//		System.out.println(getHeader()[8]);
+//		// Primeiro argumento � a coluna do Excel e o segundo � a classe, d� para ir
+//		// buscar al�m dos m�todos
+//		System.out.println("LOC: " + getTotal(5));
+//		System.out.println(getMethods(3, "ParsingException"));
+//		//System.out.println("PACKAGES: " + getTotal(1).size());
+//		System.out.println("CLASSES: " + getClasses().size());
+//		System.out.println("MÉTODOS: " + getTotal(3).size());
 	}
 
 	public List<String> getMethods(int col_index, String name) {
@@ -73,7 +66,7 @@ public class ExcelDealer {
 			XSSFRow row = sheet.getRow(r);
 			if (row != null) {
 				if (row.getCell(2).getStringCellValue().equals(name))
-					if (!list.contains(row.getCell(col_index).toString()))
+					if (row.getCell(col_index) != null && !list.contains(row.getCell(col_index).toString()))
 						list.add(row.getCell(col_index).toString());
 			}
 		}
@@ -87,12 +80,6 @@ public class ExcelDealer {
 				"is_God_Class", "LOC_method", "CYCLO_method", "is_Long_Method" };
 		bookData.add(titles);
 		bookData.addAll(values);
-
-		/*
-		 * List<Object[]>] bookData = { { {"Effective Java", "Joshua Bloch", 36},
-		 * {"Clean Code", "Robert martin", 42}, {"Thinking in Java", "Bruce Eckel", 35},
-		 * };
-		 */
 		int rowCount = 0;
 		CellStyle style = wb.createCellStyle();
 		Font font = wb.createFont();
@@ -120,10 +107,8 @@ public class ExcelDealer {
 			wb.write(outputStream);
 			outputStream.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -145,12 +130,12 @@ public class ExcelDealer {
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
 		List<Object[]> list = new ArrayList<>();
 		for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
-			Object[] rowList = new Object[row_size-2];
+			Object[] rowList = new Object[row_size - 2];
 			XSSFRow row = sheet.getRow(j);
 			if (row != null) {
-				int counter=0;
+				int counter = 0;
 				for (int i = 0; i <= row_size; i++) {
-					if(!ignoredIndexes.contains(i) && counter<rowList.length) {
+					if (!ignoredIndexes.contains(i) && counter < rowList.length) {
 						rowList[counter] = row.getCell(i);
 						counter++;
 					}
@@ -160,20 +145,44 @@ public class ExcelDealer {
 		}
 		return list;
 	}
-	
+
 	public Object[] getHeader() {
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
-		Object[] rowList = new Object[row_size-2];
+		Object[] rowList = new Object[row_size - 2];
 		XSSFRow row = sheet.getRow(0);
-		int counter=0;
+		int counter = 0;
 		for (int i = 0; i < row_size; i++) {
-			if(!ignoredIndexes.contains(i) && counter<rowList.length) {
+			if (!ignoredIndexes.contains(i) && counter < rowList.length) {
 				rowList[counter] = row.getCell(i);
 				counter++;
 			}
 
 		}
 		return rowList;
+	}
+
+	public List<String> getTotal(int column_index) {
+		List<String> list = new ArrayList<>();
+
+		for (String s : getClasses()) {
+			
+			List<String> aux = getMethods(column_index, s);
+			for (String str : aux) {
+				if (!list.contains(str))
+					list.add(str);
+			}
+
+		}
+		return list;
+	}
+	
+	public int getLinesOfCode() {
+		List<String> list = getTotal(5);
+		double total = 0;
+		
+		for(int i=0;i<list.size();i++) 
+			total += Double.parseDouble(list.get(i));
+		return (int)total;
 	}
 
 	public String getExcel_file() {
@@ -206,11 +215,11 @@ public class ExcelDealer {
 		ExcelDealer er1 = new ExcelDealer("Code_Smells", true);
 		er1.readFile();
 	}
-	
+
 	public void addAllToIgnoredIndexes(List<Integer> indexes) {
 		ignoredIndexes.addAll(indexes);
 	}
-	
+
 	public void addToIgnoredIndexes(int index) {
 		ignoredIndexes.add(index);
 	}
