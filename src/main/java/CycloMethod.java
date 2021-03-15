@@ -8,16 +8,43 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CycloMethod {
-	//static private Pattern pattern = Pattern.compile("^case |^if |^if\\(|^else |^else\\{|^for |^for\\(|^while |^while\\(");
 	static private Pattern pattern = Pattern.compile("^if |^if\\(|^case |^catch |^catch\\(|\\} catch \\(|^do |^do\\{|^while |^while\\(|^for |^for\\(|^continue;|\\?.*\\:|\\|\\||\\&\\&|.*else if");
 	static private Pattern ignoreComments = Pattern.compile("\\/\\/|\\/\\*|^\\*");
-	//static private Pattern patternCountTwice = Pattern.compile("^while |^while\\(");
-	//static private Pattern patternCountAgain = Pattern.compile("\\|\\||\\&\\&");
-		
-	private ArrayList<Integer> cyclos = new ArrayList<>();
-	private int woc;
 	
-	static public int nOfCyclo(ArrayList<String> method) {
+	/*
+	 * Para conseguir o cyclo e o woc vê o main
+	 * 
+	 * Fiz assim pk facilita depois substituir os 2 metodos q são utilizados primeiro pelos q dão as assinaturas da classe
+	 * e as linhas dos metodos das classes de outras classes, par ñ termos codigo q faz praticamente o mesmo repetido
+	 * 
+	 */
+	
+	public static void main(String[] args) {
+		//mudar para receber o nome do ficheiro java
+		String file = "SourceCodeParser.java";
+		
+		ArrayList<String> assinaturasMetodos =  nameOfMethods(new File(file));
+		try {
+			LinkedHashMap<String, ArrayList<String>> mapaDosMetodos = getLinesOfMethods(new File(file), assinaturasMetodos); //É o q dá a assinatura dos metodos
+			LinkedHashMap<String, Integer> cycloDosMetodos = new LinkedHashMap<>(); //Usa a assinatura para apanhar as linhas de cada metodo
+			for(String key : mapaDosMetodos.keySet())
+				cycloDosMetodos.put(key, cyclo(mapaDosMetodos.get(key))); //Mapa ordenado com a metrica de cada metodo
+			int metricaDaClasseWOC = woc(cycloDosMetodos); //Condensa o mapa num unico int q dá o woc
+				
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	static public int woc(LinkedHashMap<String,Integer> cyclos) {
+		int i = 0;
+		for(String s: cyclos.keySet())
+			i+=cyclos.get(s);
+		return i;
+	}
+	
+	static public int cyclo(ArrayList<String> method) {
 		int n = 1;
 		
 		for(String line: method) {
@@ -31,8 +58,6 @@ public class CycloMethod {
 				else {
 					n++;
 				}
-				//System.out.println(matcher.group());
-				
 			}
 		}
 		return n;
@@ -52,10 +77,6 @@ public class CycloMethod {
 					map.get(m).add(checkIfStart);
 					
 					int openCurly = (checkIfStart.contains("{")) ? 1 : 0;
-					
-					//System.out.println(openCurly);
-					//System.out.println(checkIfStart);
-					
 					while(openCurly == 0) {						
 						String got1stCurly = scanner.nextLine().trim();
 						openCurly += got1stCurly.contains("{") ? 1:0;
@@ -67,10 +88,8 @@ public class CycloMethod {
 					while(scanner.hasNext() && !endedMethod) {
 						String check4Curlies = scanner.nextLine();
 						map.get(m).add(check4Curlies);
-						//System.out.println(check4Curlies);
 						openCurly += (check4Curlies.contains("{") && !check4Curlies.contains("'{'")) ? 1:0;
 						openCurly -= (check4Curlies.contains("}") && !check4Curlies.contains("'}'"))  ? 1:0;
-						//System.out.println(openCurly);
 						if(openCurly == 0)
 							endedMethod = true;
 					}
@@ -82,6 +101,7 @@ public class CycloMethod {
 		
 		return map;
 	}
+	
 	
 	public static ArrayList<String> nameOfMethods(File file){
 		ArrayList<String> result = new ArrayList<>();
@@ -119,7 +139,28 @@ public class CycloMethod {
 		return result;
 	}
 	
-	public static void main(String[] args) {
+	
+	
+	
+	// podem ignorar apartir daqui, foi para testes e/ou é wip
+	
+	static private Pattern v2 = Pattern.compile("(\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;))", Pattern.MULTILINE);
+	static private Pattern exception1 = Pattern.compile("(\\/\\/.*)((\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;)))");
+	
+	
+	static public void nOfClyclo(String method) {
+		int n = 1;
+		
+	}
+	
+	private ArrayList<Integer> cyclos = new ArrayList<>();
+	private int woc;
+	
+	
+	
+	
+	
+	/*public static void main(String[] args) {
 		ArrayList<String> teste =  nameOfMethods(new File("SourceCodeParser.java"));
 		
 		
@@ -130,18 +171,18 @@ public class CycloMethod {
 				for(String s: map.get(key))
 					System.out.println(s);
 				System.out.println("------------------------------");
-			}*/
+			}
 			
 			LinkedHashMap<String, Integer> cyclo = new LinkedHashMap<>();
 			for(String key : map.keySet())
-				cyclo.put(key, nOfCyclo(map.get(key)));
+				cyclo.put(key, cyclo(map.get(key)));
 
 			int i = 0;
 			for(String key : cyclo.keySet()) {
 				System.out.println(key + " -> " + cyclo.get(key));
 				/*for(String s: map.get(key))
 					System.out.println(s);
-				System.out.println("------------------------------");*/
+				System.out.println("------------------------------");
 				i += cyclo.get(key);
 			}
 			System.out.println("total " + i);
@@ -151,5 +192,5 @@ public class CycloMethod {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 }
