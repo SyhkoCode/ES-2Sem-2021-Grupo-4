@@ -15,7 +15,7 @@ public class NumberOfMethods {
 	public static void countMethods(String filepath) {
 		File file = new File(filepath);
 		String regex = "(public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;])";
-		String regex2 = "^\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
+		String regex2 = "^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
 		String regex3 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
 		Pattern pattern2 = Pattern.compile(regex2, Pattern.MULTILINE);
@@ -52,6 +52,6 @@ public class NumberOfMethods {
 	public static void main(String[] args) throws FileNotFoundException {
 		String str = "C:\\Users\\Pedro Pinheiro\\Downloads\\jasml_0.10\\src\\com\\jasml\\compiler\\SourceCodeParser.java";
 		String str2 = "C:\\Users\\Pedro Pinheiro\\Desktop\\PCD - 2º Ano LEI (ISCTE)\\Eclipse PCD Trabalhos\\Projeto Graficos 88657.zip_expanded\\ProjetoIP_Graficos\\src\\Projeto\\Grafico.java";
-		countMethods(str2);
+		countMethods(str);
 	}
 }
