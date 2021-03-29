@@ -13,6 +13,9 @@ public class CM2 {
 	static public int nOfClyclo(String method) {
 		int n = 1;
 		
+		String noEnter = method.replaceAll(System.getProperty("line.separator"), "");
+		String cleanText = noEnter.replaceAll("(\\\"(.*)\\\"|\\/\\/(.*)|\\/\\*(.*)|\\*\\/(.*))", "");
+		
 		Matcher matcher = pattern.matcher(method);
 		while(matcher.find()) {
 			n++;
@@ -30,9 +33,7 @@ public class CM2 {
 		try {
 			Scanner scanner = new Scanner(file);
 			String s = scanner.useDelimiter("\\A").next();
-			String noEnter = s.replaceAll(System.getProperty("line.separator"), "");
-			String cleanText = noEnter.replaceAll("(\\\"(.*)\\\"|\\/\\/(.*)|\\/\\*(.*)|\\*\\/(.*))", "");
-			System.out.println(nOfClyclo(cleanText));
+			System.out.println(nOfClyclo(s));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
