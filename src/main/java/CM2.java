@@ -7,20 +7,15 @@ import java.util.regex.Pattern;
 
 public class CM2 {
 	static private Pattern pattern = Pattern.compile("(\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;))", Pattern.MULTILINE);
-	static private Pattern exceptions = Pattern.compile("(\\/\\/.*)((\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;)))");
+	//static private Pattern exceptions = Pattern.compile("(\\/\\/.*)((\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;)))");
 	
 	
 	static public int nOfClyclo(String method) {
 		int n = 1;
 		
 		Matcher matcher = pattern.matcher(method);
-		Matcher remove = exceptions.matcher(method); 
 		while(matcher.find()) {
 			n++;
-		}
-		
-		while(remove.find()) {
-			n--;
 		}
 		
 		return n;
