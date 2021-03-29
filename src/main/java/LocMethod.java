@@ -1,46 +1,48 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LocMethod {
-	//static private Pattern pattern = Pattern.compile("^case |^if |^if\\(|^else |^else\\{|^for |^for\\(|^while |^while\\(");
-	static private Pattern pattern = Pattern.compile("^if |^if\\(|^case |^catch |^catch\\(|\\} catch \\(|^throw |^do |^do\\{|^while |^while\\(|^for |^for\\(|^continue;|\\?.*\\:|\\|\\||\\&\\&|.*else if"); 
-		
-	private ArrayList<Integer> cyclos = new ArrayList<>();
-	private int woc;
+	static private Pattern pattern = Pattern.compile("^if |^if\\(|^case |^catch |^catch\\(|\\} catch \\(|^do |^do\\{|^while |^while\\(|^for |^for\\(|^continue;|\\?.*\\:|\\|\\||\\&\\&|.*else if");
+	static private Pattern ignoreComments = Pattern.compile("\\/\\/|\\/\\*|^\\*");
 	
 	static public int nOfCyclo(ArrayList<String> method) {
 		int n = 1;
 		
 		for(String line: method) {
 			Matcher matcher = pattern.matcher(line.trim());
-			while(matcher.find())
-				n++;
-
+			while(matcher.find()) {
+				Matcher comments = ignoreComments.matcher(line.trim());
+				if(comments.find()) {
+					if(line.indexOf(matcher.group()) < line.indexOf(comments.group()))
+						n++;
+				}
+				else {
+					n++;
+				}
+				
+			}
 		}
 		return n;
 	}
 	
-	static public LinkedHashMap<String, ArrayList<String>> getLinesOfMethods(File file, ArrayList<String> methods) throws FileNotFoundException {
-		LinkedHashMap<String, ArrayList<String>> map = new LinkedHashMap<>();
+	static public LinkedHashMap<String, String> getLinesOfMethods(File file, ArrayList<String> methods) throws FileNotFoundException {
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 		Scanner scanner = new Scanner(file);
 		for(String m : methods) {
-			map.put(m, new ArrayList<String>());
+			String method = new String ("");
 			boolean foundMethod = false;
 			while(scanner.hasNext() && !foundMethod) {
 				String checkIfStart = scanner.nextLine();
 				if(checkIfStart.contains(m)) {
 					foundMethod = true;
 					boolean endedMethod = false;
-					map.get(m).add(checkIfStart);
-					
+					method = method + checkIfStart;
 					int openCurly = (checkIfStart.contains("{")) ? 1 : 0;
-					
 					
 					while(openCurly == 0) {						
 						String got1stCurly = scanner.nextLine().trim();
@@ -52,27 +54,20 @@ public class LocMethod {
 					}
 					while(scanner.hasNext() && !endedMethod) {
 						String check4Curlies = scanner.nextLine();
-						map.get(m).add(check4Curlies);
-						openCurly += check4Curlies.contains("{") ? 1:0;
+						method = method + "\n" + check4Curlies;
+						openCurly += (check4Curlies.contains("{") && !check4Curlies.contains("'{'")) ? 1:0;
 						openCurly -= (check4Curlies.contains("}") && !check4Curlies.contains("'}'"))  ? 1:0;
 						if(openCurly == 0)
 							endedMethod = true;
 					}
-					
+					map.put(m, method);
 				}
-			}
+			} 
+			
 		}			
 		scanner.close();
 		
 		return map;
-	}
-	
-	static public ArrayList<Integer> countLinesOfMethods (LinkedHashMap<String, ArrayList<String>> map) throws FileNotFoundException {
-		ArrayList<Integer> getLines = new ArrayList<Integer> ();
-		for(String key : map.keySet()) {
-			getLines.add(map.get(key).size());
-		}
-		return getLines;
 	}
 	
 	public static ArrayList<String> nameOfMethods(File file){
@@ -111,17 +106,29 @@ public class LocMethod {
 		return result;
 	}
 	
+	
+	static public ArrayList<Integer> countLinesOfMethods (LinkedHashMap<String, String> map) throws FileNotFoundException {
+		ArrayList<Integer> getLines = new ArrayList<Integer> ();
+		for(String key : map.keySet()) {
+			getLines.add(map.get(key).split("\r?\n").length);
+		}
+		return getLines;
+	}
+	
 	public static void main(String[] args) {
-		ArrayList<String> teste =  nameOfMethods(new File("SourceCodeParser.java"));
+		ArrayList<String> teste =  nameOfMethods(new File("GrammerException.java"));
 		
 		
 		try {
-			LinkedHashMap<String, ArrayList<String>> map = getLinesOfMethods(new File("SourceCodeParser.java"), teste);
-			ArrayList<Integer> lines = countLinesOfMethods(map); 
-				for (int i : lines) {
-					System.out.println(i);
-				
+			LinkedHashMap<String, String> map = getLinesOfMethods(new File("GrammerException.java"), teste);
+			for (String key: map.keySet()) {
+				System.out.println(map.get(key));
 			}
+			
+			ArrayList<Integer> lines = countLinesOfMethods(map); 
+			for (int i : lines) {
+				System.out.println(i);
+			 }
 				
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
