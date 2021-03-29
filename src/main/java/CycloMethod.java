@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -193,4 +192,8 @@ public class CycloMethod {
 			e.printStackTrace();
 		}
 	}*/
+	
+	void teste() {
+		
+	}
 }

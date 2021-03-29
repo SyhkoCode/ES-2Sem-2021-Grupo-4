@@ -12,8 +12,8 @@
 
 	<properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
   </properties>
 
 	<build>
@@ -68,7 +68,23 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.0.0</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.renjin.cran/cyclocomp -->
+		<dependency>
+    		<groupId>org.renjin.cran</groupId>
+    		<artifactId>cyclocomp</artifactId>
+    		<version>1.1.0-b10</version>
+		</dependency>
 
 	</dependencies>
+	
+	<repositories>
+		<repository>
+    		<id>bedatadriven</id>
+    		<name>bedatadriven public repo</name>
+    		<url>https://nexus.bedatadriven.com/content/groups/public/</url>
+  		</repository> 
+	</repositories>
+	  
 
 </project>

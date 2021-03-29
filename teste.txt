@@ -21,10 +21,10 @@ private void parseMethodAttributes(Method method, ArrayList attributes, LabeledI
 			} else if (temp.indexOf(Constants.ATTRIBUTE_NAME_SYNTHETIC) != -1) {
 				attributes.add(parseAttribute());
 			} else if (temp.indexOf(Constants.ATTRIBUTE_NAME_LINE_NUMBER_TABLE) != -1) {
-				scanner.nextToken();
-				if (false) {
-					parseLineNumbers(null);
-				}
+				/*scanner.nextToken();
+				*if (false) {
+				*	parseLineNumbers(null);
+				}*/
 			} else {
 				exception(scanner, "unexpected.attribute." + scanner.token());
 			}
