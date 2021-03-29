@@ -18,7 +18,7 @@ public class CycloMethod {
 	 * 
 	 */
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		//mudar para receber o nome do ficheiro java
 		String file = "SourceCodeParser.java";
 		
@@ -34,7 +34,7 @@ public class CycloMethod {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	static public int woc(LinkedHashMap<String,Integer> cyclos) {
 		int i = 0;
@@ -101,6 +101,12 @@ public class CycloMethod {
 		return map;
 	}
 	
+	/* 1º tirar ficheiro para string e limpar
+	 * 2º tu vez nomes de metodos para um arraylist
+	 * 3º com arraylist faz-se hash com os nomes e as linhas dos metodos
+	 * 4ºA diogo
+	 * 4ºB susana
+	 */
 	
 	public static ArrayList<String> nameOfMethods(File file){
 		ArrayList<String> result = new ArrayList<>();
@@ -159,14 +165,14 @@ public class CycloMethod {
 	
 	
 	
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		ArrayList<String> teste =  nameOfMethods(new File("SourceCodeParser.java"));
 		
 		
 		
 		try {
 			LinkedHashMap<String, ArrayList<String>> map = getLinesOfMethods(new File("SourceCodeParser.java"), teste);
-			/*for(String key : map.keySet()) {
+			for(String key : map.keySet()) {
 				for(String s: map.get(key))
 					System.out.println(s);
 				System.out.println("------------------------------");
@@ -179,7 +185,7 @@ public class CycloMethod {
 			int i = 0;
 			for(String key : cyclo.keySet()) {
 				System.out.println(key + " -> " + cyclo.get(key));
-				/*for(String s: map.get(key))
+				for(String s: map.get(key))
 					System.out.println(s);
 				System.out.println("------------------------------");
 				i += cyclo.get(key);
@@ -191,7 +197,7 @@ public class CycloMethod {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 	
 	void teste() {
 		
