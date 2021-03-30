@@ -36,7 +36,9 @@ public class Metrics {
 	public static LinkedHashSet<String> countMethods(File filepath) {
 		String regex = "(public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;])";
 		String regex2 = "^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
-		String regex3 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
+		//String regex3 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
+		String regex3 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])|((^|\\s*)return )";
+		
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
 		Pattern pattern2 = Pattern.compile(regex2, Pattern.MULTILINE);
 		Pattern pattern3 = Pattern.compile(regex3, Pattern.MULTILINE);
@@ -65,6 +67,7 @@ public class Metrics {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		
 		return nomMethod;
 	}
 
