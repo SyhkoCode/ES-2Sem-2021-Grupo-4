@@ -36,7 +36,6 @@ public class Metrics {
 	public static LinkedHashSet<String> countMethods(File filepath) {
 		String regex = "(public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;])";
 		String regex2 = "^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
-		//String regex3 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
 		String regex3 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])|((^|\\s*)return )";
 		
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
@@ -78,9 +77,16 @@ public class Metrics {
         for(String m : methods) {
             String method = new String ("");
             boolean foundMethod = false;
+            String toCheck = m;
+            if(m.contains(System.lineSeparator())) {
+            	toCheck = m.substring(0, m.indexOf(System.lineSeparator()));
+            }
+            
             while(scanner.hasNext() && !foundMethod) {
                 String checkIfStart = scanner.nextLine();
-                if(checkIfStart.contains(m)) {
+
+                
+                if(checkIfStart.contains(toCheck)) {
                     foundMethod = true;
                     boolean endedMethod = false;
                     method = method + checkIfStart;
@@ -104,7 +110,6 @@ public class Metrics {
                             endedMethod = true;
                     }
                     map.put(m, method);
-                  //  System.out.println(method);
                 }
             } 
 
@@ -120,7 +125,6 @@ public class Metrics {
 		int n = 1;
 		Pattern pattern = Pattern.compile("(\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;))", Pattern.MULTILINE);
 		String cleanText = method.replaceAll("\\/\\/(.*)|\\/\\*([\\s\\S]*?)\\*\\/", "");
-	//	System.out.println(method);
 		Matcher matcher = pattern.matcher(cleanText);
 		while(matcher.find()) {
 			n++;
