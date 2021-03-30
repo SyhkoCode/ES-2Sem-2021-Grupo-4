@@ -6,7 +6,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CM2 {
+public class CM {
 	static private Pattern pattern = Pattern.compile("(\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;))", Pattern.MULTILINE);
 	
 	private ArrayList<Integer> cyclos = new ArrayList<>();
