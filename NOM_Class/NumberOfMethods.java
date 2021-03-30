@@ -24,7 +24,7 @@ public class NumberOfMethods {
 		try {
 			scanner = new Scanner(file);
 			String text = scanner.useDelimiter("\\A").next();
-			String cleanText = text.replaceAll("(\\\"(.*)\\\"|\\/\\/(.*)|\\/\\*(.*)|\\*\\/(.*))", "");
+			String cleanText = text.replaceAll("\\/\\/(.*)|\\/\\*([\\s\\S]*?)\\*\\/", "");
 			Matcher matcher = pattern.matcher(cleanText);
 			Matcher matcher2 = pattern2.matcher(cleanText);
 			while (matcher.find()) {
