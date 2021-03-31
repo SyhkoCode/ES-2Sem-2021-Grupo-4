@@ -41,8 +41,6 @@ public class ExcelDealer {
 
 	}
 
-
-
 public void createExcelFile(String file_name, String pathToSave, List<String[]> rows) {
 		File file = new File(pathToSave + "\\" + file_name);
 		file.delete();
