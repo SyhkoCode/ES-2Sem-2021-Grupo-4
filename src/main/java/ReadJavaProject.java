@@ -49,7 +49,7 @@ public class ReadJavaProject {
 								lines[3] = "" + methods.size();
 								lines[4] = Metrics.getLines(packageFile) + "";
 								lines[5] = "" + wmc;
-							//	lines[7] = "" + countLinesOfMethods.get(i);
+								lines[7] = "" + countLinesOfMethods.get(i);
 								lines[8] = "" + cycloOfAllMethods.get(i);
 								result.add(lines);
 								i++;

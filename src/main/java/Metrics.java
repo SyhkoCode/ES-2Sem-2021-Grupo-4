@@ -36,8 +36,8 @@ public class Metrics {
 	public static LinkedHashSet<String> countMethods(File filepath) {
 		String regex = "(public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;])";
 		String regex2 = "^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
-		String regex3 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])|((^|\\s*)return )";
-		
+		String regex3 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])|((^|\\s*)return )|((^|\\s*)(new ))";
+
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
 		Pattern pattern2 = Pattern.compile(regex2, Pattern.MULTILINE);
 		Pattern pattern3 = Pattern.compile(regex3, Pattern.MULTILINE);
@@ -46,120 +46,119 @@ public class Metrics {
 
 		try {
 			Scanner scanner = new Scanner(filepath);
-			String text = scanner.useDelimiter("\\A").next();
-			String cleanText = text.replaceAll("\\/\\/(.*)|\\/\\*([\\s\\S]*?)\\*\\/", "");
-			Matcher matcher = pattern.matcher(cleanText);
-			Matcher matcher2 = pattern2.matcher(cleanText);
-			while (matcher.find()) {
-				nomMethod.add(matcher.group().trim().replace("{", ""));
-			}
+			String text = null;
+			if (scanner.useDelimiter("\\A").hasNext()) {
+				text = scanner.useDelimiter("\\A").next();
+				String cleanText = text.replaceAll("\\/\\/(.*)|\\/\\*([\\s\\S]*?)\\*\\/", "");
+				Matcher matcher = pattern.matcher(cleanText);
+				Matcher matcher2 = pattern2.matcher(cleanText);
+				while (matcher.find()) {
+					nomMethod.add(matcher.group().trim().replace("{", ""));
+				}
 
-			while (matcher2.find()) {
-				Matcher matcher3 = pattern3.matcher(matcher2.group());
-				if (!matcher3.find()) {
-					nomMethod.add(matcher2.group().trim().replace("{", ""));
+				while (matcher2.find()) {
+					Matcher matcher3 = pattern3.matcher(matcher2.group());
+					if (!matcher3.find()) {
+						nomMethod.add(matcher2.group().trim().replace("{", ""));
+					}
+
 				}
 
 			}
-
 			scanner.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		return nomMethod;
 	}
 
-	
-	static public LinkedHashMap<String, String> getLinesOfMethods(File file, LinkedHashSet<String> methods) throws FileNotFoundException {
-        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        Scanner scanner = new Scanner(file);
-        for(String m : methods) {
-            String method = new String ("");
-            boolean foundMethod = false;
-            String toCheck = m;
-            if(m.contains(System.lineSeparator())) {
-            	toCheck = m.substring(0, m.indexOf(System.lineSeparator()));
-            }
-            
-            while(scanner.hasNext() && !foundMethod) {
-                String checkIfStart = scanner.nextLine();
+	static public LinkedHashMap<String, String> getLinesOfMethods(File file, LinkedHashSet<String> methods)
+			throws FileNotFoundException {
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
+		Scanner scanner = new Scanner(file);
+		for (String m : methods) {
+			String method = new String("");
+			boolean foundMethod = false;
+			String toCheck = m;
+			if (m.contains(System.lineSeparator())) {
+				toCheck = m.substring(0, m.indexOf(System.lineSeparator()));
+			}
 
-                
-                if(checkIfStart.contains(toCheck)) {
-                    foundMethod = true;
-                    boolean endedMethod = false;
-                    method = method + checkIfStart;
-                    int openCurly = (checkIfStart.contains("{")) ? 1 : 0;
+			while (scanner.hasNext() && !foundMethod) {
+				String checkIfStart = scanner.nextLine();
 
+				if (checkIfStart.contains(toCheck)) {
+					foundMethod = true;
+					boolean endedMethod = false;
+					method = method + checkIfStart;
+					int openCurly = (checkIfStart.contains("{")) ? 1 : 0;
 
-                    while(openCurly == 0) {
-                        String got1stCurly = scanner.nextLine().trim();
-                        openCurly += got1stCurly.contains("{") ? 1:0;
-                        if(got1stCurly.contains("}")) {
-                            endedMethod = true;
-                            break;
-                        }
-                    }
-                    while(scanner.hasNext() && !endedMethod) {
-                        String check4Curlies = scanner.nextLine();
-                        method = method + "\n" + check4Curlies;
-                        openCurly += (check4Curlies.contains("{") && !check4Curlies.contains("'{'")) ? 1:0;
-                        openCurly -= (check4Curlies.contains("}") && !check4Curlies.contains("'}'"))  ? 1:0;
-                        if(openCurly == 0)
-                            endedMethod = true;
-                    }
-                    map.put(m, method);
-                }
-            } 
+					while (openCurly == 0) {
+						String got1stCurly = scanner.nextLine().trim();
+						openCurly += got1stCurly.contains("{") ? 1 : 0;
+						if (got1stCurly.contains("}")) {
+							endedMethod = true;
+							break;
+						}
+					}
+					while (scanner.hasNext() && !endedMethod) {
+						String check4Curlies = scanner.nextLine();
+						method = method + "\n" + check4Curlies;
+						openCurly += (check4Curlies.contains("{") && !check4Curlies.contains("'{'")) ? 1 : 0;
+						openCurly -= (check4Curlies.contains("}") && !check4Curlies.contains("'}'")) ? 1 : 0;
+						if (openCurly == 0)
+							endedMethod = true;
+					}
+					map.put(m, method);
+				}
+			}
 
-        }
-        scanner.close();
-        return map;
-    }
-	
-	
-	
-	
+		}
+		scanner.close();
+		return map;
+	}
+
 	static public int nOfClyclo(String method) {
 		int n = 1;
-		Pattern pattern = Pattern.compile("(\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;))", Pattern.MULTILINE);
+		Pattern pattern = Pattern.compile(
+				"(\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;))",
+				Pattern.MULTILINE);
 		String cleanText = method.replaceAll("\\/\\/(.*)|\\/\\*([\\s\\S]*?)\\*\\/", "");
 		Matcher matcher = pattern.matcher(cleanText);
-		while(matcher.find()) {
+		while (matcher.find()) {
 			n++;
 		}
-		
+
 		return n;
-		
+
 	}
-	
+
 	static public int wmc(ArrayList<Integer> cyclos) {
 		int i = 0;
-		for(int f: cyclos)
-			i+=f;
+		for (int f : cyclos)
+			i += f;
 		return i;
 	}
-	
-	
-	static public ArrayList<Integer> countLinesOfMethods (LinkedHashMap<String, String> map) throws FileNotFoundException {
-		ArrayList<Integer> getLines = new ArrayList<Integer> ();
-		for(String key : map.keySet()) {
+
+	static public ArrayList<Integer> countLinesOfMethods(LinkedHashMap<String, String> map)
+			throws FileNotFoundException {
+		ArrayList<Integer> getLines = new ArrayList<Integer>();
+		for (String key : map.keySet()) {
 			getLines.add(map.get(key).split("\r?\n").length);
 		}
 		return getLines;
 	}
 
 	public static ArrayList<Integer> allCyclos(LinkedHashMap<String, String> linesOfMethods) {
-		
-		ArrayList<Integer> cycloOfAllMethods = new ArrayList<Integer> ();
-		
-		for(String key : linesOfMethods.keySet())
+
+		ArrayList<Integer> cycloOfAllMethods = new ArrayList<Integer>();
+
+		for (String key : linesOfMethods.keySet())
 			cycloOfAllMethods.add(nOfClyclo(linesOfMethods.get(key)));
-	
+
 		return cycloOfAllMethods;
-	
+
 	}
-	
-	
+
 }
