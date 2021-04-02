@@ -97,31 +97,19 @@ public class GUI extends JFrame {
 				JFileChooser jfc = new JFileChooser(".");
 				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int returnValue = jfc.showOpenDialog(null);
-				
+
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					String path = jfc.getSelectedFile().getAbsolutePath();
-					String excelName = jfc.getSelectedFile().getName()+"_metrics";
-					dealer = new ExcelDealer(path,false);
-					fileName_TF.setText(path+"");
-					if(pathToSave.isEmpty())
+					String excelName = jfc.getSelectedFile().getName() + "_metrics";
+					dealer = new ExcelDealer(path, false);
+					fileName_TF.setText(path + "");
+					if (pathToSave.isEmpty())
 						pathToSave = path;
-					
-					dealer.createExcelFile(excelName,pathToSave,ReadJavaProject.readJavaProject(path));
-					
-					
-					dealer = new ExcelDealer(pathToSave+"\\"+excelName+".xlsx", true);
-					tableModel.setRowCount(0);
-					tableModel.setColumnCount(0);
-					
-					Object[] header = dealer.getExcelHeader();
-					tableModel.setColumnIdentifiers(header);
-					
-					for(int i =0;i!=header.length;i++) 
-						table.getColumnModel().getColumn(i).setResizable(false);
-					
-					for(Object[] row : dealer.getAllRows()) {
-						tableModel.addRow(row);
-					}
+
+					dealer.createExcelFile(excelName, pathToSave, ReadJavaProject.readJavaProject(path));
+
+					dealer = new ExcelDealer(pathToSave + "\\" + excelName + ".xlsx", true);
+					readExcel();
 				}
 			}
 		});
@@ -140,87 +128,86 @@ public class GUI extends JFrame {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(12, 13, 958, 583);
 		contentPane.add(tabbedPane);
-		
+
 		scrollPane_1 = new JScrollPane();
 		tabbedPane.addTab("Regras", null, scrollPane_1, null);
 
 		JScrollPane scrollPane = new JScrollPane();
 		tabbedPane.addTab("Excel", null, scrollPane, null);
-		
+
 		tableModel = new DefaultTableModel();
-		table = new JTable(){
-		    @Override
-		       public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-		           Component component = super.prepareRenderer(renderer, row, column);
-		           int rendererWidth = component.getPreferredSize().width;
-		           TableColumn tableColumn = getColumnModel().getColumn(column);
-		           tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width + 10, tableColumn.getPreferredWidth()));
-		           return component;
-		        }
-		    };
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table = new JTable() {
+			@Override
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				Component component = super.prepareRenderer(renderer, row, column);
+				int rendererWidth = component.getPreferredSize().width;
+				TableColumn tableColumn = getColumnModel().getColumn(column);
+				tableColumn.setPreferredWidth(
+						Math.max(rendererWidth + getIntercellSpacing().width + 10, tableColumn.getPreferredWidth()));
+				return component;
+			}
+		};
 		table.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		table.setModel(tableModel);
 
 		table.getTableHeader().setReorderingAllowed(false);
 		scrollPane.setViewportView(table);
-		
+
 		panel = new JPanel();
 		tabbedPane.addTab("Resumo", null, panel, null);
 		panel.setLayout(null);
-		
 
-		
 		Projeto_Label = new JLabel("Resumo do Projeto");
 		Projeto_Label.setBounds(0, 33, 953, 47);
 		panel.add(Projeto_Label);
 		Projeto_Label.setFont(new Font("Tahoma", Font.PLAIN, 31));
 		Projeto_Label.setHorizontalAlignment(SwingConstants.CENTER);
-		
+
 		NClasses_Label = new JLabel("Nº de Classes");
-		NClasses_Label.setBounds(337, 68, 616, 30);
+		NClasses_Label.setBounds(359, 203, 126, 30);
 		panel.add(NClasses_Label);
 		NClasses_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Label.setFont(new Font("Tahoma", Font.BOLD, 15));
-		
+
 		NClasses_Packages = new JLabel("Nº de Packages");
-		NClasses_Packages.setBounds(337, 97, 616, 30);
+		NClasses_Packages.setHorizontalAlignment(SwingConstants.LEFT);
+		NClasses_Packages.setBounds(359, 163, 126, 30);
 		panel.add(NClasses_Packages);
 		NClasses_Packages.setFont(new Font("Tahoma", Font.BOLD, 15));
-		
+
 		NClasses_Methods = new JLabel("Nº de Métodos");
-		NClasses_Methods.setBounds(485, 97, 468, 30);
+		NClasses_Methods.setBounds(359, 243, 126, 30);
 		panel.add(NClasses_Methods);
 		NClasses_Methods.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Methods.setFont(new Font("Tahoma", Font.BOLD, 15));
-		
+
 		NClasses_LOC = new JLabel("Nº de Linhas");
-		NClasses_LOC.setBounds(485, 68, 468, 30);
+		NClasses_LOC.setHorizontalAlignment(SwingConstants.LEFT);
+		NClasses_LOC.setBounds(359, 283, 126, 30);
 		panel.add(NClasses_LOC);
 		NClasses_LOC.setFont(new Font("Tahoma", Font.BOLD, 15));
-		
+
 		Label_Classes = new JLabel("");
-		Label_Classes.setBounds(447, 62, 506, 30);
+		Label_Classes.setBounds(480, 203, 34, 30);
 		panel.add(Label_Classes);
 		Label_Classes.setHorizontalAlignment(SwingConstants.LEFT);
 		Label_Classes.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		
-		
+
 		Label_Packages = new JLabel("");
-		Label_Packages.setBounds(460, 91, 493, 30);
+		Label_Packages.setBounds(480, 163, 34, 30);
 		panel.add(Label_Packages);
 		Label_Packages.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		
+
 		Label_Methods = new JLabel("");
-		Label_Methods.setBounds(600, 91, 353, 30);
+		Label_Methods.setBounds(480, 243, 32, 30);
 		panel.add(Label_Methods);
 		Label_Methods.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		
+
 		Label_LOC = new JLabel("");
-		Label_LOC.setBounds(588, 62, 365, 30);
+		Label_LOC.setBounds(480, 283, 34, 30);
 		panel.add(Label_LOC);
 		Label_LOC.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		
+
 		JButton btnChooseExcelLocation = new JButton("Choose Excel Location");
 		btnChooseExcelLocation.addMouseListener(new MouseAdapter() {
 			@Override
@@ -228,7 +215,7 @@ public class GUI extends JFrame {
 				JFileChooser jfc = new JFileChooser(".");
 				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int returnValue = jfc.showOpenDialog(null);
-				
+
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					pathToSave = jfc.getSelectedFile().getAbsolutePath();
 				}
@@ -251,6 +238,8 @@ public class GUI extends JFrame {
 		for (int i = 0; i != header.length; i++)
 			table.getColumnModel().getColumn(i).setResizable(false);
 
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
 		for (Object[] row : dealer.getAllRows()) {
 			tableModel.addRow(row);
 		}
@@ -259,4 +248,5 @@ public class GUI extends JFrame {
 		Label_LOC.setText(String.valueOf(dealer.sumLinesOfCode()));
 		Label_Methods.setText(String.valueOf(dealer.getAllCellsOfRow(3).size()));
 	}
+	
 }

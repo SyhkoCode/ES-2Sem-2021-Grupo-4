@@ -1,4 +1,5 @@
-import java.io.File; 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+
 public class ExcelDealer {
 	private String excel_file;
 	private OPCPackage packet;
@@ -24,19 +26,14 @@ public class ExcelDealer {
 		excel_file = filename;
 		ignoredIndexes = new ArrayList<>();
 		try {
-			if (read) {
+			if( read ) {
 				packet = OPCPackage.open(new File(excel_file));
 				wb = new XSSFWorkbook(packet);
 				sheet = wb.getSheetAt(0);
 				ignoredIndexes.add(7);
 				ignoredIndexes.add(10);
-				readFile();
-				// System.out.println(getAllCellsOfRow(3));
-				// System.out.println(getClassMethods(3,"ParsingException"));
 			} else {
 				wb = new XSSFWorkbook();
-				// packet = OPCPackage.open(new File(excel_file));
-
 			}
 		} catch (InvalidFormatException | IOException e) {
 			e.printStackTrace();
@@ -44,17 +41,7 @@ public class ExcelDealer {
 
 	}
 
-	public void readFile() {
-//		// Primeiro argumento � a coluna do Excel e o segundo � a classe, d� para ir
-//		// buscar al�m dos m�todos
-//		System.out.println("LOC: " + getTotal(5));
-//		System.out.println(getMethods(3, "ParsingException"));
-//		//System.out.println("PACKAGES: " + getTotal(1).size());
-//		System.out.println("CLASSES: " + getClasses().size());
-//		System.out.println("MÉTODOS: " + getTotal(3).size());
-	}
-
-	public void createExcelFile(String file_name, String pathToSave, List<String[]> rows) {
+public void createExcelFile(String file_name, String pathToSave, List<String[]> rows) {
 		File file = new File(pathToSave + "\\" + file_name);
 		file.delete();
 		XSSFSheet sheet = wb.createSheet(file_name);
@@ -94,16 +81,56 @@ public class ExcelDealer {
 		}
 	}
 
-////////////////////                   READING METHODS                   ////////////////////                     
+	public void writeFile(String file_name, List<Object[]> values) {
+		XSSFSheet sheet = wb.createSheet(file_name);
+		List<Object[]> bookData = new ArrayList<>();
+		Object[] titles = { "MethodID", "package", "class", "method", "NOM_class", "LOC_class", "WMC_class",
+				"is_God_Class", "LOC_method", "CYCLO_method", "is_Long_Method" };
+		bookData.add(titles);
+		bookData.addAll(values);
+		int rowCount = 0;
+		CellStyle style = wb.createCellStyle();
+		Font font = wb.createFont();
+		font.setBold(true);
+		style.setFont(font);
 
+		for (Object[] aBook : bookData) {
+			XSSFRow row = sheet.createRow(rowCount++);
+
+			int columnCount = 0;
+
+			for (Object field : aBook) {
+				XSSFCell cell = row.createCell(columnCount++);
+				if( row.getRowNum() == 0 )
+					cell.setCellStyle(style);
+				if( field instanceof String ) {
+					cell.setCellValue((String) field);
+				} else if( field instanceof Integer ) {
+					cell.setCellValue((Integer) field);
+				}
+			}
+		}
+
+		try (FileOutputStream outputStream = new FileOutputStream(new String(file_name + ".xlsx"))) {
+			wb.write(outputStream);
+			outputStream.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+////////////////////                   READING METHODS                   ////////////////////                     
+	
 	public List<String> getClassMethods(int col_index, String classname) {
 		List<String> list = new ArrayList<>();
 
 		for (int r = 0; r < sheet.getPhysicalNumberOfRows(); r++) {
 			XSSFRow row = sheet.getRow(r);
 			if (row != null) {
-				if (row.getCell(2).getStringCellValue().equals(classname))
-					if (row.getCell(col_index) != null && !list.contains(row.getCell(col_index).toString()))
+				if ( row.getCell(2).getStringCellValue().equals(classname) )
+					if ( row.getCell(col_index) != null && !list.contains(row.getCell(col_index).toString()) )
 						list.add(row.getCell(col_index).toString());
 			}
 		}
@@ -116,7 +143,7 @@ public class ExcelDealer {
 		for (int r = 0; r < sheet.getPhysicalNumberOfRows(); r++) {
 			XSSFRow row = sheet.getRow(r);
 			if (row != null) {
-				if (!list.contains(row.getCell(2).toString()) && r != 0)
+				if ( !list.contains(row.getCell(2).toString()) && r != 0 )
 					list.add(row.getCell(2).toString());
 			}
 		}
@@ -129,10 +156,10 @@ public class ExcelDealer {
 		for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
 			Object[] rowList = new Object[row_size - 2]; // -2 para ignorar as colunas dos booleans que o stor não quer
 			XSSFRow row = sheet.getRow(j);
-			if (row != null) {
+			if ( row != null ) {
 				int counter = 0;
 				for (int i = 0; i <= row_size; i++) {
-					if (!ignoredIndexes.contains(i) && counter < rowList.length) {
+					if( !ignoredIndexes.contains(i) && counter < rowList.length ) {
 						rowList[counter] = row.getCell(i);
 						counter++;
 					}
@@ -163,10 +190,11 @@ public class ExcelDealer {
 		for (String classname : getClasses()) {
 			List<String> aux = getClassMethods(column_index, classname);
 			for (String str : aux) {
-				if (!list.contains(str) || column_index == 3)
+				if ( !list.contains(str) || column_index == 3 )
 					list.add(str);
 			}
 		}
+		System.out.println(list);
 		return list;
 	}
 
@@ -183,11 +211,6 @@ public class ExcelDealer {
 		return excel_file;
 	}
 
-	public static void main(String[] args) {
-		ExcelDealer er = new ExcelDealer("Code_Smellss", false);
-		ExcelDealer er1 = new ExcelDealer("Code_Smells", true);
-		er1.readFile();
-	}
 
 	public void addAllToIgnoredIndexes(List<Integer> indexes) {
 		ignoredIndexes.addAll(indexes);
