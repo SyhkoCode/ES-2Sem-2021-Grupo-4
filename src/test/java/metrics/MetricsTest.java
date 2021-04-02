@@ -27,8 +27,38 @@ class MetricsTest {
 	}
 
 	@Test
-	void test() {
-		fail("Not yet implemented");
+	final void testGetLines() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	final void testCountMethods() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	final void testGetLinesOfMethods() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	final void testNOfClyclo() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	final void testWmc() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	final void testCountLinesOfMethods() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	final void testAllCyclos() {
+		fail("Not yet implemented"); // TODO
 	}
 
 }
