@@ -14,6 +14,9 @@ import java.util.regex.Pattern;
 
 public class Metrics {
 
+	/**
+	 * LOC_class
+	 */
 	public static int getLines(File f) throws IOException {
 		FileReader fr = new FileReader(f);
 		BufferedReader br = new BufferedReader(fr);
@@ -34,6 +37,9 @@ public class Metrics {
 		return i;
 	}
 
+	/**
+	 * NOM_class
+	 */
 	public static LinkedHashSet<String> countMethods(File filepath) {
 		String regex = "(public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;])";
 		String regex2 = "^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
@@ -74,6 +80,9 @@ public class Metrics {
 		return nomMethod;
 	}
 
+	/**
+	 * Auxiliary method for LOC_method and CYCLO_method
+	 */
 	static public LinkedHashMap<String, String> getLinesOfMethods(File file, LinkedHashSet<String> methods)
 			throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
@@ -120,6 +129,9 @@ public class Metrics {
 		return map;
 	}
 
+	/**
+	 * Auxiliary method for CYCLO_method
+	 */
 	static public int nOfClyclo(String method) {
 		int n = 1;
 		Pattern pattern = Pattern.compile(
@@ -135,6 +147,9 @@ public class Metrics {
 
 	}
 
+	/**
+	 * WMC_class
+	 */
 	static public int wmc(ArrayList<Integer> cyclos) {
 		int i = 0;
 		for (int f : cyclos)
@@ -142,6 +157,9 @@ public class Metrics {
 		return i;
 	}
 
+	/**
+	 * LOC_method
+	 */
 	static public ArrayList<Integer> countLinesOfMethods(LinkedHashMap<String, String> map)
 			throws FileNotFoundException {
 		ArrayList<Integer> getLines = new ArrayList<Integer>();
@@ -151,6 +169,9 @@ public class Metrics {
 		return getLines;
 	}
 
+	/**
+	 * CYCLO_method
+	 */
 	public static ArrayList<Integer> allCyclos(LinkedHashMap<String, String> linesOfMethods) {
 
 		ArrayList<Integer> cycloOfAllMethods = new ArrayList<Integer>();
