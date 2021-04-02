@@ -21,6 +21,7 @@ public class Metrics {
 		try {
 			while (true) {
 				if (br.readLine().indexOf("{") != -1) {
+					i++; //nao estava a contar tb esta linha do bracket
 					while (br.readLine() != null)
 						i++;
 					break;
