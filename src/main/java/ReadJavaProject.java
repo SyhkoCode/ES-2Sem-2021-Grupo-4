@@ -35,22 +35,24 @@ public class ReadJavaProject {
 							
 							int i = 0;
 							
+							/*
 							System.out.println("Novo for");
 							System.out.println(methods);
 							System.out.println("---------------------");
 							System.out.println(linesOfMethods.keySet());
+							*/
 					
 						//	for(int i=0; i < countLinesOfMethods.size(); i++) {
 							for(String s: methods) {
 								String[] lines = new String[11];
-								lines[0] = current.getName();
-								lines[1] = packageFile.getName().substring(0, packageFile.getName().lastIndexOf('.'));
-								lines[2] = s;
-								lines[3] = "" + methods.size();
-								lines[4] = Metrics.getLines(packageFile) + "";
-								lines[5] = "" + wmc;
-								lines[7] = "" + countLinesOfMethods.get(i);
-								lines[8] = "" + cycloOfAllMethods.get(i);
+								lines[0] = current.getName();					//package
+								lines[1] = packageFile.getName().substring(0, packageFile.getName().lastIndexOf('.')); //class
+								lines[2] = s;									//method
+								lines[3] = "" + methods.size(); 				//NOM_class
+								lines[4] = Metrics.getLines(packageFile) + ""; 	//LOC_class
+								lines[5] = "" + wmc;  							//WMC_class
+								lines[7] = "" + countLinesOfMethods.get(i); 	//LOC_method
+								lines[8] = "" + cycloOfAllMethods.get(i); 		//CYCLO_method
 								result.add(lines);
 								i++;
 								
