@@ -2,6 +2,7 @@ package metrics;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.AfterAll;
@@ -29,8 +30,9 @@ class MetricsTest {
 	}
 
 	@Test
-	final void testGetLines() {
-		fail("Not yet implemented"); // TODO
+	final void testGetLines() throws Exception {
+		File myTestFile = new File(getClass().getResource("/GrammerException.java").getFile());
+		assertEquals(18, Metrics.getLines(myTestFile));
 	}
 
 	@Test
