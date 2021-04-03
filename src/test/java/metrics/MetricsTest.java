@@ -66,8 +66,10 @@ class MetricsTest {
 	@Test
 	final void testNOfClyclo() {
 		String teste = "";
-		//Não sei como testar q dá excepção
 		
+		assertThrows(IllegalArgumentException.class, ()->{Metrics.nOfCyclo("");});
+		assertThrows(NullPointerException.class, ()->{Metrics.nOfCyclo(null);});
+
 		teste = "public int getConstantPoolCount() {\r\n"
 				+ "        return poolItems.length;\r\n"
 				+ "    }";
