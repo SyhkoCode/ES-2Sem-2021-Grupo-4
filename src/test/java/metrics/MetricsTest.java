@@ -37,7 +37,8 @@ class MetricsTest {
 
 	@Test
 	final void testCountMethods() {
-		fail("Not yet implemented"); // TODO
+		File myTestFile = new File(getClass().getResource("/GrammerException.java").getFile());
+		assertEquals(4, Metrics.countMethods(myTestFile).size());
 	}
 
 	@Test
