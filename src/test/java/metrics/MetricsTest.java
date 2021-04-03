@@ -3,7 +3,9 @@ package metrics;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class MetricsTest {
+	
+	File myTestFile = new File(getClass().getResource("/GrammerException.java").getFile());
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -31,19 +35,32 @@ class MetricsTest {
 
 	@Test
 	final void testGetLines() throws Exception {
-		File myTestFile = new File(getClass().getResource("/GrammerException.java").getFile());
 		assertEquals(18, Metrics.getLines(myTestFile));
 	}
 
 	@Test
 	final void testCountMethods() {
-		File myTestFile = new File(getClass().getResource("/GrammerException.java").getFile());
 		assertEquals(4, Metrics.countMethods(myTestFile).size());
 	}
 
 	@Test
-	final void testGetLinesOfMethods() {
-		fail("Not yet implemented"); // TODO
+	final void testGetLinesOfMethods() throws FileNotFoundException {
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
+		map.put("public GrammerException(int offset, String msg) ", "	public GrammerException(int offset, String msg) {\n" + 
+				"		super(offset, msg);\n" + 
+				"	}");
+		map.put("public GrammerException(int offset, int line, int column, String msg) ", "	public GrammerException(int offset, int line, int column, String msg) {\n" + 
+				"		super(offset, line, column, msg);\n" + 
+				"	}");
+		map.put("public GrammerException(String msg, Exception e) ", "	public GrammerException(String msg, Exception e) {\n" + 
+				"		super(msg, e);\n" + 
+				"	}");
+		map.put("public GrammerException(int line, int column, String msg) ", "	public GrammerException(int line, int column, String msg) {\n" + 
+				"		super(line, column, msg);\n" + 
+				"	}");
+		
+		assertEquals(map, Metrics.getLinesOfMethods(myTestFile, Metrics.countMethods(myTestFile)));
+		
 	}
 
 	@Test
