@@ -133,7 +133,11 @@ public class Metrics {
 	/**
 	 * Auxiliary method for CYCLO_method
 	 */
-	static public int nOfClyclo(String method) {
+	static public int nOfCyclo(String method) {
+		if(method.length() == 0 || method == null) {
+			throw new IllegalArgumentException("Empty or null String");
+		}
+		
 		int n = 1;
 		Pattern pattern = Pattern.compile(
 				"(\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;))",
@@ -178,7 +182,7 @@ public class Metrics {
 		ArrayList<Integer> cycloOfAllMethods = new ArrayList<Integer>();
 
 		for (String key : linesOfMethods.keySet())
-			cycloOfAllMethods.add(nOfClyclo(linesOfMethods.get(key)));
+			cycloOfAllMethods.add(nOfCyclo(linesOfMethods.get(key)));
 
 		return cycloOfAllMethods;
 
