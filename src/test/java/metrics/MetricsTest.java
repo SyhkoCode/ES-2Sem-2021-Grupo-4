@@ -149,8 +149,10 @@ class MetricsTest {
 	}
 
 	@Test
-	final void testCountLinesOfMethods() {
-		fail("Not yet implemented"); // TODO
+	final void testCountLinesOfMethods() throws FileNotFoundException {
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
+		map.putAll(Metrics.getLinesOfMethods(myTestFile, Metrics.countMethods(myTestFile)));
+		assertEquals(3, Metrics.countLinesOfMethods(map).get(0));
 	}
 
 	@Test
