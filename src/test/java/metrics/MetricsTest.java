@@ -35,12 +35,12 @@ class MetricsTest {
 
 	@Test
 	final void testGetLines() throws Exception {
-		assertEquals(18, Metrics.getLines(myTestFile));
+		assertEquals(18, Metrics.getLines(myTestFile)); // LOC_class[GrammerException]=18
 	}
 
 	@Test
 	final void testCountMethods() {
-		assertEquals(4, Metrics.countMethods(myTestFile).size());
+		assertEquals(4, Metrics.countMethods(myTestFile).size()); // NOM_class[GrammerException]=4
 	}
 
 	@Test
@@ -152,12 +152,14 @@ class MetricsTest {
 	final void testCountLinesOfMethods() throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
 		map.putAll(Metrics.getLinesOfMethods(myTestFile, Metrics.countMethods(myTestFile)));
-		assertEquals(3, Metrics.countLinesOfMethods(map).get(0));
+		assertEquals(3, Metrics.countLinesOfMethods(map).get(0)); // LOC_method[GrammerException(int,String)]=3
 	}
 
 	@Test
-	final void testAllCyclos() {
-		fail("Not yet implemented"); // TODO
+	final void testAllCyclos() throws FileNotFoundException {
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
+		map.putAll(Metrics.getLinesOfMethods(myTestFile, Metrics.countMethods(myTestFile)));
+		assertEquals(1, Metrics.allCyclos(map).get(0)); // CYCLO_method[GrammerException(int,String)]=1
 	}
 
 }
