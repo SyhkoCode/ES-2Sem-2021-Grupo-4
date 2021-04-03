@@ -2,6 +2,8 @@ package metrics;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,7 +50,12 @@ class MetricsTest {
 
 	@Test
 	final void testWmc() {
-		fail("Not yet implemented"); // TODO
+		ArrayList<Integer> numbersToSum = new ArrayList<>();
+		assertEquals(0, Metrics.wmc(numbersToSum));
+		
+		numbersToSum.add(5);
+		numbersToSum.add(10);
+		assertEquals(15, Metrics.wmc(numbersToSum));
 	}
 
 	@Test
