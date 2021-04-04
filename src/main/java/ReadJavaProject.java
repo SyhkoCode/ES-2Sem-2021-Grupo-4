@@ -22,11 +22,10 @@ public class ReadJavaProject {
 					if (packageFile.getName().endsWith(".java")) {
 						try {
 							LinkedHashSet<String> methods = Metrics.countMethods(packageFile);
-							
-							LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile,methods);
-							
-							ArrayList<Integer> countLinesOfMethods = Metrics.countLinesOfMethods(linesOfMethods);
-							
+							System.out.println(methods);
+							System.out.println(packageFile.getAbsolutePath());
+							LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile,methods);							
+							ArrayList<Integer> countLinesOfMethods = Metrics.countLinesOfMethods(linesOfMethods);							
 							ArrayList<Integer> cycloOfAllMethods = Metrics.allCyclos(linesOfMethods);
 							
 							int wmc = Metrics.wmc(cycloOfAllMethods);
@@ -35,14 +34,9 @@ public class ReadJavaProject {
 							
 							int i = 0;
 							
-							/*
-							System.out.println("Novo for");
 							System.out.println(methods);
-							System.out.println("---------------------");
-							System.out.println(linesOfMethods.keySet());
-							*/
-					
-						//	for(int i=0; i < countLinesOfMethods.size(); i++) {
+							System.out.println(countLinesOfMethods);
+							System.out.println(cycloOfAllMethods);
 							for(String s: methods) {
 								String[] lines = new String[11];
 								lines[0] = current.getName();					//package
@@ -55,7 +49,6 @@ public class ReadJavaProject {
 								lines[8] = "" + cycloOfAllMethods.get(i); 		//CYCLO_method
 								result.add(lines);
 								i++;
-								
 							}
 						} catch (IOException e) {
 							System.out.println("sou mongoloide!");
@@ -63,11 +56,9 @@ public class ReadJavaProject {
 					}
 
 				}
-
 			}
 
 		} while (!folders.isEmpty());
-
 		return result;
 	}
 
