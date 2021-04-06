@@ -2,6 +2,14 @@ package metrics;
 
 import java.util.Scanner;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 public class Rule {
 	private String text;
@@ -55,11 +63,54 @@ public class Rule {
 	
 	public static void main(String[] args) {
 		String teste = "SE ( ( NOM_class > 5 OU LOC_class > 20) OU WMC_class > 50 )";
-		Rule r = new Rule(teste);
+		String teste2 = "SE ( ( NOM_class > 5 OU LOC_class > 20 ) OU ( LOC_class > 10 E WMC_class > 50 ) )";
+		
+		String teste3 = "SE ( NOM_class > 5 OU LOC_class > 20 )";
+		String teste4 = "SE ( ( NOM_class > 5 ) OU LOC_class > 20 )";
+		String teste5 = "SE ( NOM_class > 5 )";
+		String teste6 = "SE ( ( NOM_class > 5 ) OU ( LOC_class > 20 ) )";
+		String testFormatted = teste6.replaceFirst("\\bSE\\b\\s+","").replace("OU","||").replace("E","&&");
+	//	Rule r = new Rule(testeForma);
 		ReadMethod m = new ReadMethod();
-		m.addMetric("NOM_class", 4);
-		m.addMetric("LOC_class", 4);
+		m.addMetric("NOM_class", 8);
+		m.addMetric("LOC_class", 15);
 		m.addMetric("WMC_class", 4);
-		System.out.println(r.smellDetected(m));
-	}
+		
+		
+//		Pattern pattern = Pattern.compile("\\(.*\\)");
+//		Matcher matcher = pattern.matcher(testFormatted);
+		//String stryolo = null;
+		//if (matcher.find()) {
+			
+			for(String s: m.getMetrics().keySet()){
+				testFormatted = testFormatted.replace(s,"" + m.getMetric(s));
+			}
+			//}
+			System.out.println(testFormatted);
+			
+			
+			 try {
+
+		            ScriptEngineManager sem = new ScriptEngineManager();
+		            ScriptEngine se = sem.getEngineByName("JavaScript");
+		            
+		            System.out.println(se.eval(testFormatted));
+
+		        } catch (ScriptException e) {
+
+		            System.out.println("Invalid Expression");
+		            e.printStackTrace();
+
+		        }
+			
+			
+				//System.out.println(Boolean.parseBoolean(sss));
+				//System.out.println(Boolean.parseBoolean("25 > 20"));
+		  // String str = matcher.group();
+		   //str.replaceAll()
+		}
+		
+		
+	//	System.out.println(r.smellDetected(m));
+	
 }
