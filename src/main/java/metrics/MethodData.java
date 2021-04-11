@@ -21,6 +21,18 @@ public class MethodData {
 		}
 	}
 	
+	// Só para facilitar criação de testes
+	
+	public MethodData() {
+		
+	}
+
+	public void addMetric(String key, int value) {
+		map.put(key, value);
+	}
+	
+	//
+	
 	
 	public static List<MethodData> excelToMetricsMap(String filename){
 		List<MethodData> methods = new ArrayList<>();
@@ -30,6 +42,14 @@ public class MethodData {
 		return methods;
 	}
 
+	public HashMap<String, Integer> getMetrics(){
+		return map;
+	}
+
+	public int getMetric(String metric) {
+		return map.get(metric);
+	}
+	
 
 	@Override
 	public String toString() {
@@ -37,12 +57,11 @@ public class MethodData {
 				+ methodName + "]";
 	}
 
-
 	public static void main(String[] args) {
 		String path = "C:\\Users\\tiago\\OneDrive\\Ambiente de Trabalho\\CoordenacaoIII_metrics.xlsx";
 		System.out.println(MethodData.excelToMetricsMap(path));
 	}
-	
-	
 
+
+		
 }
