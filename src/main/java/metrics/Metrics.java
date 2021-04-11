@@ -138,7 +138,7 @@ public class Metrics {
 	 * Auxiliary method for CYCLO_method
 	 */
 	static public int nOfCyclo(String method) {
-		if(method.length() == 0 || method == null) {
+		if(method == null || method.length() == 0) {
 			throw new IllegalArgumentException("Empty or null String");
 		}
 		
