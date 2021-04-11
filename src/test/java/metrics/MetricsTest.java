@@ -81,6 +81,11 @@ class MetricsTest {
 		
 		assertEquals(map, Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));
 		
+		map.clear();
+		assertEquals(map, Metrics.getLinesOfMethods(emptyTestFile, Metrics.countMethods(emptyTestFile)));
+		
+		assertEquals(6, (Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile))).size());
+		assertEquals(32, (Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile))).size());		
 	}
 
 	@Test
