@@ -15,7 +15,10 @@ import org.junit.jupiter.api.Test;
 
 class MetricsTest {
 	
-	File myTestFile = new File(getClass().getResource("/GrammerException.java").getFile());
+	File GrammerExceptionTestFile = new File(getClass().getResource("/GrammerException.java").getFile());
+	File ParsingExceptionTestFile = new File(getClass().getResource("/ParsingException.java").getFile());
+	File SourceCodeParserTestFile = new File(getClass().getResource("/SourceCodeParser.java").getFile());
+	File emptyTestFile = new File(getClass().getResource("/empty.java").getFile());
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -35,12 +38,12 @@ class MetricsTest {
 
 	@Test
 	final void testGetLines() throws Exception {
-		assertEquals(18, Metrics.getLines(myTestFile)); // LOC_class[GrammerException]=18
+		assertEquals(18, Metrics.getLines(GrammerExceptionTestFile)); // LOC_class[GrammerException]=18
 	}
 
 	@Test
 	final void testCountMethods() {
-		assertEquals(4, Metrics.countMethods(myTestFile).size()); // NOM_class[GrammerException]=4
+		assertEquals(4, Metrics.countMethods(GrammerExceptionTestFile).size()); // NOM_class[GrammerException]=4
 	}
 
 	@Test
@@ -59,7 +62,7 @@ class MetricsTest {
 				"		super(line, column, msg);\n" + 
 				"	}");
 		
-		assertEquals(map, Metrics.getLinesOfMethods(myTestFile, Metrics.countMethods(myTestFile)));
+		assertEquals(map, Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));
 		
 	}
 
@@ -153,14 +156,14 @@ class MetricsTest {
 	@Test
 	final void testCountLinesOfMethods() throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
-		map.putAll(Metrics.getLinesOfMethods(myTestFile, Metrics.countMethods(myTestFile)));
+		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));
 		assertEquals(3, Metrics.countLinesOfMethods(map).get(0)); // LOC_method[GrammerException(int,String)]=3
 	}
 
 	@Test
 	final void testAllCyclos() throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
-		map.putAll(Metrics.getLinesOfMethods(myTestFile, Metrics.countMethods(myTestFile)));
+		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));
 		assertEquals(1, Metrics.allCyclos(map).get(0)); // CYCLO_method[GrammerException(int,String)]=1
 	}
 
