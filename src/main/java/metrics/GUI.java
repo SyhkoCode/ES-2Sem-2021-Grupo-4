@@ -245,9 +245,9 @@ public class GUI extends JFrame {
 			tableModel.addRow(row);
 		}
 		Label_Classes.setText(String.valueOf((dealer.getClasses().size())));
-		Label_Packages.setText(String.valueOf(dealer.getAllCellsOfRow(1).size()));
+		Label_Packages.setText(String.valueOf(dealer.getAllCellsOfColumn(1).size()));
 		Label_LOC.setText(String.valueOf(dealer.sumLinesOfCode()));
-		Label_Methods.setText(String.valueOf(dealer.getAllCellsOfRow(3).size()));
+		Label_Methods.setText(String.valueOf(dealer.getAllCellsOfColumn(3).size()));
 	}
 	
 }
