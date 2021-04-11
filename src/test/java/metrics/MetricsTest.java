@@ -57,7 +57,10 @@ class MetricsTest {
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 		
+		assertEquals(0, Metrics.countMethods(emptyTestFile).size());
 		assertEquals(4, Metrics.countMethods(GrammerExceptionTestFile).size()); // NOM_class[GrammerException]=4
+		assertEquals(6, Metrics.countMethods(ParsingExceptionTestFile).size()); // NOM_class[ParsingException]=6
+		assertEquals(32, Metrics.countMethods(SourceCodeParserTestFile).size()); // NOM_class[SourceCodeParser]=29 + 3 inner classes = 32
 	}
 
 	@Test
