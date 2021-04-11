@@ -79,7 +79,7 @@ public class Metrics {
 			}
 			scanner.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new IllegalArgumentException("Ficheiro especificado não existe.");
 		}
 
 		return nomMethod;
