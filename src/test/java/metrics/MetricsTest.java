@@ -42,8 +42,11 @@ class MetricsTest {
 		String expectedMessage = "Ficheiro não pode ser nulo.";
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
-		
+
+		assertEquals(0, Metrics.getLines(emptyTestFile));		
 		assertEquals(18, Metrics.getLines(GrammerExceptionTestFile)); // LOC_class[GrammerException]=18
+		assertEquals(50, Metrics.getLines(ParsingExceptionTestFile)); // LOC_class[ParsingException]=50
+		assertEquals(1371, Metrics.getLines(SourceCodeParserTestFile)); // LOC_class[SourceCodeParser]=1371	
 	}
 
 	@Test
