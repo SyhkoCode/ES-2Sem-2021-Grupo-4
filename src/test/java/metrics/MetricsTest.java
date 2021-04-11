@@ -87,8 +87,14 @@ class MetricsTest {
 	final void testNOfClyclo() {
 		String teste = "";
 		
-		assertThrows(IllegalArgumentException.class, ()->{Metrics.nOfCyclo("");});
-		assertThrows(NullPointerException.class, ()->{Metrics.nOfCyclo(null);});
+		Exception exceptionStringNull = assertThrows(IllegalArgumentException.class, ()->{Metrics.nOfCyclo(null);});
+		Exception exceptionStringEmpty = assertThrows(IllegalArgumentException.class, ()->{Metrics.nOfCyclo("");});
+		String expectedMessage = "Empty or null String";
+		String actualMessageStringNull = exceptionStringNull.getMessage();
+		assertTrue(actualMessageStringNull.contains(expectedMessage));
+		String actualMessageStringEmpty = exceptionStringEmpty.getMessage();
+		assertTrue(actualMessageStringEmpty.contains(expectedMessage));
+		assertEquals(actualMessageStringEmpty,actualMessageStringNull);
 
 		teste = "public int getConstantPoolCount() {\r\n"
 				+ "        return poolItems.length;\r\n"
