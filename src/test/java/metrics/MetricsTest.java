@@ -38,6 +38,11 @@ class MetricsTest {
 
 	@Test
 	final void testGetLines() throws Exception {
+		Exception exception = assertThrows(NullPointerException.class, ()->{Metrics.getLines(null);});
+		String expectedMessage = "Ficheiro não pode ser nulo.";
+		String actualMessage = exception.getMessage();
+		assertTrue(actualMessage.contains(expectedMessage));
+		
 		assertEquals(18, Metrics.getLines(GrammerExceptionTestFile)); // LOC_class[GrammerException]=18
 	}
 
