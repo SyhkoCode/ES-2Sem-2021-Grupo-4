@@ -19,20 +19,24 @@ public class Metrics {
 	 * LOC_class
 	 */
 	public static int getLines(File f) throws IOException {
+		if(f == null) {
+			throw new NullPointerException("Ficheiro não pode ser nulo.");
+		}
+		
 		FileReader fr = new FileReader(f);
 		BufferedReader br = new BufferedReader(fr);
 		int i = 0;
-		try {
-			while (true) {
-				if (br.readLine().indexOf("{") != -1) {
-					i++; //nao estava a contar tb esta linha do bracket
-					while (br.readLine() != null)
-						i++;
-					break;
-				}
+		String line = br.readLine();
+		while (line != null) {
+			if (line.indexOf("{") != -1) {
+				i++; //nao estava a contar tb esta linha do bracket
+				while (br.readLine() != null)
+					i++;
+				break;
 			}
-		} catch (NullPointerException e) {
+			line = br.readLine();
 		}
+		
 		br.close();
 		fr.close();
 		return i;
