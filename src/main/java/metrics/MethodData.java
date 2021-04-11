@@ -2,7 +2,6 @@ package metrics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MethodData {
 	private HashMap<String, Integer> map = new HashMap<>();
@@ -34,8 +33,8 @@ public class MethodData {
 	//
 	
 	
-	public static List<MethodData> excelToMetricsMap(String filename){
-		List<MethodData> methods = new ArrayList<>();
+	public static ArrayList<MethodData> excelToMetricsMap(String filename){
+		ArrayList<MethodData> methods = new ArrayList<>();
 		for( Object[] o : new ExcelDealer(filename, true).getAllRows() )
 			methods.add(new MethodData(o));
 		
@@ -49,7 +48,18 @@ public class MethodData {
 	public int getMetric(String metric) {
 		return map.get(metric);
 	}
-	
+
+	public String getPackageName() {
+		return packageName;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public String getMethodName() {
+		return methodName;
+	}
 
 	@Override
 	public String toString() {

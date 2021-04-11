@@ -35,7 +35,6 @@ public class Rule {
             ScriptEngineManager sem = new ScriptEngineManager();
             ScriptEngine se = sem.getEngineByName("JavaScript");
             
-//            System.out.println(se.eval(comMetricas));
             return (boolean) se.eval(comMetricas);
 
         } catch (ScriptException e) {
@@ -45,13 +44,13 @@ public class Rule {
         }
 	}
 	
-	public ArrayList<Rule> allRules(File f){
+	public static ArrayList<Rule> allRules(File f){
 		ArrayList<Rule> rulesList = new ArrayList<>();
 		Scanner s;
 		try {
 			s = new Scanner(f);
 			while(s.hasNext())
-				rulesList.add(new Rule(s.next(),s.next()));	
+				rulesList.add(new Rule(s.nextLine(),s.nextLine()));	
 			s.close();
 			
 		} catch (FileNotFoundException e) {
