@@ -19,20 +19,24 @@ public class Metrics {
 	 * LOC_class
 	 */
 	public static int getLines(File f) throws IOException {
+		if(f == null) {
+			throw new NullPointerException("Ficheiro não pode ser nulo.");
+		}
+		
 		FileReader fr = new FileReader(f);
 		BufferedReader br = new BufferedReader(fr);
 		int i = 0;
-		try {
-			while (true) {
-				if (br.readLine().indexOf("{") != -1) {
-					i++; //nao estava a contar tb esta linha do bracket
-					while (br.readLine() != null)
-						i++;
-					break;
-				}
-			}
-		} catch (NullPointerException e) {
+		String line = br.readLine();
+		while (line != null) {
+			if (line.indexOf("{") != -1) {
+				i++; //nao estava a contar tb esta linha do bracket
+				while (br.readLine() != null)
+					i++;
+				break;
+			}			
+			line = br.readLine();
 		}
+		
 		br.close();
 		fr.close();
 		return i;
@@ -42,13 +46,12 @@ public class Metrics {
 	 * NOM_class
 	 */
 	public static LinkedHashSet<String> countMethods(File filepath) {
-		String regex = "(public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;])";
-		String regex2 = "^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
-		String regex3 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])|((^|\\s*)return )|((^|\\s*)(new ))";
+		String regex = "((public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;]))|(^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;]))";
+		String regex2 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])|((^|\\s*)return )|((^|\\s*)(new ))";
 
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+		
 		Pattern pattern2 = Pattern.compile(regex2, Pattern.MULTILINE);
-		Pattern pattern3 = Pattern.compile(regex3, Pattern.MULTILINE);
 
 		LinkedHashSet<String> nomMethod = new LinkedHashSet<String>();
 
@@ -59,23 +62,18 @@ public class Metrics {
 				text = scanner.useDelimiter("\\A").next();
 				String cleanText = text.replaceAll("\\/\\/(.*)|\\/\\*([\\s\\S]*?)\\*\\/", "");
 				Matcher matcher = pattern.matcher(cleanText);
-				Matcher matcher2 = pattern2.matcher(cleanText);
+				
 				while (matcher.find()) {
-					nomMethod.add(matcher.group().trim().replace("{", ""));
-				}
-
-				while (matcher2.find()) {
-					Matcher matcher3 = pattern3.matcher(matcher2.group());
-					if (!matcher3.find()) {
-						nomMethod.add(matcher2.group().trim().replace("{", ""));
+					Matcher matcher2 = pattern2.matcher(matcher.group());
+					if (!matcher2.find()) {
+						nomMethod.add(matcher.group().trim().replace("{", ""));
 					}
-
 				}
 
 			}
 			scanner.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new IllegalArgumentException("Ficheiro especificado não existe.");
 		}
 
 		return nomMethod;
@@ -88,6 +86,7 @@ public class Metrics {
 			throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 		Scanner scanner = new Scanner(file);
+		ArrayList<String> descartar = new ArrayList<>();
 		for (String m : methods) {
 			String method = new String("");
 			boolean foundMethod = false;
@@ -124,9 +123,19 @@ public class Metrics {
 					map.put(m, method);
 				}
 			}
+			if (!foundMethod) {
+				descartar.add(m);
+				scanner.close();
+				scanner = new Scanner(file);
+			}
+
 
 		}
 		scanner.close();
+		
+		for (String s : descartar)
+			methods.remove(s);
+		
 		return map;
 	}
 
@@ -134,7 +143,7 @@ public class Metrics {
 	 * Auxiliary method for CYCLO_method
 	 */
 	static public int nOfCyclo(String method) {
-		if(method.length() == 0 || method == null) {
+		if(method == null || method.length() == 0) {
 			throw new IllegalArgumentException("Empty or null String");
 		}
 		
