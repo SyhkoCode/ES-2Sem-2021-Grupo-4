@@ -85,7 +85,7 @@ class MetricsTest {
 		assertEquals(map, Metrics.getLinesOfMethods(emptyTestFile, Metrics.countMethods(emptyTestFile)));
 		
 		assertEquals(6, (Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile))).size());
-		assertEquals(32, (Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile))).size());		
+		assertEquals(32, (Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile))).size());				
 	}
 
 	@Test
@@ -186,6 +186,24 @@ class MetricsTest {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
 		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));
 		assertEquals(3, Metrics.countLinesOfMethods(map).get(0)); // LOC_method[GrammerException(int,String)]=3
+		assertEquals(3, Metrics.countLinesOfMethods(map).get(1)); // LOC_method[GrammerException(int,int,int,String)]=3
+		assertEquals(3, Metrics.countLinesOfMethods(map).get(2)); // LOC_method[GrammerException(String,Exception)]=3
+		assertEquals(3, Metrics.countLinesOfMethods(map).get(3)); // LOC_method[GrammerException(int,int,String)]=3
+		
+		map.clear();
+		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile)));
+		assertEquals(6, Metrics.countLinesOfMethods(map).get(0)); // LOC_method[ParsingException(int,int,int,String)]=6
+		assertEquals(21, Metrics.countLinesOfMethods(map).get(5)); // LOC_method[getMessage()]=21
+		
+		map.clear();
+		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile)));
+		assertEquals(40, Metrics.countLinesOfMethods(map).get(5)); // LOC_method[parseClassSignature()]=40
+		assertEquals(76, Metrics.countLinesOfMethods(map).get(7)); // LOC_method[parseField()]=76
+		
+		map.clear();
+		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.countMethods(emptyTestFile)));
+		ArrayList<Integer> empty = new ArrayList<Integer>();
+		assertEquals(empty, Metrics.countLinesOfMethods(map));
 	}
 
 	@Test
