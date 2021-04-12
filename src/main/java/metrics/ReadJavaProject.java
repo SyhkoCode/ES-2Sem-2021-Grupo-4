@@ -32,23 +32,26 @@ public class ReadJavaProject {
 							
 							int wmc = Metrics.wmc(cycloOfAllMethods);
 							
-							//String[] methodsArray = (String[]) methods.toArray();
 							
 							int i = 0;
 							
-							/*
-							System.out.println("Novo for");
-							System.out.println(methods);
-							System.out.println("---------------------");
-							System.out.println(linesOfMethods.keySet());
-							*/
-					
-						//	for(int i=0; i < countLinesOfMethods.size(); i++) {
-							for(String s: methods) {
+							
+							for (String s : methods) {
+
+								String strFormatted = "";
+								String str2 = s.replaceAll(".*\\(|\\n|\\r|\\)", "");
+								String[] strs = str2.split(",");
+
+								for (String substr : strs) {
+									strFormatted += substr.trim().split("\\s+")[0] + ",";
+
+								}
+
 								String[] lines = new String[11];
 								lines[0] = current.getName();					//package
 								lines[1] = packageFile.getName().substring(0, packageFile.getName().lastIndexOf('.')); //class
-								lines[2] = s;									//method
+								lines[2] = s.replaceAll("\\((.|\\n|\\r)*\\)", "") + "("
+										+ strFormatted.substring(0, strFormatted.length() - 1) + ")"; //method
 								lines[3] = "" + methods.size(); 				//NOM_class
 								lines[4] = Metrics.getLines(packageFile) + ""; 	//LOC_class
 								lines[5] = "" + wmc;  							//WMC_class

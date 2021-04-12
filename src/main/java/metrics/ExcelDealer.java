@@ -124,7 +124,7 @@ public void createExcelFile(String file_name, String pathToSave, List<String[]> 
 	
 ////////////////////                   READING METHODS                   ////////////////////                     
 	
-	public List<String> getClassMethods(int col_index, String classname) {
+	public List<String> getClassMethods(int col_index, String classname) { // Devolve todas as células na coluna do índice escolhido relativas à classe dada
 		List<String> list = new ArrayList<>();
 
 		for (int r = 0; r < sheet.getPhysicalNumberOfRows(); r++) {
@@ -135,10 +135,11 @@ public void createExcelFile(String file_name, String pathToSave, List<String[]> 
 						list.add(row.getCell(col_index).toString());
 			}
 		}
+		
 		return list;
 	}
 
-	public List<String> getClasses() {
+	public List<String> getClasses() { // Devolve uma lista com todas as classes do Excel, sem repetições
 		List<String> list = new ArrayList<>();
 
 		for (int r = 0; r < sheet.getPhysicalNumberOfRows(); r++) {
@@ -148,12 +149,14 @@ public void createExcelFile(String file_name, String pathToSave, List<String[]> 
 					list.add(row.getCell(2).toString());
 			}
 		}
+		
 		return list;
 	}
 
-	public List<Object[]> getAllRows() {
+	public List<Object[]> getAllRows() { // Devolve uma lista em que cada array é uma linha inteira do Excel - útil para a GUI
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
 		List<Object[]> list = new ArrayList<>();
+		
 		for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
 			Object[] rowList = new Object[row_size - 2]; // -2 para ignorar as colunas dos booleans que o stor não quer
 			XSSFRow row = sheet.getRow(j);
@@ -168,10 +171,11 @@ public void createExcelFile(String file_name, String pathToSave, List<String[]> 
 				list.add(rowList);
 			}
 		}
+		
 		return list;
 	}
 
-	public Object[] getExcelHeader() {
+	public Object[] getExcelHeader() {  // Devolve o cabeçalho de cada coluna do Excel - útil para a GUI, i.e, "package","class","NOM_Class", etc
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
 		Object[] rowList = new Object[row_size - 2];
 		XSSFRow row = sheet.getRow(0);
@@ -186,25 +190,28 @@ public void createExcelFile(String file_name, String pathToSave, List<String[]> 
 		return rowList;
 	}
 
-	public List<String> getAllCellsOfRow(int column_index) {
+	public List<String> getAllCellsOfColumn(int column_index) {  // Devolve todas as células dado o índice da coluna
 		List<String> list = new ArrayList<>();
 		for (String classname : getClasses()) {
 			List<String> aux = getClassMethods(column_index, classname);
 			for (String str : aux) {
 				if ( !list.contains(str) || column_index == 3 )
 					list.add(str);
+//				if(column_index == 3)
+//					System.out.println(str);
 			}
 		}
 		System.out.println(list);
 		return list;
 	}
 
-	public int sumLinesOfCode() {
-		List<String> list = getAllCellsOfRow(5);
+	public int sumLinesOfCode() {    // Função que retorna o total de linhas de código do projeto
+		List<String> list = getAllCellsOfColumn(5);
 		double total = 0;
 
 		for (int i = 0; i < list.size(); i++)
 			total += Double.parseDouble(list.get(i));
+		
 		return (int) total;
 	}
 
