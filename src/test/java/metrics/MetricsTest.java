@@ -211,6 +211,21 @@ class MetricsTest {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
 		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));
 		assertEquals(1, Metrics.allCyclos(map).get(0)); // CYCLO_method[GrammerException(int,String)]=1
+		
+		map.clear();
+		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile)));
+		assertEquals(1, Metrics.allCyclos(map).get(0)); // CYCLO_method[ParsingException(int,int,int,String)]=1
+		assertEquals(8, Metrics.allCyclos(map).get(5)); // CYCLO_method[getMessage()]=8
+		
+		map.clear();
+		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile)));
+		assertEquals(10, Metrics.allCyclos(map).get(5)); // CYCLO_method[parseClassSignature()]=10
+		assertEquals(19, Metrics.allCyclos(map).get(7)); // CYCLO_method[parseField()]=19
+		
+		map.clear();
+		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.countMethods(emptyTestFile)));
+		ArrayList<Integer> empty = new ArrayList<Integer>();
+		assertEquals(empty, Metrics.allCyclos(map));
 	}
 
 }
