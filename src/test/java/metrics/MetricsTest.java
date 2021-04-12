@@ -85,7 +85,17 @@ class MetricsTest {
 		assertEquals(map, Metrics.getLinesOfMethods(emptyTestFile, Metrics.countMethods(emptyTestFile)));
 		
 		assertEquals(6, (Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile))).size());
-		assertEquals(32, (Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile))).size());				
+		assertEquals(32, (Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile))).size());	
+		
+//		map.clear();
+//		map.put("public ParsingException(int offset, int line, int column, String msg) ", "	public ParsingException(int offset, int line, int column, String msg) {\n" + 
+//				"		super(msg);\n" + System.lineSeparator() + 
+//				"		this.offset = offset;\n" + 
+//				"		this.line = line;n" + 
+//				"		this.column = column;\n" + 
+//				"	}");
+//		
+//		assertEquals(map.get(0).contains(System.lineSeparator()), (Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile))).get(0).contains(System.lineSeparator()));
 	}
 
 	@Test

@@ -33,7 +33,7 @@ public class Metrics {
 				while (br.readLine() != null)
 					i++;
 				break;
-			}
+			}			
 			line = br.readLine();
 		}
 		
@@ -46,13 +46,12 @@ public class Metrics {
 	 * NOM_class
 	 */
 	public static LinkedHashSet<String> countMethods(File filepath) {
-		String regex = "(public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;])";
-		String regex2 = "^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])";
-		String regex3 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])|((^|\\s*)return )|((^|\\s*)(new ))";
+		String regex = "((public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;]))|(^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;]))";
+		String regex2 = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])|((^|\\s*)return )|((^|\\s*)(new ))";
 
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+		
 		Pattern pattern2 = Pattern.compile(regex2, Pattern.MULTILINE);
-		Pattern pattern3 = Pattern.compile(regex3, Pattern.MULTILINE);
 
 		LinkedHashSet<String> nomMethod = new LinkedHashSet<String>();
 
@@ -63,17 +62,12 @@ public class Metrics {
 				text = scanner.useDelimiter("\\A").next();
 				String cleanText = text.replaceAll("\\/\\/(.*)|\\/\\*([\\s\\S]*?)\\*\\/", "");
 				Matcher matcher = pattern.matcher(cleanText);
-				Matcher matcher2 = pattern2.matcher(cleanText);
+				
 				while (matcher.find()) {
-					nomMethod.add(matcher.group().trim().replace("{", ""));
-				}
-
-				while (matcher2.find()) {
-					Matcher matcher3 = pattern3.matcher(matcher2.group());
-					if (!matcher3.find()) {
-						nomMethod.add(matcher2.group().trim().replace("{", ""));
+					Matcher matcher2 = pattern2.matcher(matcher.group());
+					if (!matcher2.find()) {
+						nomMethod.add(matcher.group().trim().replace("{", ""));
 					}
-
 				}
 
 			}
