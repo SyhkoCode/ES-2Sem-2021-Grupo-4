@@ -86,6 +86,7 @@ public class Metrics {
 			throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 		Scanner scanner = new Scanner(file);
+		ArrayList<String> descartar = new ArrayList<>();
 		for (String m : methods) {
 			String method = new String("");
 			boolean foundMethod = false;
@@ -122,9 +123,19 @@ public class Metrics {
 					map.put(m, method);
 				}
 			}
+			if (!foundMethod) {
+				descartar.add(m);
+				scanner.close();
+				scanner = new Scanner(file);
+			}
+
 
 		}
 		scanner.close();
+		
+		for (String s : descartar)
+			methods.remove(s);
+		
 		return map;
 	}
 
