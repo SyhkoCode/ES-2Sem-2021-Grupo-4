@@ -172,13 +172,33 @@ class MetricsTest {
 	}
 
 	@Test
-	final void testWmc() {
+	final void testWmc() throws FileNotFoundException {
 		ArrayList<Integer> numbersToSum = new ArrayList<>();
 		assertEquals(0, Metrics.wmc(numbersToSum));
 		
 		numbersToSum.add(5);
 		numbersToSum.add(10);
 		assertEquals(15, Metrics.wmc(numbersToSum));
+		
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
+		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.countMethods(emptyTestFile)));		
+		ArrayList<Integer> none = Metrics.allCyclos(map);
+		assertEquals(0, Metrics.wmc(none));
+		
+		map.clear();
+		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));		
+		ArrayList<Integer> GrammerExceptionCyclos = Metrics.allCyclos(map);
+		assertEquals(4, Metrics.wmc(GrammerExceptionCyclos)); // WMC_class[GrammerException]=4
+		
+		map.clear();
+		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile)));		
+		ArrayList<Integer> ParsingExceptionCyclos = Metrics.allCyclos(map);
+		assertEquals(13, Metrics.wmc(ParsingExceptionCyclos)); // WMC_class[ParsingException]=13
+		
+		map.clear();
+		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile)));		
+		ArrayList<Integer> SourceCodeParserCyclos = Metrics.allCyclos(map);
+		assertEquals(331, Metrics.wmc(SourceCodeParserCyclos)); // WMC_class[SourceCodeParser]=328 + 3 inner classes = 331		
 	}
 
 	@Test
