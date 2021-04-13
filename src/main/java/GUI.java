@@ -528,7 +528,10 @@ public class GUI extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel.setLayout(null);
-		panel.setToolTipText(conditionsLongMethod.size() + "");
+		if (isLongMethod)
+			panel.setToolTipText(conditionsLongMethod.size() + "");
+		else
+			panel.setToolTipText(conditionsGodClass.size() + "");
 
 		JLabel lblSe = new JLabel("SE");
 		lblSe.setFont(new Font("Tahoma", Font.PLAIN, 30));
@@ -550,7 +553,10 @@ public class GUI extends JFrame {
 		rightPlus.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				conditionsLongMethod.get(Integer.parseInt(panel.getToolTipText())).addOpenParentheses();
+				if (isLongMethod)
+					conditionsLongMethod.get(Integer.parseInt(panel.getToolTipText())).addOpenParentheses();
+				else
+					conditionsGodClass.get(Integer.parseInt(panel.getToolTipText())).addOpenParentheses();
 				updateTA();
 			}
 		});
@@ -560,7 +566,10 @@ public class GUI extends JFrame {
 		rightMinus.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				conditionsLongMethod.get(Integer.parseInt(panel.getToolTipText())).removeOpenParentheses();
+				if (isLongMethod)
+					conditionsLongMethod.get(Integer.parseInt(panel.getToolTipText())).removeOpenParentheses();
+				else
+					conditionsGodClass.get(Integer.parseInt(panel.getToolTipText())).removeOpenParentheses();
 				updateTA();
 			}
 		});
@@ -570,7 +579,10 @@ public class GUI extends JFrame {
 		leftPlus.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				conditionsLongMethod.get(Integer.parseInt(panel.getToolTipText())).addCloseParentheses();
+				if (isLongMethod)
+					conditionsLongMethod.get(Integer.parseInt(panel.getToolTipText())).addCloseParentheses();
+				else
+					conditionsGodClass.get(Integer.parseInt(panel.getToolTipText())).addCloseParentheses();
 				updateTA();
 			}
 		});
@@ -580,7 +592,10 @@ public class GUI extends JFrame {
 		leftMinus.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				conditionsLongMethod.get(Integer.parseInt(panel.getToolTipText())).removeCloseParentheses();
+				if (isLongMethod)
+					conditionsLongMethod.get(Integer.parseInt(panel.getToolTipText())).removeCloseParentheses();
+				else
+					conditionsGodClass.get(Integer.parseInt(panel.getToolTipText())).removeCloseParentheses();
 				updateTA();
 			}
 		});
@@ -657,7 +672,7 @@ public class GUI extends JFrame {
 			conditionsGodClass.clear();
 			initiateConditionGodClass();
 		}
-		updateTA();	
+		updateTA();
 	}
 
 	private void updateTA() {
