@@ -143,12 +143,12 @@ public class GUI extends JFrame {
 	private JLabel NClasses_LOC;
 	private JLabel NClasses_Methods;
 	private JLabel NClasses_Packages;
-	private JPanel panel;
+	private JPanel resumePanel;
 	private JPanel panel_1;
-	private JPanel conditions_Panel;
+	private JPanel conditions_isLongMethod_Panel;
 	private JPanel addCondition_isLongMethod_Panel;
 	private JTextArea conditionFormat_TA;
-	private JPanel conditions_Panel_1;
+	private JPanel conditions_isGodClass_Panel;
 	private JPanel addCondition_isGodClass_Panel;
 
 	/**
@@ -253,8 +253,8 @@ public class GUI extends JFrame {
 		JScrollPane conditions_SP = new JScrollPane();
 		tabbedPane_1.addTab("isLongMethod", null, conditions_SP, null);
 
-		conditions_Panel = new JPanel();
-		conditions_SP.setViewportView(conditions_Panel);
+		conditions_isLongMethod_Panel = new JPanel();
+		conditions_SP.setViewportView(conditions_isLongMethod_Panel);
 
 		addCondition_isLongMethod_Panel = new JPanel();
 		addCondition_isLongMethod_Panel.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -264,7 +264,7 @@ public class GUI extends JFrame {
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				addNewConditionBox(true);
+				addNewConditionBox();
 				updateTA();
 			}
 		});
@@ -274,19 +274,15 @@ public class GUI extends JFrame {
 		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 30));
 		addCondition_isLongMethod_Panel.add(btnNewButton, BorderLayout.CENTER);
 
-		conditions_IsLongMethod_GL = new GroupLayout(conditions_Panel);
-		conditions_Panel.setLayout(conditions_IsLongMethod_GL);
-
 		JScrollPane scrollPane_2 = new JScrollPane();
 		tabbedPane_1.addTab("isGodClass", null, scrollPane_2, null);
 
-		conditions_Panel_1 = new JPanel();
-		scrollPane_2.setViewportView(conditions_Panel_1);
+		conditions_isGodClass_Panel = new JPanel();
+		scrollPane_2.setViewportView(conditions_isGodClass_Panel);
 
 		addCondition_isGodClass_Panel = new JPanel();
 		addCondition_isGodClass_Panel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		addCondition_isGodClass_Panel.setLayout(new BorderLayout(0, 0));
-		conditions_IsGodClass_GL = new GroupLayout(conditions_Panel_1);
 
 		JButton btnNewButton_2 = new JButton("Add new Condition");
 
@@ -296,12 +292,11 @@ public class GUI extends JFrame {
 		btnNewButton_2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				addNewConditionBox(false);
+				addNewConditionBox();
 				updateTA();
 			}
 		});
 		addCondition_isGodClass_Panel.add(btnNewButton_2, BorderLayout.CENTER);
-		conditions_Panel_1.setLayout(conditions_IsGodClass_GL);
 
 		JButton btnNewButton_1 = new JButton("");
 		btnNewButton_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -360,59 +355,59 @@ public class GUI extends JFrame {
 		table.getTableHeader().setReorderingAllowed(false);
 		scrollPane.setViewportView(table);
 
-		panel = new JPanel();
-		tabbedPane.addTab("Resumo", null, panel, null);
-		panel.setLayout(null);
+		resumePanel = new JPanel();
+		tabbedPane.addTab("Resumo", null, resumePanel, null);
+		resumePanel.setLayout(null);
 
 		Projeto_Label = new JLabel("Resumo do Projeto");
 		Projeto_Label.setBounds(0, 33, 953, 47);
-		panel.add(Projeto_Label);
+		resumePanel.add(Projeto_Label);
 		Projeto_Label.setFont(new Font("Tahoma", Font.PLAIN, 31));
 		Projeto_Label.setHorizontalAlignment(SwingConstants.CENTER);
 
 		NClasses_Label = new JLabel("Nº de Classes");
 		NClasses_Label.setBounds(359, 203, 126, 30);
-		panel.add(NClasses_Label);
+		resumePanel.add(NClasses_Label);
 		NClasses_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Label.setFont(new Font("Tahoma", Font.BOLD, 15));
 
 		NClasses_Packages = new JLabel("Nº de Packages");
 		NClasses_Packages.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Packages.setBounds(359, 163, 126, 30);
-		panel.add(NClasses_Packages);
+		resumePanel.add(NClasses_Packages);
 		NClasses_Packages.setFont(new Font("Tahoma", Font.BOLD, 15));
 
 		NClasses_Methods = new JLabel("Nº de Métodos");
 		NClasses_Methods.setBounds(359, 243, 126, 30);
-		panel.add(NClasses_Methods);
+		resumePanel.add(NClasses_Methods);
 		NClasses_Methods.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Methods.setFont(new Font("Tahoma", Font.BOLD, 15));
 
 		NClasses_LOC = new JLabel("Nº de Linhas");
 		NClasses_LOC.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_LOC.setBounds(359, 283, 126, 30);
-		panel.add(NClasses_LOC);
+		resumePanel.add(NClasses_LOC);
 		NClasses_LOC.setFont(new Font("Tahoma", Font.BOLD, 15));
 
 		Label_Classes = new JLabel("");
 		Label_Classes.setBounds(480, 203, 34, 30);
-		panel.add(Label_Classes);
+		resumePanel.add(Label_Classes);
 		Label_Classes.setHorizontalAlignment(SwingConstants.LEFT);
 		Label_Classes.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		Label_Packages = new JLabel("");
 		Label_Packages.setBounds(480, 163, 34, 30);
-		panel.add(Label_Packages);
+		resumePanel.add(Label_Packages);
 		Label_Packages.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		Label_Methods = new JLabel("");
 		Label_Methods.setBounds(480, 243, 32, 30);
-		panel.add(Label_Methods);
+		resumePanel.add(Label_Methods);
 		Label_Methods.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		Label_LOC = new JLabel("");
 		Label_LOC.setBounds(480, 283, 34, 30);
-		panel.add(Label_LOC);
+		resumePanel.add(Label_LOC);
 		Label_LOC.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		JButton btnChooseExcelLocation = new JButton("Choose Excel Location");
@@ -433,9 +428,9 @@ public class GUI extends JFrame {
 		btnChooseExcelLocation.setBounds(766, 609, 204, 30);
 		contentPane.add(btnChooseExcelLocation);
 		initiateConditionLongMethod();
-		isLongMethod=false;
+		isLongMethod = false;
 		initiateConditionGodClass();
-		isLongMethod=true;
+		isLongMethod = true;
 	}
 
 	private void readExcel() {
@@ -459,59 +454,74 @@ public class GUI extends JFrame {
 		Label_LOC.setText(String.valueOf(dealer.sumLinesOfCode()));
 		Label_Methods.setText(String.valueOf(dealer.getAllCellsOfRow(3).size()));
 	}
-	
+
 	private void initiateConditionLongMethod() {
-		JPanel panelLongMethod = getConditionPanel();
-		conditions_IsLongMethod_GL.setHorizontalGroup(conditions_IsLongMethod_GL.createParallelGroup(Alignment.LEADING)
-				.addComponent(panelLongMethod, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE)
-				.addComponent(addCondition_isLongMethod_Panel, GroupLayout.PREFERRED_SIZE, 922,
-						GroupLayout.PREFERRED_SIZE));
+		conditions_isLongMethod_Panel.removeAll();
+		conditions_IsLongMethod_GL = new GroupLayout(conditions_isLongMethod_Panel);
+		conditions_isLongMethod_Panel.setLayout(conditions_IsLongMethod_GL);
+		conditions_IsLongMethod_GL
+				.setHorizontalGroup(conditions_IsLongMethod_GL.createParallelGroup(Alignment.LEADING).addComponent(
+						addCondition_isLongMethod_Panel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE));
 		conditions_IsLongMethod_GL
 				.setVerticalGroup(conditions_IsLongMethod_GL.createParallelGroup(Alignment.LEADING)
-						.addGroup(conditions_IsLongMethod_GL.createSequentialGroup()
-								.addComponent(panelLongMethod, GroupLayout.PREFERRED_SIZE, 100,
-										GroupLayout.PREFERRED_SIZE)
-								.addComponent(addCondition_isLongMethod_Panel, GroupLayout.PREFERRED_SIZE, 100,
-										GroupLayout.PREFERRED_SIZE)));
+						.addGroup(conditions_IsLongMethod_GL.createSequentialGroup().addComponent(
+								addCondition_isLongMethod_Panel, GroupLayout.PREFERRED_SIZE, 100,
+								GroupLayout.PREFERRED_SIZE)));
+
 	}
-	
+
 	private void initiateConditionGodClass() {
-		JPanel panelGodClass = getConditionPanel();
-		conditions_IsGodClass_GL.setHorizontalGroup(conditions_IsGodClass_GL.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 922, Short.MAX_VALUE)
-				.addComponent(panelGodClass, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE).addComponent(
+		conditions_isGodClass_Panel.removeAll();
+		conditions_IsGodClass_GL = new GroupLayout(conditions_isGodClass_Panel);
+		conditions_isGodClass_Panel.setLayout(conditions_IsGodClass_GL);
+		conditions_IsGodClass_GL
+				.setHorizontalGroup(conditions_IsGodClass_GL.createParallelGroup(Alignment.LEADING).addComponent(
 						addCondition_isGodClass_Panel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE));
-		conditions_IsGodClass_GL.setVerticalGroup(
-				conditions_IsGodClass_GL.createParallelGroup(Alignment.LEADING).addGap(0, 432, Short.MAX_VALUE)
-						.addGroup(conditions_IsGodClass_GL.createSequentialGroup()
-								.addComponent(panelGodClass, GroupLayout.PREFERRED_SIZE, 100,
-										GroupLayout.PREFERRED_SIZE)
-								.addComponent(addCondition_isGodClass_Panel, GroupLayout.PREFERRED_SIZE, 100,
-										GroupLayout.PREFERRED_SIZE)));
+		conditions_IsGodClass_GL.setVerticalGroup(conditions_IsGodClass_GL.createParallelGroup(Alignment.LEADING)
+				.addGroup(conditions_IsGodClass_GL.createSequentialGroup().addComponent(addCondition_isGodClass_Panel,
+						GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)));
 	}
 
-	private void addNewConditionBox(boolean isLongMethod) {
-		JPanel panel = getConditionPanel();
-		JPanel conditionSeparator = getCondionsSeparatorPanel();
-		if (isLongMethod)
-			addComponentsToGroupLayout(conditions_IsLongMethod_GL, panel, conditionSeparator,
-					addCondition_isLongMethod_Panel, conditionsLongMethod.size());
-		else
-			addComponentsToGroupLayout(conditions_IsGodClass_GL, panel, conditionSeparator,
-					addCondition_isGodClass_Panel, conditionsGodClass.size());
+	private void addNewConditionBox() {
+		if (isLongMethod) {
+			if (conditionsLongMethod.size() == 0)
+				addComponentsToGroupLayout(conditions_IsLongMethod_GL, getConditionPanel(),
+						addCondition_isLongMethod_Panel, null, conditionsLongMethod.size());
+			else
+				addComponentsToGroupLayout(conditions_IsLongMethod_GL, getConditionPanel(),
+						addCondition_isLongMethod_Panel, getCondionsSeparatorPanel(), conditionsLongMethod.size());
+		} else {
+			if (conditionsGodClass.size() == 0)
+				addComponentsToGroupLayout(conditions_IsGodClass_GL, getConditionPanel(), addCondition_isGodClass_Panel,
+						null, conditionsGodClass.size());
+			else
+				addComponentsToGroupLayout(conditions_IsGodClass_GL, getConditionPanel(), addCondition_isGodClass_Panel,
+						getCondionsSeparatorPanel(), conditionsGodClass.size());
+		}
 
 	}
 
-	private void addComponentsToGroupLayout(GroupLayout layout, JPanel panel, JPanel conditionSeparator,
-			JPanel addCondition, int size) {
-		layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
-				.addComponent(conditionSeparator, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE)
-				.addComponent(panel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE));
-		layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
-				.addGroup(layout.createSequentialGroup().addGap(150 * size - 200)
-						.addComponent(conditionSeparator, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
-						.addComponent(panel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-						.addComponent(addCondition, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)));
+	private void addComponentsToGroupLayout(GroupLayout layout, JPanel panel, JPanel addCondition,
+			JPanel conditionSeparator, int size) {
+		if (conditionSeparator != null) {
+			layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
+					.addComponent(conditionSeparator, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE)
+					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE));
+			layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
+					.addGroup(layout.createSequentialGroup().addGap(150 * size - 200)
+							.addComponent(conditionSeparator, GroupLayout.PREFERRED_SIZE, 50,
+									GroupLayout.PREFERRED_SIZE)
+							.addComponent(panel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+							.addComponent(addCondition, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)));
+		} else {
+			layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(panel,
+					GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE));
+			layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
+					.addGroup(layout.createSequentialGroup().addGap(0)
+							.addComponent(panel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+							.addComponent(addCondition, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)));
+		}
+
 	}
 
 	private JPanel getConditionPanel() {
@@ -640,10 +650,14 @@ public class GUI extends JFrame {
 	}
 
 	private void clearConditions() {
-		if (isLongMethod)
+		if (isLongMethod) {
 			conditionsLongMethod.clear();
-		else
+			initiateConditionLongMethod();
+		} else {
 			conditionsGodClass.clear();
+			initiateConditionGodClass();
+		}
+		updateTA();	
 	}
 
 	private void updateTA() {
