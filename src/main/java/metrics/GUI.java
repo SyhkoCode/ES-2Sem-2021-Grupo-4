@@ -43,6 +43,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -312,19 +313,21 @@ public class GUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				JFileChooser jfc = new JFileChooser(".");
-				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int returnValue = jfc.showOpenDialog(null);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt", "text");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showSaveDialog(null);
 
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					System.out.println(jfc.getSelectedFile().getAbsolutePath());
+					
 					String path = jfc.getSelectedFile().getAbsolutePath();
-					String fileName = jfc.getSelectedFile().getName() + "_";
-//					fileName_TF.setText(path + "");
+					if (!path.endsWith(".txt")) {
+						path += ".txt";					
+					}
 					if (pathToSave.isEmpty())
 						pathToSave = path;
-
-					
-//					System.out.println(getRulesString());
-					FileDealer.createFile(path + "\\teste" + ".txt", getRulesString());
+		
+					FileDealer.createFile(path, getRulesString());
 				}
 			}
 		});
