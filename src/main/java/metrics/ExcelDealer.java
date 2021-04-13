@@ -201,7 +201,6 @@ public void createExcelFile(String file_name, String pathToSave, List<String[]> 
 //					System.out.println(str);
 			}
 		}
-		System.out.println(list);
 		return list;
 	}
 

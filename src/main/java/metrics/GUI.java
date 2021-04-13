@@ -44,6 +44,8 @@ import java.awt.event.ItemEvent;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class GUI extends JFrame {
 
@@ -65,9 +67,9 @@ public class GUI extends JFrame {
 		}
 
 		public String getSentence() {
-			if (((String) sentence.getSelectedItem()).equals("Linhas de c�digo"))
+			if (((String) sentence.getSelectedItem()).equals("Linhas de código"))
 				return "LOC_" + (isClassCondition ? "class" : "method");
-			else if (((String) sentence.getSelectedItem()).equals("N�mero de ciclos"))
+			else if (((String) sentence.getSelectedItem()).equals("Número de ciclos"))
 				return (isClassCondition ? "WMC_class" : "CYCLO_method");
 			else
 				return "NOM_class";
@@ -152,6 +154,7 @@ public class GUI extends JFrame {
 	private JTextArea conditionFormat_TA;
 	private JPanel conditions_isGodClass_Panel;
 	private JPanel addCondition_isGodClass_Panel;
+	private JButton btnSaveFile;
 
 	/**
 	 * Launch the application.
@@ -263,6 +266,10 @@ public class GUI extends JFrame {
 		addCondition_isLongMethod_Panel.setLayout(new BorderLayout(0, 0));
 
 		JButton btnNewButton = new JButton("Add new Condition");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -300,12 +307,32 @@ public class GUI extends JFrame {
 		});
 		addCondition_isGodClass_Panel.add(btnNewButton_2, BorderLayout.CENTER);
 
-		JButton btnNewButton_1 = new JButton("");
-		btnNewButton_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnNewButton_1.setFocusable(false);
-		btnNewButton_1.setBounds(891, 490, 50, 50);
-		btnNewButton_1.setIcon(new ImageIcon("images/save_Image.png"));
-		panel_1.add(btnNewButton_1);
+		btnSaveFile = new JButton("");
+		btnSaveFile.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					String path = jfc.getSelectedFile().getAbsolutePath();
+					String fileName = jfc.getSelectedFile().getName() + "_";
+//					fileName_TF.setText(path + "");
+					if (pathToSave.isEmpty())
+						pathToSave = path;
+
+					
+//					System.out.println(getRulesString());
+					FileDealer.createFile(path + "\\teste" + ".txt", getRulesString());
+				}
+			}
+		});
+		btnSaveFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnSaveFile.setFocusable(false);
+		btnSaveFile.setBounds(891, 490, 50, 50);
+		btnSaveFile.setIcon(new ImageIcon("images/save_Image.png"));
+		panel_1.add(btnSaveFile);
 
 		JButton btnNewButton_1_1 = new JButton("");
 		btnNewButton_1_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -541,9 +568,9 @@ public class GUI extends JFrame {
 		panel.add(lblSe);
 
 		JComboBox<String> comboBox = getComoboBox(isLongMethod
-				? new DefaultComboBoxModel<String>(new String[] { "Linhas de c\u00F3digo", "N\u00FAmero de ciclos" })
+				? new DefaultComboBoxModel<String>(new String[] { "Linhas de código", "Número de ciclos" })
 				: new DefaultComboBoxModel<String>(
-						new String[] { "N�mero de m�todos", "Linhas de c\u00F3digo", "N\u00FAmero de ciclos" }),
+						new String[] { "Número de métodos", "Linhas de código", "Número de ciclos" }),
 				240, 35, 200, 30);
 		panel.add(comboBox);
 
@@ -690,6 +717,15 @@ public class GUI extends JFrame {
 
 	public String getGodClassFormat() {
 		return getFormatString(conditionsGodClass);
+	}
+	
+	public ArrayList<String> getRulesString(){
+		ArrayList<String> write = new ArrayList<>();
+		write.add("is_Long_Method");
+		write.add(getLongMethodFormat());
+		write.add("is_God_Class");
+		write.add(getGodClassFormat());
+		return write;
 	}
 
 	private String getFormatString(ArrayList<ConditionsInfo> conditions) {

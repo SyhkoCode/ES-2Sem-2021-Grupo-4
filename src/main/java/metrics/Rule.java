@@ -34,7 +34,6 @@ public class Rule {
 
             ScriptEngineManager sem = new ScriptEngineManager();
             ScriptEngine se = sem.getEngineByName("JavaScript");
-            
             return (boolean) se.eval(comMetricas);
 
         } catch (ScriptException e) {
@@ -85,11 +84,11 @@ public class Rule {
 		Rule r5 = new Rule(teste5,"");
 		Rule r6 = new Rule(teste6,"");
 		
-		System.out.println(r.smellDetected(m));
-		System.out.println(r2.smellDetected(m));
-		System.out.println(r3.smellDetected(m));
-		System.out.println(r4.smellDetected(m));
-		System.out.println(r5.smellDetected(m));
-		System.out.println(r6.smellDetected(m));
+//		System.out.println(r.smellDetected(m));
+//		System.out.println(r2.smellDetected(m));
+//		System.out.println(r3.smellDetected(m));
+//		System.out.println(r4.smellDetected(m));
+//		System.out.println(r5.smellDetected(m));
+//		System.out.println(r6.smellDetected(m));
 	}
 }
