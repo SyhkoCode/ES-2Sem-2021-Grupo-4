@@ -575,7 +575,7 @@ public class GUI extends JFrame {
 		panel.add(comboBox);
 
 		JComboBox<String> comboBoxSignals = getComoboBox(
-				new DefaultComboBoxModel<String>(new String[] { "=", ">", "<", ">=", "<=" }), 490, 35, 100, 30);
+				new DefaultComboBoxModel<String>(new String[] { "==", ">", "<", ">=", "<=" }), 490, 35, 100, 30);
 		panel.add(comboBoxSignals);
 
 		JButton rightPlus = getButton("+ (", 67, 34, 60, 30);
