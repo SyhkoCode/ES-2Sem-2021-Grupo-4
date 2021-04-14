@@ -69,7 +69,7 @@ public class MethodData {
 
 	public static void main(String[] args) {
 		String path = "C:\\Users\\tiago\\OneDrive\\Ambiente de Trabalho\\CoordenacaoIII_metrics.xlsx";
-		System.out.println(MethodData.excelToMetricsMap(path));
+//		System.out.println(MethodData.excelToMetricsMap(path));
 	}
 
 
