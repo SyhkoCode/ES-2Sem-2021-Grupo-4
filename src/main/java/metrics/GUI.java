@@ -611,6 +611,8 @@ public class GUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricasGeradas.getText()),Rule.allRules(new File(regras.getText())));
+				if(keepResults.isSelected())
+					new ExcelDealer("", false).createExcelFile2(localizacaoResultados.getText(), mra.getResults());
 			}
 		});
 		runRules.setBounds(372, 211, 174, 26);

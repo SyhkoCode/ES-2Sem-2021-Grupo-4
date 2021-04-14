@@ -17,13 +17,13 @@ public class MethodRuleAnalysis {
 				map.get(r.getNome()).add(r.smellDetected(md));
 			}
 		}
-		
-		for(int i=0;i<getMethods().size();i++) {
-			System.out.println(getMethods().get(i).getMethodName());
-			for(String nome : getMap().keySet()) {
-				System.out.println(getMap().get(nome).get(i));			
-			}
-		}
+//		
+//		for(int i=0;i<getMethods().size();i++) {
+//			System.out.println(getMethods().get(i).getMethodName());
+//			for(String nome : getMap().keySet()) {
+//				System.out.println(getMap().get(nome).get(i));			
+//			}
+//		}
 	}
 
 	public HashMap<String, ArrayList<Boolean>> getMap() {
@@ -32,6 +32,33 @@ public class MethodRuleAnalysis {
 
 	public ArrayList<MethodData> getMethods() {
 		return methods;
+	}
+	
+	public ArrayList<String[]> getResults(){
+		ArrayList<String[]> result = new ArrayList<>();
+		for(int i=0;i<getMethods().size();i++) {
+			String[] aux = new String[4];
+			aux[0] = getMethods().get(i).getClassName();
+			aux[1] = getMethods().get(i).getMethodName();
+
+//			System.out.println(aux[0] + " AQUI");
+			int counter = 2;
+			for(String nome : getMap().keySet()) {
+				aux[counter] = getMap().get(nome).get(i).toString();
+				counter++;
+//				System.out.println(getMap().get(nome).get(i));			
+			}
+			result.add(aux);
+		}
+		
+		for(int i=0;i<result.size();i++) {
+			for(int j=0;j<result.get(i).length;j++) {
+				System.out.println(result.get(i)[j]);
+			}
+		}
+		
+		return result;
+		
 	}
 	
 	
