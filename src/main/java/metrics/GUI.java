@@ -321,7 +321,7 @@ public class GUI extends JFrame {
 					
 					String path = jfc.getSelectedFile().getAbsolutePath();
 					if (!path.endsWith(".txt")) {
-						path = path.replaceAll("\\..*","") + ".txt";		
+						path = path.replaceAll("\\.[^.]*$","") + ".txt";		
 					}
 					if (pathToSave.isEmpty())
 						pathToSave = path;
