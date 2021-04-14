@@ -448,8 +448,10 @@ public class GUI extends JFrame {
 		initiateConditionGodClass();
 		isLongMethod = true;
 		
+		
 		JPanel detecaoPanel = new JPanel();
-		tabbedPane.addTab("Correr Regras", null, detecaoPanel, null);
+		JScrollPane scrolPane = new JScrollPane(detecaoPanel);
+		tabbedPane.addTab("Correr Regras", null, scrolPane, null);
 		detecaoPanel.setLayout(null);
 		
 		metricasGeradas = new JTextField();
