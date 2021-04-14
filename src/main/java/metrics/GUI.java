@@ -44,6 +44,9 @@ import java.awt.event.ItemEvent;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 public class GUI extends JFrame {
 
@@ -152,6 +155,17 @@ public class GUI extends JFrame {
 	private JTextArea conditionFormat_TA;
 	private JPanel conditions_isGodClass_Panel;
 	private JPanel addCondition_isGodClass_Panel;
+	private JTextField metricasGeradas;
+	private JTextField regras;
+	private JButton bRules;
+	private JTextField localizacaoResultados;
+	private JButton bLocation;
+	private JCheckBox testRuleEffiency;
+	private JButton buttonLocEfficency;
+	private JTextField localTeoricos;
+	private JButton bTeoricos;
+	private JButton runRules;
+
 
 	/**
 	 * Launch the application.
@@ -433,6 +447,84 @@ public class GUI extends JFrame {
 		isLongMethod = false;
 		initiateConditionGodClass();
 		isLongMethod = true;
+		
+		JPanel detecaoPanel = new JPanel();
+		tabbedPane.addTab("Correr Regras", null, detecaoPanel, null);
+		detecaoPanel.setLayout(null);
+		
+		metricasGeradas = new JTextField();
+		metricasGeradas.setEditable(false);
+		metricasGeradas.setBounds(125, 11, 491, 26);
+		detecaoPanel.add(metricasGeradas);
+		metricasGeradas.setColumns(10);
+		
+		JButton bMetrics = new JButton("Choose metrics");
+		bMetrics.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				/*
+				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					pathToSave = jfc.getSelectedFile().getAbsolutePath();
+				}
+				*/
+			}
+		});
+		
+		regras = new JTextField();
+		regras.setEditable(false);
+		regras.setColumns(10);
+		regras.setBounds(125, 48, 491, 26);
+		detecaoPanel.add(regras);
+		
+		localizacaoResultados = new JTextField();
+		localizacaoResultados.setEditable(false);
+		localizacaoResultados.setColumns(10);
+		localizacaoResultados.setBounds(125, 85, 491, 26);
+		detecaoPanel.add(localizacaoResultados);
+		bMetrics.setBounds(626, 11, 174, 26);
+		detecaoPanel.add(bMetrics);
+		
+		bRules = new JButton("Choose rules");
+		bRules.setBounds(626, 48, 174, 26);
+		detecaoPanel.add(bRules);
+		
+		JCheckBox keepResults = new JCheckBox("Keep Results");
+		keepResults.setBounds(6, 80, 93, 37);
+		detecaoPanel.add(keepResults);
+		
+		bLocation = new JButton("Choose location");
+		bLocation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		bLocation.setBounds(626, 85, 174, 26);
+		detecaoPanel.add(bLocation);
+		
+		testRuleEffiency = new JCheckBox("Test Rule Effiency");
+		testRuleEffiency.setBounds(263, 120, 113, 37);
+		detecaoPanel.add(testRuleEffiency);
+		
+		buttonLocEfficency = new JButton("Choose location efficiency");
+		buttonLocEfficency.setBounds(408, 125, 174, 26);
+		detecaoPanel.add(buttonLocEfficency);
+		
+		localTeoricos = new JTextField();
+		localTeoricos.setEditable(false);
+		localTeoricos.setColumns(10);
+		localTeoricos.setBounds(125, 164, 491, 26);
+		detecaoPanel.add(localTeoricos);
+		
+		bTeoricos = new JButton("Choose teoricos");
+		bTeoricos.setBounds(626, 164, 174, 26);
+		detecaoPanel.add(bTeoricos);
+		
+		runRules = new JButton("Run");
+		runRules.setBounds(372, 211, 174, 26);
+		detecaoPanel.add(runRules);
 	}
 
 	private void readExcel() {
@@ -665,6 +757,7 @@ public class GUI extends JFrame {
 
 		return panel;
 	}
+	
 
 	private void clearConditions() {
 		if (isLongMethod) {
