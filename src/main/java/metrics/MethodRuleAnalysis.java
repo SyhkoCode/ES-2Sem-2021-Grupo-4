@@ -17,6 +17,13 @@ public class MethodRuleAnalysis {
 				map.get(r.getNome()).add(r.smellDetected(md));
 			}
 		}
+		
+		for(int i=0;i<getMethods().size();i++) {
+			System.out.println(getMethods().get(i).getMethodName());
+			for(String nome : getMap().keySet()) {
+				System.out.println(getMap().get(nome).get(i));			
+			}
+		}
 	}
 
 	public HashMap<String, ArrayList<Boolean>> getMap() {
