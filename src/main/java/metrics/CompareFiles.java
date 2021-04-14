@@ -1,5 +1,8 @@
 package metrics;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
@@ -42,6 +45,29 @@ public class CompareFiles {
 			}
 		}
 		return isLongMethodIndex;
+	}
+	
+	
+	public ArrayList<Indicator> compareCS(XSSFSheet csFileDefault, XSSFSheet csFileCreated) {
+		
+		ArrayList<Indicator> indicators = new ArrayList<>(); // ou HashMap<String,Indicator> indicators = new HashMap<>();
+		
+		/*
+		iterar rows das sheets csFileDefault e csFileCreated
+			obter os booleans das colunas index obtidas pelos getters acima
+			comparar: 
+				if(csFileDefault_isgodclass && csFileCreated_isgodclass) indicators.add(Indicator.VP); // temos de ver o q queremos fazer..criar uma coluna so pa isto e escrever Indicator.VP.getName na row correspondente ou pintar esta celula mesmo
+				else if(!csFileDefault_isgodclass && csFileCreated_isgodclass) indicators.add(Indicator.FP);
+				else if(csFileDefault_isgodclass && !csFileCreated_isgodclass) indicators.add(Indicator.FN);
+				else indicators.add(Indicator.VN);
+	
+				if(csFileDefault_islongmethod && csFileCreated_islongmethod) indicators.add(Indicator.VP);
+				else if(!csFileDefault_islongmethod && csFileCreated_islongmethod) indicators.add(Indicator.FP);
+				else if(csFileDefault_islongmethod && !csFileCreated_islongmethod) indicators.add(Indicator.FN);
+				else indicators.add(Indicator.VN);
+				*/	
+			return indicators;
+		
 	}
 
 	public static void main(String[] args) {
