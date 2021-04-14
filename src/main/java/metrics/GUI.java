@@ -318,11 +318,10 @@ public class GUI extends JFrame {
 				int returnValue = jfc.showSaveDialog(null);
 
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					System.out.println(jfc.getSelectedFile().getAbsolutePath());
 					
 					String path = jfc.getSelectedFile().getAbsolutePath();
 					if (!path.endsWith(".txt")) {
-						path += ".txt";					
+						path = path.replaceAll("\\..*","") + ".txt";		
 					}
 					if (pathToSave.isEmpty())
 						pathToSave = path;
