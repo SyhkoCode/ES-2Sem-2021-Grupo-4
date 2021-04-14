@@ -82,11 +82,54 @@ public void createExcelFile(String file_name, String pathToSave, List<String[]> 
 		}
 	}
 
+
+public void createExcelFile2(String path, ArrayList<String[]> rows) {
+	System.out.println(rows);
+	File file = new File(path);
+	file.delete();
+	XSSFSheet sheet = wb.createSheet("Rule");
+	String[] titles = { "MethodID","class","method", "is_God_Class", "is_Long_Method" };
+
+	CellStyle style = wb.createCellStyle();
+	Font font = wb.createFont();
+	font.setBold(true);
+	style.setFont(font);
+
+	XSSFRow row = sheet.createRow(0);
+	for (int i = 0; i != titles.length; i++) {
+		XSSFCell cell = row.createCell(i);
+		cell.setCellStyle(style);
+		cell.setCellValue(titles[i]);
+	}
+
+	for (int i = 0; i != rows.size(); i++) {
+		row = sheet.createRow(i + 1);
+		XSSFCell cell = row.createCell(0);
+		cell.setCellValue(i + 1);
+		for (int j = 0; j != rows.get(i).length; j++) {
+			cell = row.createCell(j+1);
+			System.out.println(rows.get(i)[j]);
+			cell.setCellValue(rows.get(i)[j]);
+		}
+	}
+	for (int i = 0; i != titles.length; i++)
+		sheet.autoSizeColumn(i);
+
+	try (FileOutputStream outputStream = new FileOutputStream(
+			new String(path))) {
+		wb.write(outputStream);
+		outputStream.close();
+	} catch (IOException e) {
+
+	}
+}
+
+// Ver uma forma mais fixe de colocar o titles[] já que varia de acordo com o tipo de escrita
+
 	public void writeFile(String file_name, List<Object[]> values) {
 		XSSFSheet sheet = wb.createSheet(file_name);
 		List<Object[]> bookData = new ArrayList<>();
-		Object[] titles = { "MethodID", "package", "class", "method", "NOM_class", "LOC_class", "WMC_class",
-				"is_God_Class", "LOC_method", "CYCLO_method", "is_Long_Method" };
+		Object[] titles = { "is_Long_Method", "is_God_Class" };
 		bookData.add(titles);
 		bookData.addAll(values);
 		int rowCount = 0;

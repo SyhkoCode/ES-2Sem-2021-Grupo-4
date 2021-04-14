@@ -15,6 +15,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.awt.Font;
 import java.awt.Color;
@@ -43,6 +44,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -465,14 +467,16 @@ public class GUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				JFileChooser jfc = new JFileChooser(".");
-				/*
-				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
+				jfc.setFileFilter(filter);
 				int returnValue = jfc.showOpenDialog(null);
 
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					pathToSave = jfc.getSelectedFile().getAbsolutePath();
+					metricasGeradas.setText(pathToSave);
+
 				}
-				*/
 			}
 		});
 		
@@ -483,6 +487,7 @@ public class GUI extends JFrame {
 		detecaoPanel.add(regras);
 		
 		localizacaoResultados = new JTextField();
+		localizacaoResultados.setEnabled(false);
 		localizacaoResultados.setEditable(false);
 		localizacaoResultados.setColumns(10);
 		localizacaoResultados.setBounds(125, 85, 491, 26);
@@ -491,40 +496,127 @@ public class GUI extends JFrame {
 		detecaoPanel.add(bMetrics);
 		
 		bRules = new JButton("Choose rules");
+		bRules.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt files", "txt");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					pathToSave = jfc.getSelectedFile().getAbsolutePath();
+					regras.setText(pathToSave);
+				}
+			}
+		});
+		
 		bRules.setBounds(626, 48, 174, 26);
 		detecaoPanel.add(bRules);
 		
 		JCheckBox keepResults = new JCheckBox("Keep Results");
-		keepResults.setBounds(6, 80, 93, 37);
+		keepResults.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if(keepResults.isSelected()) {
+					localizacaoResultados.setEnabled(true);
+					bLocation.setEnabled(true);
+				} else {
+					localizacaoResultados.setEnabled(false);
+					bLocation.setEnabled(false);
+				}
+			}
+		});
+		keepResults.setBounds(6, 80, 113, 37);
 		detecaoPanel.add(keepResults);
 		
 		bLocation = new JButton("Choose location");
-		bLocation.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		bLocation.setEnabled(false);
+		bLocation.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(".xlsx", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showSaveDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					
+					String path = jfc.getSelectedFile().getAbsolutePath();
+					if (!path.endsWith(".txt")) {
+						path = path.replaceAll("\\.[^.]*$","") + ".xlsx";		
+						localizacaoResultados.setText(path);
+					}
+					if (pathToSave.isEmpty())
+						pathToSave = path;
+		
+				}
 			}
 		});
 		bLocation.setBounds(626, 85, 174, 26);
 		detecaoPanel.add(bLocation);
 		
 		testRuleEffiency = new JCheckBox("Test Rule Effiency");
-		testRuleEffiency.setBounds(263, 120, 113, 37);
+		testRuleEffiency.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if(testRuleEffiency.isSelected()) {
+					buttonLocEfficency.setEnabled(true);
+					bTeoricos.setEnabled(true);
+					localTeoricos.setEnabled(true);
+				} else {
+					buttonLocEfficency.setEnabled(false);
+					bTeoricos.setEnabled(false);
+					localTeoricos.setEnabled(false);
+				}
+			}
+		});
+		testRuleEffiency.setBounds(263, 120, 139, 37);
 		detecaoPanel.add(testRuleEffiency);
 		
 		buttonLocEfficency = new JButton("Choose location efficiency");
-		buttonLocEfficency.setBounds(408, 125, 174, 26);
+		buttonLocEfficency.setEnabled(false);
+		buttonLocEfficency.setBounds(408, 125, 208, 26);
 		detecaoPanel.add(buttonLocEfficency);
 		
 		localTeoricos = new JTextField();
+		localTeoricos.setEnabled(false);
 		localTeoricos.setEditable(false);
 		localTeoricos.setColumns(10);
 		localTeoricos.setBounds(125, 164, 491, 26);
 		detecaoPanel.add(localTeoricos);
 		
 		bTeoricos = new JButton("Choose teoricos");
+		bTeoricos.setEnabled(false);
+		bTeoricos.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					pathToSave = jfc.getSelectedFile().getAbsolutePath();
+					localTeoricos.setText(pathToSave);
+				}
+			}
+		});
+		
 		bTeoricos.setBounds(626, 164, 174, 26);
 		detecaoPanel.add(bTeoricos);
 		
 		runRules = new JButton("Run");
+		runRules.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricasGeradas.getText()),Rule.allRules(new File(regras.getText())));
+				if(keepResults.isSelected())
+					new ExcelDealer("", false).createExcelFile2(localizacaoResultados.getText(), mra.getResults());
+			}
+		});
 		runRules.setBounds(372, 211, 174, 26);
 		detecaoPanel.add(runRules);
 	}
