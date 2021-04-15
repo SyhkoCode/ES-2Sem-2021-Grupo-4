@@ -452,8 +452,7 @@ public class GUI extends JFrame {
 		
 		
 		JPanel detecaoPanel = new JPanel();
-		JScrollPane scrolPane = new JScrollPane(detecaoPanel);
-		tabbedPane.addTab("Correr Regras", null, scrolPane, null);
+		tabbedPane.addTab("Correr Regras", null, detecaoPanel, null);
 		detecaoPanel.setLayout(null);
 		
 		metricasGeradas = new JTextField();
@@ -609,16 +608,39 @@ public class GUI extends JFrame {
 		detecaoPanel.add(bTeoricos);
 		
 		runRules = new JButton("Run");
+		runRules.setBounds(372, 201, 174, 26);
+		detecaoPanel.add(runRules);
+		
+		JTabbedPane panelResultados = new JTabbedPane(JTabbedPane.TOP);
+		panelResultados.setBounds(10, 238, 931, 304);
+		detecaoPanel.add(panelResultados);
+		panelResultados.setEnabled(false);
+		
+		JPanel classesPanel = new JPanel();
+		JScrollPane sClasses = new JScrollPane (classesPanel);
+		classesPanel.setLayout(null);
+		panelResultados.addTab("Classes", null, sClasses, null);
+		
+		JPanel metodosPanel = new JPanel();
+		JScrollPane sMetodos = new JScrollPane (metodosPanel);
+		metodosPanel.setLayout(null);
+		panelResultados.addTab("Methods", null, sMetodos, null);
+		
 		runRules.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricasGeradas.getText()),Rule.allRules(new File(regras.getText())));
-				if(keepResults.isSelected())
+				if(keepResults.isSelected()) {
 					new ExcelDealer("", false).createExcelFile2(localizacaoResultados.getText(), mra.getResults());
+					panelResultados.setEnabled(true);
+				}
+			
+			//falta aqui então ele criar as tabelas
+			
 			}
+			
+			
 		});
-		runRules.setBounds(372, 211, 174, 26);
-		detecaoPanel.add(runRules);
 	}
 
 	private void readExcel() {
