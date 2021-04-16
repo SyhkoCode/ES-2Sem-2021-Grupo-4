@@ -80,13 +80,13 @@ public class MethodRuleAnalysis {
 			aux_methods[1] = getMap().get("is_Long_Method").get(i).toString();
 			result.get(1).add(aux_methods);
 		}
-		System.out.println(Arrays.deepToString(result.get(0).get(0)));
-		System.out.println(Arrays.deepToString(result.get(0).get(1)));
-		System.out.println(Arrays.deepToString(result.get(0).get(2)));
-		System.out.println(Arrays.deepToString(result.get(1).get(0)));
-		System.out.println(Arrays.deepToString(result.get(1).get(1)));
-		System.out.println(Arrays.deepToString(result.get(1).get(2)));
-		System.out.println(Arrays.deepToString(result.get(1).get(3)));
+//		System.out.println(Arrays.deepToString(result.get(0).get(0)));
+//		System.out.println(Arrays.deepToString(result.get(0).get(1)));
+//		System.out.println(Arrays.deepToString(result.get(0).get(2)));
+//		System.out.println(Arrays.deepToString(result.get(1).get(0)));
+//		System.out.println(Arrays.deepToString(result.get(1).get(1)));
+//		System.out.println(Arrays.deepToString(result.get(1).get(2)));
+//		System.out.println(Arrays.deepToString(result.get(1).get(3)));
 
 		return result;
 	}

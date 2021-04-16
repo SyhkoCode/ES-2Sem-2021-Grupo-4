@@ -17,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Component;
@@ -46,8 +47,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.event.ChangeEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JCheckBox;
 
 public class GUI extends JFrame {
@@ -140,8 +139,11 @@ public class GUI extends JFrame {
 	private JPanel contentPane;
 	private JTextField fileName_TF;
 	private JTable table;
+	private JTable table1;
+	private JTable table2;
 	private DefaultTableModel tableModel;
 	private DefaultTableModel tableModel1;
+	private DefaultTableModel tableModel2;
 	private JLabel Label_Classes;
 	private JLabel Label_Packages;
 	private JLabel Label_LOC;
@@ -168,8 +170,6 @@ public class GUI extends JFrame {
 	private JTextField localTeoricos;
 	private JButton bTeoricos;
 	private JButton runRules;
-	private JTable table_1;
-	private JTable table_2;
 
 
 	/**
@@ -609,12 +609,28 @@ public class GUI extends JFrame {
 		
 		bTeoricos.setBounds(626, 164, 174, 26);
 		detecaoPanel.add(bTeoricos);
-		
+		JTabbedPane panelResultados = new JTabbedPane(JTabbedPane.TOP);
+
 		runRules = new JButton("Run");
+		runRules.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricasGeradas.getText()),Rule.allRules(new File(regras.getText())));
+				if(keepResults.isSelected()) {
+					new ExcelDealer("", false).createExcelFile2(localizacaoResultados.getText(), mra.getResults());
+					panelResultados.setEnabled(true);
+				}
+				readCodeSmells(mra.getClassesResults());
+				panelResultados.setEnabled(true);
+			//falta aqui então ele criar as tabelas
+			
+			}
+			
+			
+		});
 		runRules.setBounds(372, 201, 174, 26);
 		detecaoPanel.add(runRules);
 		
-		JTabbedPane panelResultados = new JTabbedPane(JTabbedPane.TOP);
 		panelResultados.setBounds(10, 238, 931, 304);
 		detecaoPanel.add(panelResultados);
 		panelResultados.setEnabled(false);
@@ -622,9 +638,9 @@ public class GUI extends JFrame {
 		
 		panelResultados.addTab("Classes", null, sClasses, null);
 		
-		table_1 = new JTable();
+		table1 = new JTable();
 		tableModel1 = new DefaultTableModel();
-		table_1 = new JTable() {
+		table1 = new JTable() {
 			@Override
 			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
 				Component component = super.prepareRenderer(renderer, row, column);
@@ -635,31 +651,32 @@ public class GUI extends JFrame {
 				return component;
 			}
 		};
-		table_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		table_1.setModel(tableModel);
-		sClasses.setViewportView(table_1);
+		
+		table1.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		table1.setModel(tableModel1);
+		sClasses.setViewportView(table1);
 		JScrollPane sMetodos = new JScrollPane ();
 		
 		panelResultados.addTab("Methods", null, sMetodos, null);
 		
-		table_2 = new JTable();
-		sMetodos.setViewportView(table_2);
-		
-		runRules.addMouseListener(new MouseAdapter() {
+		table2 = new JTable();
+		tableModel2 = new DefaultTableModel();
+		table2 = new JTable() {
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricasGeradas.getText()),Rule.allRules(new File(regras.getText())));
-				if(keepResults.isSelected()) {
-					new ExcelDealer("", false).createExcelFile2(localizacaoResultados.getText(), mra.getResults());
-					panelResultados.setEnabled(true);
-				}
-			
-			//falta aqui então ele criar as tabelas
-			
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				Component component = super.prepareRenderer(renderer, row, column);
+				int rendererWidth = component.getPreferredSize().width;
+				TableColumn tableColumn = getColumnModel().getColumn(column);
+				tableColumn.setPreferredWidth(
+						Math.max(rendererWidth + getIntercellSpacing().width + 10, tableColumn.getPreferredWidth()));
+				return component;
 			}
-			
-			
-		});
+		};
+		
+		table2.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		table2.setModel(tableModel2);
+		sMetodos.setViewportView(table2);
+		
 	}
 
 	private void readExcel() {
@@ -682,6 +699,39 @@ public class GUI extends JFrame {
 		Label_Packages.setText(String.valueOf(dealer.getAllCellsOfColumn(1).size()));
 		Label_LOC.setText(String.valueOf(dealer.sumLinesOfCode()));
 		Label_Methods.setText(String.valueOf(dealer.getAllCellsOfColumn(3).size()));
+	}
+	
+	
+	private void readCodeSmells(ArrayList<ArrayList<String[]>> list) {
+		
+		tableModel1.setRowCount(0);
+		tableModel1.setColumnCount(0);
+		tableModel2.setRowCount(0);
+		tableModel2.setColumnCount(0);
+
+		Object[] headerClass = {"Class","is_God_Class"};
+		Object[] headerMethod = {"method","is_Long_Method"};
+		tableModel1.setColumnIdentifiers(headerClass);
+		tableModel2.setColumnIdentifiers(headerMethod);
+
+		for (int i = 0; i != headerClass.length; i++) {
+			table1.getColumnModel().getColumn(i).setResizable(false);
+			table2.getColumnModel().getColumn(i).setResizable(false);
+		}
+
+		table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		for (Object[] row : list.get(0)) {
+			System.out.println(Arrays.deepToString(row));
+			tableModel1.addRow(row);
+		}
+		
+		for (Object[] row : list.get(1)) {
+			System.out.println(Arrays.deepToString(row));
+			tableModel2.addRow(row);
+		}
+		
 	}
 
 	private void initiateConditionLongMethod() {
