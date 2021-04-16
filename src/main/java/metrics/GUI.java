@@ -141,6 +141,7 @@ public class GUI extends JFrame {
 	private JTextField fileName_TF;
 	private JTable table;
 	private DefaultTableModel tableModel;
+	private DefaultTableModel tableModel1;
 	private JLabel Label_Classes;
 	private JLabel Label_Packages;
 	private JLabel Label_LOC;
@@ -167,6 +168,8 @@ public class GUI extends JFrame {
 	private JTextField localTeoricos;
 	private JButton bTeoricos;
 	private JButton runRules;
+	private JTable table_1;
+	private JTable table_2;
 
 
 	/**
@@ -615,16 +618,32 @@ public class GUI extends JFrame {
 		panelResultados.setBounds(10, 238, 931, 304);
 		detecaoPanel.add(panelResultados);
 		panelResultados.setEnabled(false);
+		JScrollPane sClasses = new JScrollPane ();
 		
-		JPanel classesPanel = new JPanel();
-		JScrollPane sClasses = new JScrollPane (classesPanel);
-		classesPanel.setLayout(null);
 		panelResultados.addTab("Classes", null, sClasses, null);
 		
-		JPanel metodosPanel = new JPanel();
-		JScrollPane sMetodos = new JScrollPane (metodosPanel);
-		metodosPanel.setLayout(null);
+		table_1 = new JTable();
+		tableModel1 = new DefaultTableModel();
+		table_1 = new JTable() {
+			@Override
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				Component component = super.prepareRenderer(renderer, row, column);
+				int rendererWidth = component.getPreferredSize().width;
+				TableColumn tableColumn = getColumnModel().getColumn(column);
+				tableColumn.setPreferredWidth(
+						Math.max(rendererWidth + getIntercellSpacing().width + 10, tableColumn.getPreferredWidth()));
+				return component;
+			}
+		};
+		table_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		table_1.setModel(tableModel);
+		sClasses.setViewportView(table_1);
+		JScrollPane sMetodos = new JScrollPane ();
+		
 		panelResultados.addTab("Methods", null, sMetodos, null);
+		
+		table_2 = new JTable();
+		sMetodos.setViewportView(table_2);
 		
 		runRules.addMouseListener(new MouseAdapter() {
 			@Override
