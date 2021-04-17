@@ -20,10 +20,10 @@ public class ExcelDealer {
 	private String excel_file;
 	private OPCPackage packet;
 	private XSSFWorkbook wb;
-	private static XSSFSheet sheet;
+	private XSSFSheet sheet;
 	private List<Integer> ignoredIndexes;
 
-	public ExcelDealer(String filename, boolean read) {
+	public ExcelDealer(String filename, boolean read, int[] arrayint) {
 		excel_file = filename;
 		ignoredIndexes = new ArrayList<>();
 		try {
@@ -31,8 +31,12 @@ public class ExcelDealer {
 				packet = OPCPackage.open(new File(excel_file));
 				wb = new XSSFWorkbook(packet);
 				sheet = wb.getSheetAt(0);
-				ignoredIndexes.add(7);
-				ignoredIndexes.add(10);
+				if(arrayint.length > 0){
+					for(int i : arrayint){
+						ignoredIndexes.add(i);
+					}
+				}
+				
 			} else {
 				wb = new XSSFWorkbook();
 			}
@@ -153,12 +157,12 @@ public void createExcelFile(String file_name, String pathToSave, List<String[]> 
 		return list;
 	}
 
-	public List<Object[]> getAllRows() { // Devolve uma lista em que cada array é uma linha inteira do Excel - útil para a GUI
+	public List<Object[]> getAllRows(int columnsToDiscard) { // Devolve uma lista em que cada array é uma linha inteira do Excel - útil para a GUI
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
 		List<Object[]> list = new ArrayList<>();
 		
 		for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
-			Object[] rowList = new Object[row_size - 2]; // -2 para ignorar as colunas dos booleans que o stor não quer
+			Object[] rowList = new Object[row_size - columnsToDiscard]; // -2 para ignorar as colunas dos booleans que o stor não quer
 			XSSFRow row = sheet.getRow(j);
 			if ( row != null ) {
 				int counter = 0;
@@ -175,9 +179,9 @@ public void createExcelFile(String file_name, String pathToSave, List<String[]> 
 		return list;
 	}
 
-	public Object[] getExcelHeader() {  // Devolve o cabeçalho de cada coluna do Excel - útil para a GUI, i.e, "package","class","NOM_Class", etc
+	public Object[] getExcelHeader(int columnsToDiscard) {  // Devolve o cabeçalho de cada coluna do Excel - útil para a GUI, i.e, "package","class","NOM_Class", etc
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
-		Object[] rowList = new Object[row_size - 2];
+		Object[] rowList = new Object[row_size - columnsToDiscard];
 		XSSFRow row = sheet.getRow(0);
 		int counter = 0;
 		for (int i = 0; i < row_size; i++) {

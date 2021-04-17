@@ -35,7 +35,7 @@ public class MethodData {
 	
 	public static ArrayList<MethodData> excelToMetricsMap(String filename){
 		ArrayList<MethodData> methods = new ArrayList<>();
-		for( Object[] o : new ExcelDealer(filename, true).getAllRows() )
+		for( Object[] o : new ExcelDealer(filename, true,new int[]{7,10}).getAllRows(2) )
 			methods.add(new MethodData(o));
 		
 		return methods;
