@@ -617,10 +617,10 @@ public class GUI extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricasGeradas.getText()),Rule.allRules(new File(regras.getText())));
 				if(keepResults.isSelected()) {
-					new ExcelDealer("", false).createExcelFile2(localizacaoResultados.getText(), mra.getResults());
+					new ExcelDealer("", false).createCodeSmellsExcelFile(localizacaoResultados.getText(), mra.getResults());
 					panelResultados.setEnabled(true);
 				}
-				readCodeSmells(mra.getClassesResults());
+				readCodeSmells(mra.getCodeSmellResults());
 				panelResultados.setEnabled(true);
 			//falta aqui então ele criar as tabelas
 			
@@ -638,7 +638,6 @@ public class GUI extends JFrame {
 		
 		panelResultados.addTab("Classes", null, sClasses, null);
 		
-		table1 = new JTable();
 		tableModel1 = new DefaultTableModel();
 		table1 = new JTable() {
 			@Override
@@ -651,15 +650,16 @@ public class GUI extends JFrame {
 				return component;
 			}
 		};
-		
+
 		table1.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		table1.setModel(tableModel1);
+
+		table1.getTableHeader().setReorderingAllowed(false);
 		sClasses.setViewportView(table1);
 		JScrollPane sMetodos = new JScrollPane ();
 		
 		panelResultados.addTab("Methods", null, sMetodos, null);
 		
-		table2 = new JTable();
 		tableModel2 = new DefaultTableModel();
 		table2 = new JTable() {
 			@Override
@@ -675,6 +675,8 @@ public class GUI extends JFrame {
 		
 		table2.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		table2.setModel(tableModel2);
+
+		table2.getTableHeader().setReorderingAllowed(false);
 		sMetodos.setViewportView(table2);
 		
 	}
@@ -709,8 +711,8 @@ public class GUI extends JFrame {
 		tableModel2.setRowCount(0);
 		tableModel2.setColumnCount(0);
 
-		Object[] headerClass = {"Class","is_God_Class"};
-		Object[] headerMethod = {"method","is_Long_Method"};
+		Object[] headerClass = {"class","is_God_Class"};
+		Object[] headerMethod = {"MethodID","method","is_Long_Method"};
 		tableModel1.setColumnIdentifiers(headerClass);
 		tableModel2.setColumnIdentifiers(headerMethod);
 

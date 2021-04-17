@@ -62,31 +62,25 @@ public class MethodRuleAnalysis {
 
 	}
 
-	public ArrayList<ArrayList<String[]>> getClassesResults() {
+	public ArrayList<ArrayList<String[]>> getCodeSmellResults() {
 		ArrayList<String> classesFound = new ArrayList<>();
 		ArrayList<ArrayList<String[]>> result = new ArrayList<>();
 		result.add(new ArrayList<String[]>());
 		result.add(new ArrayList<String[]>());
 		for (int i = 0; i < getMethods().size(); i++) {
 			String[] aux_classes = new String[2];
-			String[] aux_methods = new String[2];
+			String[] aux_methods = new String[3];
 			if (!classesFound.contains(getMethods().get(i).getClassName())) {
 				aux_classes[0] = getMethods().get(i).getClassName();
 				classesFound.add(getMethods().get(i).getClassName());
 				aux_classes[1] = getMap().get("is_God_Class").get(i).toString();
 				result.get(0).add(aux_classes);
 			}
-			aux_methods[0] = getMethods().get(i).getMethodName();
-			aux_methods[1] = getMap().get("is_Long_Method").get(i).toString();
+			aux_methods[0] = Integer.toString(i+1);
+			aux_methods[1] = getMethods().get(i).getMethodName();
+			aux_methods[2] = getMap().get("is_Long_Method").get(i).toString();
 			result.get(1).add(aux_methods);
 		}
-//		System.out.println(Arrays.deepToString(result.get(0).get(0)));
-//		System.out.println(Arrays.deepToString(result.get(0).get(1)));
-//		System.out.println(Arrays.deepToString(result.get(0).get(2)));
-//		System.out.println(Arrays.deepToString(result.get(1).get(0)));
-//		System.out.println(Arrays.deepToString(result.get(1).get(1)));
-//		System.out.println(Arrays.deepToString(result.get(1).get(2)));
-//		System.out.println(Arrays.deepToString(result.get(1).get(3)));
 
 		return result;
 	}
@@ -96,7 +90,7 @@ public class MethodRuleAnalysis {
 
 		MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(path),
 				Rule.allRules(new File("testeregras")));
-		mra.getClassesResults();
+		mra.getCodeSmellResults();
 //		for (int i = 0; i < mra.getMethods().size(); i++) {
 //			System.out.println(mra.getMethods().get(i).getMethodName());
 //			for (String nome : mra.getMap().keySet()) {
