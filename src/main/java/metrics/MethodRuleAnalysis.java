@@ -37,6 +37,8 @@ public class MethodRuleAnalysis {
 
 	public ArrayList<String[]> getResults() {
 		ArrayList<String[]> result = new ArrayList<>();
+		String[] header = getCodeSmellResults().get(0).get(0);
+		result.add(header);
 		for (int i = 0; i < getMethods().size(); i++) {
 			String[] aux = new String[4];
 			aux[0] = getMethods().get(i).getClassName();
@@ -64,22 +66,29 @@ public class MethodRuleAnalysis {
 
 	public ArrayList<ArrayList<String[]>> getCodeSmellResults() {
 		ArrayList<String> classesFound = new ArrayList<>();
+		String[] metrics = new String[map.size()];
 		ArrayList<ArrayList<String[]>> result = new ArrayList<>();
+		result.add(new ArrayList<String[]>());
 		result.add(new ArrayList<String[]>());
 		result.add(new ArrayList<String[]>());
 		for (int i = 0; i < getMethods().size(); i++) {
 			String[] aux_classes = new String[2];
 			String[] aux_methods = new String[3];
-			if (!classesFound.contains(getMethods().get(i).getClassName())) {
+			if (!classesFound.contains(getMethods().get(i).getClassName()) && getMap().containsKey("is_God_Class")) {
+				metrics[0] = "is_God_Class";
 				aux_classes[0] = getMethods().get(i).getClassName();
 				classesFound.add(getMethods().get(i).getClassName());
 				aux_classes[1] = getMap().get("is_God_Class").get(i).toString();
-				result.get(0).add(aux_classes);
+				result.get(1).add(aux_classes);
 			}
-			aux_methods[0] = Integer.toString(i+1);
-			aux_methods[1] = getMethods().get(i).getMethodName();
-			aux_methods[2] = getMap().get("is_Long_Method").get(i).toString();
-			result.get(1).add(aux_methods);
+			if (getMap().containsKey("is_Long_Method")) {
+				metrics[map.size()-1] = "is_Long_Method";
+				aux_methods[0] = Integer.toString(i + 1);
+				aux_methods[1] = getMethods().get(i).getMethodName();
+				aux_methods[2] = getMap().get("is_Long_Method").get(i).toString();
+				result.get(2).add(aux_methods);
+			}
+			result.get(0).add(metrics);
 		}
 
 		return result;
