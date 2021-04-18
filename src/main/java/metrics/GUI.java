@@ -989,6 +989,15 @@ public class GUI extends JFrame {
 	public String getLongMethodFormat() {
 		return getFormatString(conditionsLongMethod);
 	}
+	
+	public ArrayList<String> getRulesString(){
+		ArrayList<String> write = new ArrayList<>();
+		write.add("is_Long_Method");
+		write.add(getLongMethodFormat());
+		write.add("is_God_Class");
+		write.add(getGodClassFormat());
+		return write;
+	}
 
 	public String getGodClassFormat() {
 		return getFormatString(conditionsGodClass);
