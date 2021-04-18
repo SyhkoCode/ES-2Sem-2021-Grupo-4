@@ -170,6 +170,7 @@ public class GUI extends JFrame {
 	private JTextField localTeoricos;
 	private JButton bTeoricos;
 	private JButton runRules;
+	private JButton btnSaveFile;
 
 
 	/**
@@ -319,12 +320,33 @@ public class GUI extends JFrame {
 		});
 		addCondition_isGodClass_Panel.add(btnNewButton_2, BorderLayout.CENTER);
 
-		JButton btnNewButton_1 = new JButton("");
-		btnNewButton_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnNewButton_1.setFocusable(false);
-		btnNewButton_1.setBounds(891, 490, 50, 50);
-		btnNewButton_1.setIcon(new ImageIcon("images/save_Image.png"));
-		panel_1.add(btnNewButton_1);
+		btnSaveFile = new JButton("");
+		btnSaveFile.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt", "text");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showSaveDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					
+					String path = jfc.getSelectedFile().getAbsolutePath();
+					if (!path.endsWith(".txt")) {
+						path = path.replaceAll("\\.[^.]*$","") + ".txt";		
+					}
+					if (pathToSave.isEmpty())
+						pathToSave = path;
+		
+					FileDealer.createFile(path, getRulesString());
+				}
+			}
+		});
+		btnSaveFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnSaveFile.setFocusable(false);
+		btnSaveFile.setBounds(891, 490, 50, 50);
+		btnSaveFile.setIcon(new ImageIcon("images/save_Image.png"));
+		panel_1.add(btnSaveFile);
 
 		JButton btnNewButton_1_1 = new JButton("");
 		btnNewButton_1_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
