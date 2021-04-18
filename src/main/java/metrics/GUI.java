@@ -48,6 +48,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.JCheckBox;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class GUI extends JFrame {
 
@@ -283,6 +285,10 @@ public class GUI extends JFrame {
 		addCondition_isLongMethod_Panel.setLayout(new BorderLayout(0, 0));
 
 		JButton btnNewButton = new JButton("Add new Condition");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -842,14 +848,14 @@ public class GUI extends JFrame {
 		panel.add(lblSe);
 
 		JComboBox<String> comboBox = getComoboBox(isLongMethod
-				? new DefaultComboBoxModel<String>(new String[] { "Linhas de c\u00F3digo", "N\u00FAmero de ciclos" })
+				? new DefaultComboBoxModel<String>(new String[] { "Linhas de código", "Número de ciclos" })
 				: new DefaultComboBoxModel<String>(
-						new String[] { "N�mero de m�todos", "Linhas de c\u00F3digo", "N\u00FAmero de ciclos" }),
+						new String[] { "Número de métodos", "Linhas de código", "Número de ciclos" }),
 				240, 35, 200, 30);
 		panel.add(comboBox);
 
 		JComboBox<String> comboBoxSignals = getComoboBox(
-				new DefaultComboBoxModel<String>(new String[] { "=", ">", "<", ">=", "<=" }), 490, 35, 100, 30);
+				new DefaultComboBoxModel<String>(new String[] { "==", ">", "<", ">=", "<=" }), 490, 35, 100, 30);
 		panel.add(comboBoxSignals);
 
 		JButton rightPlus = getButton("+ (", 67, 34, 60, 30);
