@@ -100,6 +100,12 @@ class RuleTest {
 		assertEquals(true, r5.smellDetected(m));
 		assertEquals(true, r6.smellDetected(m));
 		
+		Rule wrong = new Rule("fail_pls", "shdjsdfhjdfhdf");
+		exception = assertThrows(IllegalStateException.class, ()->{wrong.smellDetected(m);});
+		expectedMessage = "Regra invalida, verifique o ficheiro";
+		actualMessage = exception.getMessage();
+		assertTrue(actualMessage.contains(expectedMessage));
+		
 	}
 
 	@Test
@@ -115,7 +121,14 @@ class RuleTest {
 		
 		File rules = new File(getClass().getResource("/testeregras.txt/").getFile());
 		ArrayList<Rule> test = Rule.allRules(rules);
-		assertEquals(teorical, test);
+
+		assertEquals(teorical.size(), test.size());
+		
+		for(int i = 0; i < teorical.size(); i++) {
+			assertEquals(teorical.get(i).getNome(), test.get(i).getNome());
+			assertEquals(teorical.get(i).getText(), test.get(i).getText());
+		}
+			
 		
 		File givesNull = new File(getClass().getResource("/wrongRules.txt/").getFile());
 		assertEquals(null, Rule.allRules(givesNull));

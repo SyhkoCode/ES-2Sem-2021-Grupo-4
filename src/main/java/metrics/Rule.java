@@ -45,9 +45,8 @@ public class Rule {
             return (boolean) se.eval(comMetricas);
 
         } catch (ScriptException e) {
-            System.out.println("Invalid Expression");
-            e.printStackTrace();
-            return false;
+        	e.printStackTrace();
+        	throw new IllegalStateException("Regra invalida, verifique o ficheiro");
         }
 	}
 	
@@ -77,23 +76,6 @@ public class Rule {
 	
 	public String getText() {
 		return text;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(nome, text);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Rule other = (Rule) obj;
-		return Objects.equals(nome, other.nome) && Objects.equals(text, other.text);
 	}
 
 }
