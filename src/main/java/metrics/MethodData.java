@@ -14,7 +14,7 @@ public class MethodData {
 		this.packageName = array[1].toString();
 		this.className = array[2].toString();
 		this.methodName =  array[3].toString();
-		//String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
+//		String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
 		for(int i=4,j=0;i<array.length;i++,j++) {
 			map.put(metrics[j], Integer.parseInt(array[i].toString()));
 		}
@@ -38,7 +38,7 @@ public class MethodData {
 	public static ArrayList<MethodData> excelToMetricsMap(String filename){
 		ArrayList<MethodData> methods = new ArrayList<>();
 		for( Object[] o : new ExcelDealer(filename, true,new int[]{7,10}).getAllRows(2) )
-			methods.add(new MethodData(o));
+			methods.add(new MethodData(o, new String[]{"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"}));
 		
 		return methods;
 	}

@@ -669,7 +669,7 @@ public class GUI extends JFrame {
 				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricasGeradas.getText()),
 						Rule.allRules(new File(regras.getText())));
 				if (keepResults.isSelected()) {
-					new ExcelDealer("", false).createCodeSmellsExcelFile(localizacaoResultados.getText(),
+					new ExcelDealer("", false, new int[] {7,10}).createCodeSmellsExcelFile(localizacaoResultados.getText(),
 							mra.getResults());
 					panelResultados.setEnabled(true);
 				}
@@ -1027,15 +1027,6 @@ public class GUI extends JFrame {
 
 	public String getLongMethodFormat() {
 		return getFormatString(conditionsLongMethod);
-	}
-
-	public ArrayList<String> getRulesString() {
-		ArrayList<String> write = new ArrayList<>();
-		write.add("is_Long_Method");
-		write.add(getLongMethodFormat());
-		write.add("is_God_Class");
-		write.add(getGodClassFormat());
-		return write;
 	}
 
 	public String getGodClassFormat() {
