@@ -95,10 +95,9 @@ public class MethodRuleAnalysis {
 	}
 
 	public static void main(String[] args) {
-		String path = "C:\\Users\\tiago\\OneDrive\\Ambiente de Trabalho\\CoordenacaoIII_metrics.xlsx";
+		String path = "C:\\Users\\sophi\\Desktop\\CoordenacaoIII_metrics.xlsx";
 
-		MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(path),
-				Rule.allRules(new File("testeregras")));
+		MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(path),Rule.allRules(new File("testeregras")));
 		mra.getCodeSmellResults();
 //		for (int i = 0; i < mra.getMethods().size(); i++) {
 //			System.out.println(mra.getMethods().get(i).getMethodName());
