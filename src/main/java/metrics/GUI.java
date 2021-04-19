@@ -239,14 +239,14 @@ public class GUI extends JFrame {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					String path = jfc.getSelectedFile().getAbsolutePath();
 					String excelName = jfc.getSelectedFile().getName() + "_metrics";
-					dealer = new ExcelDealer(path, false);
+					dealer = new ExcelDealer(path, false, new int[]{7,10});
 					fileName_TF.setText(path + "");
 					if (pathToSave.isEmpty())
 						pathToSave = path;
 
 					dealer.createExcelFile(excelName, pathToSave, ReadJavaProject.readJavaProject(path));
 
-					dealer = new ExcelDealer(pathToSave + "\\" + excelName + ".xlsx", true);
+					dealer = new ExcelDealer(pathToSave + "\\" + excelName + ".xlsx", true, new int[]{7,10});
 					readExcel();
 				}
 			}
@@ -348,14 +348,12 @@ public class GUI extends JFrame {
 				int returnValue = jfc.showSaveDialog(null);
 
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
-
 					String path = jfc.getSelectedFile().getAbsolutePath();
 					if (!path.endsWith(".txt")) {
 						path = path.replaceAll("\\.[^.]*$", "") + ".txt";
 					}
 					if (pathToSave.isEmpty())
 						pathToSave = path;
-
 					FileDealer.createFile(path, getRulesString());
 				}
 			}
@@ -740,7 +738,7 @@ public class GUI extends JFrame {
 		tableModel.setRowCount(0);
 		tableModel.setColumnCount(0);
 
-		Object[] header = dealer.getExcelHeader();
+		Object[] header = dealer.getExcelHeader(2);
 		tableModel.setColumnIdentifiers(header);
 
 		for (int i = 0; i != header.length; i++)
@@ -748,7 +746,7 @@ public class GUI extends JFrame {
 
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		for (Object[] row : dealer.getAllRows()) {
+		for (Object[] row : dealer.getAllRows(2)) {
 			tableModel.addRow(row);
 		}
 		Label_Classes.setText(String.valueOf((dealer.getClasses().size())));
@@ -881,6 +879,7 @@ public class GUI extends JFrame {
 		lblSe.setFont(new Font("Tahoma", Font.PLAIN, 30));
 		lblSe.setBounds(12, 35, 43, 30);
 		panel.add(lblSe);
+
 
 		JComboBox<String> comboBox = getComoboBox(
 				isLongMethod ? new DefaultComboBoxModel<String>(new String[] { "Linhas de código", "Número de ciclos" })
@@ -1041,6 +1040,15 @@ public class GUI extends JFrame {
 
 	public String getGodClassFormat() {
 		return getFormatString(conditionsGodClass);
+	}
+	
+	public ArrayList<String> getRulesString(){
+		ArrayList<String> write = new ArrayList<>();
+		write.add("is_Long_Method");
+		write.add(getLongMethodFormat());
+		write.add("is_God_Class");
+		write.add(getGodClassFormat());
+		return write;
 	}
 
 	private String getFormatString(ArrayList<ConditionsInfo> conditions) {

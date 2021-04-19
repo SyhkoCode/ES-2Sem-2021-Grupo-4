@@ -34,7 +34,6 @@ public class Rule {
 
             ScriptEngineManager sem = new ScriptEngineManager();
             ScriptEngine se = sem.getEngineByName("JavaScript");
-            
             return (boolean) se.eval(comMetricas);
 
         } catch (ScriptException e) {
@@ -72,12 +71,12 @@ public class Rule {
 		String teste4 = "SE ( ( NOM_class > 5 ) OU LOC_class > 20 )";
 		String teste5 = "SE ( NOM_class > 5 )";
 		String teste6 = "SE ( ( NOM_class > 5 ) OU ( LOC_class > 20 ) )";
-		MethodData m = new MethodData();
+	//	MethodData m = new MethodData();
 		
-		m.addMetric("NOM_class", 7);
-		m.addMetric("LOC_class", 15);
-		m.addMetric("WMC_class", 50);
-		
+//		m.addMetric("NOM_class", 7);
+//		m.addMetric("LOC_class", 15);
+//		m.addMetric("WMC_class", 50);
+//		
 		Rule r = new Rule(teste,"");
 		Rule r2 = new Rule(teste2,"");
 		Rule r3 = new Rule(teste3,"");
@@ -85,11 +84,11 @@ public class Rule {
 		Rule r5 = new Rule(teste5,"");
 		Rule r6 = new Rule(teste6,"");
 		
-		System.out.println(r.smellDetected(m));
-		System.out.println(r2.smellDetected(m));
-		System.out.println(r3.smellDetected(m));
-		System.out.println(r4.smellDetected(m));
-		System.out.println(r5.smellDetected(m));
-		System.out.println(r6.smellDetected(m));
+//		System.out.println(r.smellDetected(m));
+//		System.out.println(r2.smellDetected(m));
+//		System.out.println(r3.smellDetected(m));
+//		System.out.println(r4.smellDetected(m));
+//		System.out.println(r5.smellDetected(m));
+//		System.out.println(r6.smellDetected(m));
 	}
 }
