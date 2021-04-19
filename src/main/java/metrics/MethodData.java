@@ -10,11 +10,11 @@ public class MethodData {
 	private String methodName;
 
 	
-	public MethodData(Object[] array) {
+	public MethodData(Object[] array, String[] metrics) {
 		this.packageName = array[1].toString();
 		this.className = array[2].toString();
 		this.methodName =  array[3].toString();
-		String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
+		//String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
 		for(int i=4,j=0;i<array.length;i++,j++) {
 			map.put(metrics[j], Integer.parseInt(array[i].toString()));
 		}
@@ -22,8 +22,10 @@ public class MethodData {
 	
 	// Só para facilitar criação de testes
 	
-	public MethodData() {
-		
+	public MethodData(Object[] array) {
+		this.packageName = array[1].toString();
+		this.className = array[2].toString();
+		this.methodName =  array[3].toString();
 	}
 
 	public void addMetric(String key, int value) {
