@@ -1,6 +1,6 @@
 package metrics;
 
-import java.awt.EventQueue;
+import java.awt.EventQueue; 
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -30,7 +30,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
@@ -1052,17 +1051,6 @@ public class GUI extends JFrame {
 		return result;
 	}
 
-	private void clearConditions() {
-		if (isLongMethod) {
-			conditionsLongMethod.clear();
-			initiateConditionLongMethod();
-		} else {
-			conditionsGodClass.clear();
-			initiateConditionGodClass();
-		}
-		updateTA();
-	}
-
 	private void loadRule(String[] rule) {
 		boolean help = isLongMethod;
 		isLongMethod = true;
@@ -1088,7 +1076,7 @@ public class GUI extends JFrame {
 			info.setNewValues(conditionsStr[i++], conditionsStr[i++], Integer.parseInt(conditionsStr[i++]));
 
 			while (i < conditionsStr.length - 1 && conditionsStr[i].equals(")")) {
-				info.addOpenParentheses();
+				info.addCloseParentheses();
 				i++;
 			}
 			if (i < conditionsStr.length - 1 && (conditionsStr[i].equals("OU") || conditionsStr[i].equals("E")))
