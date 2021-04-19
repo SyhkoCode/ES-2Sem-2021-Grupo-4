@@ -71,7 +71,7 @@ public class Rule {
 		String teste4 = "SE ( ( NOM_class > 5 ) OU LOC_class > 20 )";
 		String teste5 = "SE ( NOM_class > 5 )";
 		String teste6 = "SE ( ( NOM_class > 5 ) OU ( LOC_class > 20 ) )";
-		MethodData m = new MethodData();
+		MethodData m = new MethodData("package", "class", "metodo");
 		
 		m.addMetric("NOM_class", 7);
 		m.addMetric("LOC_class", 15);

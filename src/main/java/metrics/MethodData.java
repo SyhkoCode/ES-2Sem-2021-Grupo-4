@@ -11,19 +11,28 @@ public class MethodData {
 
 	
 	public MethodData(Object[] array) {
-		this.packageName = array[1].toString();
+		/*this.packageName = array[1].toString();
 		this.className = array[2].toString();
 		this.methodName =  array[3].toString();
 		String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
 		for(int i=4,j=0;i<array.length;i++,j++) {
 			map.put(metrics[j], Integer.parseInt(array[i].toString()));
+		}*/
+		
+		// Alternativa q usa as 2 funções a seguir
+		this(array[1].toString(), array[2].toString(), array[3].toString());
+		String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
+		for(int i=4,j=0;i<array.length;i++,j++) {
+			addMetric(metrics[j], Integer.parseInt(array[i].toString()));
 		}
 	}
 	
 	// Só para facilitar criação de testes
 	
-	public MethodData() {
-		
+	public MethodData(String packageName, String className, String methodName) {
+		this.packageName = packageName;
+		this.className = className;
+		this.methodName =  methodName;
 	}
 
 	public void addMetric(String key, int value) {
