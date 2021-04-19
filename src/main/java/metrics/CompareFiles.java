@@ -7,32 +7,28 @@ import java.util.LinkedHashMap;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-
 @SuppressWarnings("unused")
 public class CompareFiles {
 
-	
-	
-private class Helper {
-		
-		private String file_name;
-		private String target;
-		
-		public Helper(String file_name, String target){
-			this.file_name = file_name;
-			this.target = target;
+	private class Helper {
+
+		private String fileName;
+		private String columnTitle;
+
+		public Helper(String fileName, String columnTitle){
+			this.fileName = fileName;
+			this.columnTitle = columnTitle;
 		}
 
-		public String getFile_name() {
-			return file_name;
+		public String getFileName() {
+			return fileName;
 		}
 
-		public String getTarget() {
-			return target;
+		public String getColumnTitle() {
+			return columnTitle;
 		}
-		
+
 	}
-	
 	
 	private String csFileDefault;
 	private String csFileCreated;
@@ -40,6 +36,8 @@ private class Helper {
 	private String rulesFile;
 	private ExcelDealer excelDealerDefault;
 	private ExcelDealer excelDealerCreated;
+	HashMap<String,Indicator> saveIndsPerMethod = new HashMap<>();
+	HashMap<String,Indicator> saveIndsPerClass = new HashMap<>();
 	
 	public CompareFiles(String csFileDefault, String csFileCreated) {
 		this.csFileDefault = csFileDefault;
@@ -48,186 +46,96 @@ private class Helper {
 		this.excelDealerCreated = new ExcelDealer(csFileCreated,true, new int[]{});
 	}
 
-
 	public CompareFiles(String csFileDefault, String metricsFile, String rulesFile) {
 		this.csFileDefault = csFileDefault;
 		this.metricsFile = metricsFile;
 		this.rulesFile = rulesFile;
 	}
-
-
 	
-	public LinkedHashMap<Helper,Integer> get_Targets_ColIndexes(String[] targets) {
-		
+
+	public LinkedHashMap<Helper,Integer> getColIndexesByTitle(String[] titles) {
 		LinkedHashMap<Helper,Integer> map = new LinkedHashMap<>();
-		
-		for(String target: targets){
+
+		for(String title: titles){
 			for(int i=0; i<excelDealerDefault.getExcelHeader(0).length; i++){
-					if(String.valueOf(excelDealerDefault.getExcelHeader(0)[i]).equalsIgnoreCase(target)){
-						map.put(new Helper(excelDealerDefault.getExcel_file(),String.valueOf(excelDealerDefault.getExcelHeader(0)[i])), i);
-					}
-				}
-			for(int i=0; i<excelDealerCreated.getExcelHeader(0).length; i++){
-					if(String.valueOf(excelDealerCreated.getExcelHeader(0)[i]).equalsIgnoreCase(target)){
-						map.put(new Helper(excelDealerCreated.getExcel_file(),String.valueOf(excelDealerCreated.getExcelHeader(0)[i])), i);
-					}
+				if(String.valueOf(excelDealerDefault.getExcelHeader(0)[i]).equalsIgnoreCase(title)){
+					map.put(new Helper(excelDealerDefault.getExcel_file(),String.valueOf(excelDealerDefault.getExcelHeader(0)[i])), i);
 				}
 			}
-			
-			return map;
+			for(int i=0; i<excelDealerCreated.getExcelHeader(0).length; i++){
+				if(String.valueOf(excelDealerCreated.getExcelHeader(0)[i]).equalsIgnoreCase(title)){
+					map.put(new Helper(excelDealerCreated.getExcel_file(),String.valueOf(excelDealerCreated.getExcelHeader(0)[i])), i);
+				}
+			}
 		}
+		return map;
+	}
 		
 	
-public void testQuality(String[] strs) {
-	
-	HashMap<Helper,Integer> helpersList = get_Targets_ColIndexes(strs);
-	
-		
+	public void testQuality(String[] strs) {
+		HashMap<Helper,Integer> helpersList = getColIndexesByTitle(strs);
+
 		for(Object[] objDefaultExcel: excelDealerDefault.getAllRows(0)){
 			for(Object[] objCreatedExcel: excelDealerCreated.getAllRows(0)){
-			
-				if(String.valueOf(objDefaultExcel[1]).equals(String.valueOf(objCreatedExcel[1])) && String.valueOf(objDefaultExcel[2]).equals(String.valueOf(objCreatedExcel[2])) && String.valueOf(objDefaultExcel[3]).equals(String.valueOf(objCreatedExcel[3]))){
-					int a = 0;
+
+				String packageDefaultExcel = String.valueOf(objDefaultExcel[1]);
+				String pacote = String.valueOf(objCreatedExcel[1]);
+				String classDefaultExcel = String.valueOf(objDefaultExcel[2]);
+				String classe = String.valueOf(objCreatedExcel[2]);
+				String metodoDefaultExcel = String.valueOf(objDefaultExcel[3]);
+				String metodo = String.valueOf(objCreatedExcel[3]);
+
+				if(packageDefaultExcel.equals(pacote) && classDefaultExcel.equals(classe) && metodoDefaultExcel.equals(metodo)){
+					int arrayIndex = 0;
 					for(int i = 0; i < strs.length; i++){
-						
-//						System.out.println(String.valueOf(objDefaultExcel[3]) + "  " + String.valueOf(objDefaultExcel[(int)helpersList.values().toArray()[a]]) + "    " +   String.valueOf(objCreatedExcel[3])    +  "  " + String.valueOf(objCreatedExcel[(int)helpersList.values().toArray()[a+1]]));
-//						System.out.println((int)helpersList.values().toArray()[a]);
-//						System.out.println((int)helpersList.values().toArray()[a+1]);
-					//	if(String.valueOf(objDefaultExcel[(int)helpersList.values().toArray()[a]]).equals(String.valueOf(objCreatedExcel[(int)helpersList.values().toArray()[a+1]]))){
-							
-							//System.out.println(String.valueOf(objDefaultExcel[3]) + "  " + String.valueOf(objDefaultExcel[(int)helpersList.values().toArray()[a]]) + "    " +   String.valueOf(objCreatedExcel[3])    +  "  " + String.valueOf(objCreatedExcel[(int)helpersList.values().toArray()[a+1]]));
-					//	System.out.println("Found one :)");
-							
-					//	}
-						
-						
-						if(String.valueOf(objDefaultExcel[(int)helpersList.values().toArray()[a]]).equals("TRUE") &&
-								
-								String.valueOf(objCreatedExcel[(int)helpersList.values().toArray()[a+1]]).equals("TRUE")){
-							
-							System.out.println("Verdadeiro Positivo em :" + String.valueOf(objCreatedExcel[3]));
-							
-						
-						
+						String cellTextDefault = String.valueOf(objDefaultExcel[(int)helpersList.values().toArray()[arrayIndex]]);
+						String cellTextCreated = String.valueOf(objCreatedExcel[(int)helpersList.values().toArray()[arrayIndex+1]]);
+
+						if(cellTextDefault.equals("TRUE") && cellTextCreated.equals("TRUE")){	
+							System.out.println(Indicator.VP.getName()+" no metodo: " + metodo+" da classe: " + classe);
+							saveIndsPerMethod.put(metodo, Indicator.VP);
+							saveIndsPerClass.put(classe, Indicator.VP);
 						}
-						
-						
-						else if(String.valueOf(objDefaultExcel[(int)helpersList.values().toArray()[a]]).equals("FALSE") &&
-								
-								String.valueOf(objCreatedExcel[(int)helpersList.values().toArray()[a+1]]).equals("TRUE")){
-							
-							System.out.println("Falso Positivo em :" + String.valueOf(objCreatedExcel[3]));
-							
-						
-						
+
+						else if(cellTextDefault.equals("FALSE") && cellTextCreated.equals("TRUE")){
+							System.out.println(Indicator.FP.getName()+" no metodo: " + metodo+" da classe: " + classe);
+							saveIndsPerMethod.put(metodo, Indicator.FP);
+							saveIndsPerClass.put(classe, Indicator.FP);
 						}
-						
-						
-						else if(String.valueOf(objDefaultExcel[(int)helpersList.values().toArray()[a]]).equals("FALSE") &&
-								
-								String.valueOf(objCreatedExcel[(int)helpersList.values().toArray()[a+1]]).equals("FALSE")){
-							
-							System.out.println("Verdadeiro Negativo em :" + String.valueOf(objCreatedExcel[3]));
-							
-						
-						
+
+						else if(cellTextDefault.equals("FALSE") && cellTextCreated.equals("FALSE")){						
+							System.out.println(Indicator.VN.getName()+" no metodo: " + metodo +" da classe: "+ classe);
+							saveIndsPerMethod.put(metodo, Indicator.VN);
+							saveIndsPerClass.put(classe, Indicator.VN);
 						}
-						
-						
-						else if(String.valueOf(objDefaultExcel[(int)helpersList.values().toArray()[a]]).equals("TRUE") &&
-								
-								String.valueOf(objCreatedExcel[(int)helpersList.values().toArray()[a+1]]).equals("FALSE")){
-							
-							System.out.println("Falso Negativo em :" + String.valueOf(objCreatedExcel[3]));
-							
-						
-						
-						}
-						
-						
-						
-						a+=2;
+
+						else if(cellTextDefault.equals("TRUE") && cellTextCreated.equals("FALSE")){					
+							System.out.println(Indicator.FN.getName()+" no metodo: " + metodo +" da classe: "+ classe);
+							saveIndsPerMethod.put(metodo, Indicator.FN);
+							saveIndsPerClass.put(classe, Indicator.FN);
+						}	
+						arrayIndex+=2;
 					}
-					
-					
-		//			System.out.println(String.valueOf(objDefaultExcel[columnIndexDefault]));
-//						System.out.println("yolo");
-					}
-					
-						
 				}
 			}
 		}
-		
-		
-		
-		
-	//	System.out.println(counter);
-
-//}
-		
-	
-	
-//		int index = 0;
-//		for (Cell s : sheet.getRow(0)) {
-//			if (s.getStringCellValue().equalsIgnoreCase(target)) {
-//				index = s.getColumnIndex();
-//				break;
-//			}
-//		}
-//		
-//		return index;	
-	
-	
-	
-//	private static String get_Value_Of_Cell(XSSFSheet csFileDefault, XSSFSheet csFileCreated) {
-//		
-//		List<Object[]> testingY = 
-//		
-//		
-//		return "";	
-//	}
-	
-	
-	
-	
-	
-	
-	
-	
-	public ArrayList<Indicator> compareCS(XSSFSheet csFileDefault, XSSFSheet csFileCreated) {
-		
-		ArrayList<Indicator> indicators = new ArrayList<>(); // ou HashMap<String,Indicator> indicators = new HashMap<>();
-		
-		/*
-		iterar rows das sheets csFileDefault e csFileCreated
-			obter os booleans das colunas index obtidas pelos getters acima
-			comparar: 
-				if(csFileDefault_isgodclass && csFileCreated_isgodclass) indicators.add(Indicator.VP); // temos de ver o q queremos fazer..criar uma coluna so pa isto e escrever Indicator.VP.getName na row correspondente ou pintar esta celula mesmo
-				else if(!csFileDefault_isgodclass && csFileCreated_isgodclass) indicators.add(Indicator.FP);
-				else if(csFileDefault_isgodclass && !csFileCreated_isgodclass) indicators.add(Indicator.FN);
-				else indicators.add(Indicator.VN);
-	
-				if(csFileDefault_islongmethod && csFileCreated_islongmethod) indicators.add(Indicator.VP);
-				else if(!csFileDefault_islongmethod && csFileCreated_islongmethod) indicators.add(Indicator.FP);
-				else if(csFileDefault_islongmethod && !csFileCreated_islongmethod) indicators.add(Indicator.FN);
-				else indicators.add(Indicator.VN);
-				*/	
-			return indicators;
-		
+		System.out.println(saveIndsPerMethod.size());
+		System.out.println(saveIndsPerMethod.entrySet());
+		System.out.println(saveIndsPerClass.size());
+		System.out.println(saveIndsPerClass.entrySet());
 	}
+			
 
 	public static void main(String[] args) throws IOException {
-		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Desktop\\jasml_0.10_metrics.xlsx");
+		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
+		cf.testQuality(new String[]{"is_god_class","is_long_method"});
+		
+		//CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Desktop\\jasml_0.10_metrics.xlsx");
 		//ArrayList<Helper> yolllo = cf.get_Targets_ColIndexes(new String[]{"is_god_class"});
 		//System.out.println(yolllo.size());
-		cf.testQuality(new String[]{"is_god_class","is_long_method"});
 		//FileInputStream file = new FileInputStream("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx");
 		//XSSFSheet sheet = new XSSFWorkbook(file).getSheet("Code Smells");
 		//System.out.println(get_Target_ColIndex(sheet,"is_God_Class"));
-		
-	
-
 	}
 
 }
