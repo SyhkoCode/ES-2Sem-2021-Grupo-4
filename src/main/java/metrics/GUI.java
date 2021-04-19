@@ -30,6 +30,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
@@ -41,6 +42,9 @@ import java.awt.BorderLayout;
 import javax.swing.ImageIcon;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.GroupLayout.SequentialGroup;
+
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.ScrollPaneConstants;
@@ -71,9 +75,9 @@ public class GUI extends JFrame {
 		}
 
 		public String getSentence() {
-			if (((String) sentence.getSelectedItem()).equals("Linhas de c�digo"))
+			if (((String) sentence.getSelectedItem()).equals("Linhas de código"))
 				return "LOC_" + (isClassCondition ? "class" : "method");
-			else if (((String) sentence.getSelectedItem()).equals("N�mero de ciclos"))
+			else if (((String) sentence.getSelectedItem()).equals("Número de ciclos"))
 				return (isClassCondition ? "WMC_class" : "CYCLO_method");
 			else
 				return "NOM_class";
@@ -112,6 +116,16 @@ public class GUI extends JFrame {
 		public void removeCloseParentheses() {
 			if (closeParentheses > 0)
 				closeParentheses--;
+		}
+
+		public void setNewValues(String sentenceStr, String conditionStr, int numberInt) {
+			sentence.setSelectedItem(sentenceStr);
+			condition.setSelectedItem(conditionStr);
+			number.setValue(numberInt);
+		}
+
+		public void setSeparatorValue(String sepratorStr) {
+			separator.setSelectedItem(sepratorStr);
 		}
 
 		@Override
@@ -291,7 +305,7 @@ public class GUI extends JFrame {
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				addNewConditionBox();
+				addNewConditionBox(1, true);
 				updateTA();
 			}
 		});
@@ -319,7 +333,7 @@ public class GUI extends JFrame {
 		btnNewButton_2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				addNewConditionBox();
+				addNewConditionBox(1, true);
 				updateTA();
 			}
 		});
@@ -358,6 +372,20 @@ public class GUI extends JFrame {
 		btnNewButton_1_1.setFocusable(false);
 		btnNewButton_1_1.setBounds(829, 490, 50, 50);
 		btnNewButton_1_1.setIcon(new ImageIcon("images/upload_Image.png"));
+		btnNewButton_1_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt files", "txt");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					loadRule(FileDealer.readFile(jfc.getSelectedFile().getAbsolutePath()));
+				}
+			}
+		});
 		panel_1.add(btnNewButton_1_1);
 
 		JScrollPane scrollPane_1 = new JScrollPane();
@@ -752,7 +780,7 @@ public class GUI extends JFrame {
 				}
 
 			}
-
+      
 		}
 
 //		Object[] headerClass = {"class","is_God_Class"};
@@ -802,46 +830,43 @@ public class GUI extends JFrame {
 						GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)));
 	}
 
-	private void addNewConditionBox() {
-		if (isLongMethod) {
-			if (conditionsLongMethod.size() == 0)
-				addComponentsToGroupLayout(conditions_IsLongMethod_GL, getConditionPanel(),
-						addCondition_isLongMethod_Panel, null, conditionsLongMethod.size());
-			else
-				addComponentsToGroupLayout(conditions_IsLongMethod_GL, getConditionPanel(),
-						addCondition_isLongMethod_Panel, getCondionsSeparatorPanel(), conditionsLongMethod.size());
-		} else {
-			if (conditionsGodClass.size() == 0)
-				addComponentsToGroupLayout(conditions_IsGodClass_GL, getConditionPanel(), addCondition_isGodClass_Panel,
-						null, conditionsGodClass.size());
-			else
-				addComponentsToGroupLayout(conditions_IsGodClass_GL, getConditionPanel(), addCondition_isGodClass_Panel,
-						getCondionsSeparatorPanel(), conditionsGodClass.size());
+	private void addNewConditionBox(int number, boolean append) {
+		GroupLayout layout = isLongMethod ? conditions_IsLongMethod_GL : conditions_IsGodClass_GL;
+		ArrayList<ConditionsInfo> components = isLongMethod ? conditionsLongMethod : conditionsGodClass;
+
+		if (!append) {
+			JPanel panel = isLongMethod ? conditions_isLongMethod_Panel : conditions_isGodClass_Panel;
+			panel.removeAll();
+			layout = new GroupLayout(panel);
+			panel.setLayout(layout);
+			components.clear();
 		}
 
+		ParallelGroup hGroup = layout.createParallelGroup(Alignment.LEADING);
+		SequentialGroup vGroup = layout.createSequentialGroup();
+		JPanel addConditionPanel = isLongMethod ? addCondition_isLongMethod_Panel : addCondition_isGodClass_Panel;
+		for (int i = 0; i != number; i++) {
+			JPanel conditionPanel = getConditionPanel();
+
+			if (components.size() > 1) {
+				JPanel separator = getCondionsSeparatorPanel();
+				hGroup.addComponent(separator, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE);
+				if (i == 0)
+					vGroup.addGap(150 * components.size() - 200);
+				vGroup.addComponent(separator, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE);
+			}
+
+			hGroup.addComponent(conditionPanel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE);
+			vGroup.addComponent(conditionPanel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE);
+		}
+		hGroup.addComponent(addConditionPanel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE);
+		vGroup.addComponent(addConditionPanel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE);
+		addComponentsToGroupLayouts(layout, hGroup, vGroup);
 	}
 
-	private void addComponentsToGroupLayout(GroupLayout layout, JPanel panel, JPanel addCondition,
-			JPanel conditionSeparator, int size) {
-		if (conditionSeparator != null) {
-			layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
-					.addComponent(conditionSeparator, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE)
-					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE));
-			layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
-					.addGroup(layout.createSequentialGroup().addGap(150 * size - 200)
-							.addComponent(conditionSeparator, GroupLayout.PREFERRED_SIZE, 50,
-									GroupLayout.PREFERRED_SIZE)
-							.addComponent(panel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-							.addComponent(addCondition, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)));
-		} else {
-			layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(panel,
-					GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE));
-			layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
-					.addGroup(layout.createSequentialGroup().addGap(0)
-							.addComponent(panel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-							.addComponent(addCondition, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)));
-		}
-
+	private void addComponentsToGroupLayouts(GroupLayout layout, ParallelGroup hGroup, SequentialGroup vGroup) {
+		layout.setHorizontalGroup(hGroup);
+		layout.setVerticalGroup(vGroup);
 	}
 
 	private JPanel getConditionPanel() {
@@ -1025,5 +1050,50 @@ public class GUI extends JFrame {
 			result += " " + condition.toString();
 		result += " )";
 		return result;
+	}
+
+	private void clearConditions() {
+		if (isLongMethod) {
+			conditionsLongMethod.clear();
+			initiateConditionLongMethod();
+		} else {
+			conditionsGodClass.clear();
+			initiateConditionGodClass();
+		}
+		updateTA();
+	}
+
+	private void loadRule(String[] rule) {
+		boolean help = isLongMethod;
+		isLongMethod = true;
+		addConditionsBox(rule[0]);
+		isLongMethod = false;
+		addConditionsBox(rule[1]);
+		isLongMethod = help;
+		updateTA();
+	}
+
+	private void addConditionsBox(String conditionsRule) {
+		String[] conditionsStr = conditionsRule.split(" ");
+		addNewConditionBox((int) Math.ceil((conditionsStr.length - 3) / 4.0), false);
+		int i = 2;
+		int count = 0;
+		while (i < conditionsStr.length - 1) {
+			ConditionsInfo info = isLongMethod ? conditionsLongMethod.get(count) : conditionsGodClass.get(count);
+			while (conditionsStr[i].equals("(")) {
+				info.addOpenParentheses();
+				i++;
+			}
+
+			info.setNewValues(conditionsStr[i++], conditionsStr[i++], Integer.parseInt(conditionsStr[i++]));
+
+			while (i < conditionsStr.length - 1 && conditionsStr[i].equals(")")) {
+				info.addOpenParentheses();
+				i++;
+			}
+			if (i < conditionsStr.length - 1 && (conditionsStr[i].equals("OU") || conditionsStr[i].equals("E")))
+				info.setSeparatorValue(conditionsStr[i++]);
+			count++;
+		}
 	}
 }
