@@ -86,8 +86,15 @@ public class ExcelDealer {
 		File file = new File(path);
 		file.delete();
 		XSSFSheet sheet = wb.createSheet("Rule");
-		String[] titles = { "MethodID", "class", "method", "is_God_Class", "is_Long_Method" };
-
+		String[] titles = new String[3+rows.get(0).length];
+		for(int i=0;i<titles.length;i++) {
+			String[] aux = { "MethodID", "class", "method"};
+			if(i<3)
+				titles[i] = aux[i];
+			else
+				titles[i] = rows.get(0)[i-3];
+		}
+				
 		CellStyle style = wb.createCellStyle();
 		Font font = wb.createFont();
 		font.setBold(true);
@@ -100,10 +107,10 @@ public class ExcelDealer {
 			cell.setCellValue(titles[i]);
 		}
 
-		for (int i = 0; i != rows.size(); i++) {
-			row = sheet.createRow(i + 1);
+		for (int i = 1; i != rows.size(); i++) {
+			row = sheet.createRow(i);
 			XSSFCell cell = row.createCell(0);
-			cell.setCellValue(i + 1);
+			cell.setCellValue(i);
 			for (int j = 0; j != rows.get(i).length; j++) {
 				cell = row.createCell(j + 1);
 				System.out.println(rows.get(i)[j]);

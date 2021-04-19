@@ -765,25 +765,38 @@ public class GUI extends JFrame {
 		tableModel2.setRowCount(0);
 		tableModel2.setColumnCount(0);
 
-		Object[] headerClass = { "class", "is_God_Class" };
-		Object[] headerMethod = { "MethodID", "method", "is_Long_Method" };
-		tableModel1.setColumnIdentifiers(headerClass);
-		tableModel2.setColumnIdentifiers(headerMethod);
+		for (int i = 0; i < list.get(0).get(0).length; i++) {
+			if (list.get(0).get(0)[i].equals("is_God_Class")) {
+				Object[] headerClass = { "class", "is_God_Class" };
+				tableModel1.setColumnIdentifiers(headerClass);
+				for (int j = 0; j != headerClass.length; j++) {
+					table1.getColumnModel().getColumn(j).setResizable(false);
+				}
+			} else {
+				Object[] headerMethod = { "MethodID", "method", "is_Long_Method" };
+				tableModel2.setColumnIdentifiers(headerMethod);
+				for (int j = 0; j != headerMethod.length; j++) {
+					table2.getColumnModel().getColumn(j).setResizable(false);
+				}
 
-		for (int i = 0; i != headerClass.length; i++) {
-			table1.getColumnModel().getColumn(i).setResizable(false);
-			table2.getColumnModel().getColumn(i).setResizable(false);
+			}
+      
 		}
+
+//		Object[] headerClass = {"class","is_God_Class"};
+//		Object[] headerMethod = {"MethodID","method","is_Long_Method"};
+//		tableModel1.setColumnIdentifiers(headerClass);
+//		tableModel2.setColumnIdentifiers(headerMethod);
 
 		table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		for (Object[] row : list.get(0)) {
+		for (Object[] row : list.get(1)) {
 			System.out.println(Arrays.deepToString(row));
 			tableModel1.addRow(row);
 		}
 
-		for (Object[] row : list.get(1)) {
+		for (Object[] row : list.get(2)) {
 			System.out.println(Arrays.deepToString(row));
 			tableModel2.addRow(row);
 		}
@@ -994,6 +1007,17 @@ public class GUI extends JFrame {
 			conditionsGodClass.get(conditionsGodClass.size() - 2).setSeparator(comboBox_2);
 
 		return panel;
+	}
+
+	private void clearConditions() {
+		if (isLongMethod) {
+			conditionsLongMethod.clear();
+			initiateConditionLongMethod();
+		} else {
+			conditionsGodClass.clear();
+			initiateConditionGodClass();
+		}
+		updateTA();
 	}
 
 	private void updateTA() {
