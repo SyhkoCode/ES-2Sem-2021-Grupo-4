@@ -1,5 +1,6 @@
 package metrics;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -115,6 +116,14 @@ public class CompareFiles {
 
 					}
 					else {
+						
+						
+						
+//						MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(new File(rulesFile)));
+//						for (int i = 0; i < mra.getCodeSmellResults().get(0).get(0).length; i++) {
+//							System.out.println(mra.getCodeSmellResults());
+//						}
+//						readCodeSmells(mra.getCodeSmellResults());
 //											int b = 0;
 //											try {
 //												String[] content = new String(Files.readAllBytes(Paths.get(rulesFile))).split("\\n");
@@ -138,10 +147,10 @@ public class CompareFiles {
 
 			}
 		}
-		System.out.println(saveIndsPerMethod.size());
-		System.out.println(saveIndsPerMethod.entrySet());
-		System.out.println(saveIndsPerClass.size());
-		System.out.println(saveIndsPerClass.entrySet());
+//		System.out.println(saveIndsPerMethod.size());
+//		System.out.println(saveIndsPerMethod.entrySet());
+//		System.out.println(saveIndsPerClass.size());
+//		System.out.println(saveIndsPerClass.entrySet());
 
 		List<HashMap> indicators = new ArrayList<>();
 		indicators.add(saveIndsPerClass);
@@ -157,12 +166,25 @@ public class CompareFiles {
 	public HashMap<String,Indicator> getIndicatorsPerMethod(List<HashMap> indicators) {
 		return indicators.get(1);
 	}
+	
+	public long countIndicatorInMap(Indicator indicator, HashMap<String,Indicator> indicatorsMap) {
+		return indicatorsMap.values().stream().filter(v -> v.equals(indicator)).count();		
+	}
 
 	public static void main(String[] args) throws IOException {
 		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
-		cf.testQuality(new String[]{"is_god_class","is_long_method"});
-		System.out.println("Nº de FPs: "+(cf.getIndicatorsPerClass((cf.testQuality(new String[]{"is_god_class","is_long_method"})))).values().stream().filter(v -> v.equals(Indicator.FP)).count()+ " em "+(cf.getIndicatorsPerClass((cf.testQuality(new String[]{"is_god_class","is_long_method"})))).size()+" classes");
-		System.out.println("Nº de FPs: "+(cf.getIndicatorsPerMethod((cf.testQuality(new String[]{"is_god_class","is_long_method"})))).values().stream().filter(v -> v.equals(Indicator.FP)).count()+ " em "+(cf.getIndicatorsPerMethod((cf.testQuality(new String[]{"is_god_class","is_long_method"})))).size()+" metodos");
+		
+		List<HashMap> indicators = cf.testQuality(new String[]{"is_god_class","is_long_method"});	
+		HashMap<String,Indicator> indicatorsPerClassMap = cf.getIndicatorsPerClass(indicators);
+		HashMap<String,Indicator> indicatorsPerMethodMap = cf.getIndicatorsPerMethod(indicators);
+		
+		System.out.println(indicatorsPerClassMap.entrySet());
+		System.out.println(indicatorsPerMethodMap.entrySet());
+		System.out.println("Nº de FPs: "+cf.countIndicatorInMap(Indicator.FP,indicatorsPerClassMap)+ " em "+indicatorsPerClassMap.size()+" classes");
+		System.out.println("Nº de FPs: "+cf.countIndicatorInMap(Indicator.FP,indicatorsPerMethodMap)+ " em "+indicatorsPerMethodMap.size()+" metodos");
+
+//		CompareFiles cf2 = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics - Copy.xlsx", "testeregras");
+//		cf2.testQuality(new String[]{"is_god_class","is_long_method"});
 
 
 	}
