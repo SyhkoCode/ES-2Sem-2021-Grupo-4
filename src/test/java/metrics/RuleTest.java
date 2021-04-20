@@ -47,17 +47,18 @@ class RuleTest {
 		assertTrue(actualMessage.contains(expectedMessage));
 		
 		exception = assertThrows(IllegalArgumentException.class, ()->{new Rule ("", "");});
-		expectedMessage = "Os argumentos não podem ser vazios.";
+		expectedMessage = "Os argumentos nao podem ser vazios.";
 		actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
+		assertEquals(actualMessage,expectedMessage);
 		
 		exception = assertThrows(IllegalArgumentException.class, ()->{new Rule ("is_God_Class", "");});
-		expectedMessage = "Os argumentos não podem ser vazios.";
+		expectedMessage = "Os argumentos nao podem ser vazios.";
 		actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 		
 		exception = assertThrows(IllegalArgumentException.class, ()->{new Rule ("", "SE ( NOM_class > 5 )");});
-		expectedMessage = "Os argumentos não podem ser vazios.";
+		expectedMessage = "Os argumentos nao podem ser vazios.";
 		actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 		
@@ -127,8 +128,7 @@ class RuleTest {
 		for(int i = 0; i < teorical.size(); i++) {
 			assertEquals(teorical.get(i).getNome(), test.get(i).getNome());
 			assertEquals(teorical.get(i).getText(), test.get(i).getText());
-		}
-			
+		}		
 		
 		File givesNull = new File(getClass().getResource("/wrongRules.txt/").getFile());
 		assertEquals(null, Rule.allRules(givesNull));
