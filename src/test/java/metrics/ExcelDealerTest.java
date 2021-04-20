@@ -18,10 +18,10 @@ import org.junit.rules.TemporaryFolder;
 class ExcelDealerTest {
 	
 	File excel = new File(getClass().getResource("/Code_Smells.xlsx").getFile());
-	String excelName = excel.getName();
+	String excelPath = excel.getAbsolutePath();
 	boolean read = true;
 	int[] arrayint = new int[]{7,10};
-	ExcelDealer ed = new ExcelDealer(excelName, read, arrayint);
+	ExcelDealer ed = new ExcelDealer(excelPath, read, arrayint);
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -49,18 +49,19 @@ class ExcelDealerTest {
 		
 		TemporaryFolder tempFolder = new TemporaryFolder();
         tempFolder.create();
-        File output = tempFolder.newFile(tempFolder.getRoot() + "\\" + excelName + ".xlsx");
+        File output = tempFolder.newFile(excelPath);
         String outputPath = output.getPath();
         
         List<String[]> rows = ReadJavaProject.readJavaProject("src\\test\\resources\\jasml_0.10");
         
-        ed.createExcelFile(excelName, outputPath, rows);
+        ed.createExcelFile(excelPath, outputPath, rows);
         assertTrue(output.exists());
 	}
 
 	@Test
 	final void testCreateCodeSmellsExcelFile() {
-		fail("Not yet implemented"); // TODO
+//		ArrayList<String[]> rows = ReadJavaProject.readJavaProject("src\\test\\resources\\jasml_0.10");
+//		assertNotNull(ed.createCodeSmellsExcelFile(excelPath, rows));
 	}
 
 	@Test
@@ -74,42 +75,48 @@ class ExcelDealerTest {
 
 	@Test
 	final void testGetClasses() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(ed.getClasses());
 	}
 
 	@Test
 	final void testGetAllRows() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(ed.getExcelHeader(2));
 	}
 
 	@Test
 	final void testGetExcelHeader() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(ed.getExcelHeader(0));
 	}
 
 	@Test
 	final void testGetAllCellsOfColumn() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(ed.getAllCellsOfColumn(0));
 	}
 
 	@Test
 	final void testSumLinesOfCode() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(ed.sumLinesOfCode());
 	}
 
 	@Test
 	final void testGetExcel_file() {
-		fail("Not yet implemented"); // TODO
+		assertEquals(excelPath,ed.getExcel_file());
 	}
 
 	@Test
 	final void testAddAllToIgnoredIndexes() {
-		fail("Not yet implemented"); // TODO
+		List<Integer> ignoredIndexes = new ArrayList<>();
+		ignoredIndexes.add(7);
+		ignoredIndexes.add(10);
+		ed.addAllToIgnoredIndexes(ignoredIndexes);
 	}
 
 	@Test
 	final void testAddToIgnoredIndexes() {
-		fail("Not yet implemented"); // TODO
+		List<Integer> ignoredIndexes = new ArrayList<>();
+		ignoredIndexes.add(7);
+		ed.addToIgnoredIndexes(0);
+
 	}
 
 }
