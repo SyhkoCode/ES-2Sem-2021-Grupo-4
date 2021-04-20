@@ -37,6 +37,7 @@ public class FileDealer {
 			myReader.close();
 
 		} catch (FileNotFoundException e) {
+			throw new IllegalArgumentException("Ficheiro nao existe.");
 		}
 		return result;
 	}
