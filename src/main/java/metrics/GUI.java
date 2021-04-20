@@ -1,6 +1,6 @@
 package metrics;
 
-import java.awt.EventQueue;
+import java.awt.EventQueue; 
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,7 +15,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Component;
@@ -39,12 +41,16 @@ import java.awt.BorderLayout;
 import javax.swing.ImageIcon;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.GroupLayout.SequentialGroup;
+
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.event.ChangeEvent;
+import javax.swing.JCheckBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -111,6 +117,16 @@ public class GUI extends JFrame {
 				closeParentheses--;
 		}
 
+		public void setNewValues(String sentenceStr, String conditionStr, int numberInt) {
+			sentence.setSelectedItem(sentenceStr);
+			condition.setSelectedItem(conditionStr);
+			number.setValue(numberInt);
+		}
+
+		public void setSeparatorValue(String sepratorStr) {
+			separator.setSelectedItem(sepratorStr);
+		}
+
 		@Override
 		public String toString() {
 			String result = "";
@@ -138,7 +154,11 @@ public class GUI extends JFrame {
 	private JPanel contentPane;
 	private JTextField fileName_TF;
 	private JTable table;
+	private JTable table1;
+	private JTable table2;
 	private DefaultTableModel tableModel;
+	private DefaultTableModel tableModel1;
+	private DefaultTableModel tableModel2;
 	private JLabel Label_Classes;
 	private JLabel Label_Packages;
 	private JLabel Label_LOC;
@@ -155,6 +175,16 @@ public class GUI extends JFrame {
 	private JTextArea conditionFormat_TA;
 	private JPanel conditions_isGodClass_Panel;
 	private JPanel addCondition_isGodClass_Panel;
+	private JTextField metricasGeradas;
+	private JTextField regras;
+	private JButton bRules;
+	private JTextField localizacaoResultados;
+	private JButton bLocation;
+	private JCheckBox testRuleEffiency;
+	private JButton buttonLocEfficency;
+	private JTextField localTeoricos;
+	private JButton bTeoricos;
+	private JButton runRules;
 	private JButton btnSaveFile;
 
 	/**
@@ -209,14 +239,14 @@ public class GUI extends JFrame {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					String path = jfc.getSelectedFile().getAbsolutePath();
 					String excelName = jfc.getSelectedFile().getName() + "_metrics";
-					dealer = new ExcelDealer(path, false);
+					dealer = new ExcelDealer(path, false, new int[]{7,10});
 					fileName_TF.setText(path + "");
 					if (pathToSave.isEmpty())
 						pathToSave = path;
 
 					dealer.createExcelFile(excelName, pathToSave, ReadJavaProject.readJavaProject(path));
 
-					dealer = new ExcelDealer(pathToSave + "\\" + excelName + ".xlsx", true);
+					dealer = new ExcelDealer(pathToSave + "\\" + excelName + ".xlsx", true, new int[]{7,10});
 					readExcel();
 				}
 			}
@@ -274,7 +304,7 @@ public class GUI extends JFrame {
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				addNewConditionBox();
+				addNewConditionBox(1, true);
 				updateTA();
 			}
 		});
@@ -302,7 +332,7 @@ public class GUI extends JFrame {
 		btnNewButton_2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				addNewConditionBox();
+				addNewConditionBox(1, true);
 				updateTA();
 			}
 		});
@@ -318,14 +348,12 @@ public class GUI extends JFrame {
 				int returnValue = jfc.showSaveDialog(null);
 
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					
 					String path = jfc.getSelectedFile().getAbsolutePath();
 					if (!path.endsWith(".txt")) {
-						path = path.replaceAll("\\.[^.]*$","") + ".txt";		
+						path = path.replaceAll("\\.[^.]*$", "") + ".txt";
 					}
 					if (pathToSave.isEmpty())
 						pathToSave = path;
-		
 					FileDealer.createFile(path, getRulesString());
 				}
 			}
@@ -341,6 +369,20 @@ public class GUI extends JFrame {
 		btnNewButton_1_1.setFocusable(false);
 		btnNewButton_1_1.setBounds(829, 490, 50, 50);
 		btnNewButton_1_1.setIcon(new ImageIcon("images/upload_Image.png"));
+		btnNewButton_1_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt files", "txt");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					loadRule(FileDealer.readFile(jfc.getSelectedFile().getAbsolutePath()));
+				}
+			}
+		});
 		panel_1.add(btnNewButton_1_1);
 
 		JScrollPane scrollPane_1 = new JScrollPane();
@@ -462,6 +504,233 @@ public class GUI extends JFrame {
 		isLongMethod = false;
 		initiateConditionGodClass();
 		isLongMethod = true;
+
+		JPanel detecaoPanel = new JPanel();
+		tabbedPane.addTab("Correr Regras", null, detecaoPanel, null);
+		detecaoPanel.setLayout(null);
+
+		metricasGeradas = new JTextField();
+		metricasGeradas.setEditable(false);
+		metricasGeradas.setBounds(125, 11, 491, 26);
+		detecaoPanel.add(metricasGeradas);
+		metricasGeradas.setColumns(10);
+
+		JButton bMetrics = new JButton("Choose metrics");
+		bMetrics.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					pathToSave = jfc.getSelectedFile().getAbsolutePath();
+					metricasGeradas.setText(pathToSave);
+
+				}
+			}
+		});
+
+		regras = new JTextField();
+		regras.setEditable(false);
+		regras.setColumns(10);
+		regras.setBounds(125, 48, 491, 26);
+		detecaoPanel.add(regras);
+
+		localizacaoResultados = new JTextField();
+		localizacaoResultados.setEnabled(false);
+		localizacaoResultados.setEditable(false);
+		localizacaoResultados.setColumns(10);
+		localizacaoResultados.setBounds(125, 85, 491, 26);
+		detecaoPanel.add(localizacaoResultados);
+		bMetrics.setBounds(626, 11, 174, 26);
+		detecaoPanel.add(bMetrics);
+
+		bRules = new JButton("Choose rules");
+		bRules.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt files", "txt");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					pathToSave = jfc.getSelectedFile().getAbsolutePath();
+					regras.setText(pathToSave);
+				}
+			}
+		});
+
+		bRules.setBounds(626, 48, 174, 26);
+		detecaoPanel.add(bRules);
+
+		JCheckBox keepResults = new JCheckBox("Keep Results");
+		keepResults.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (keepResults.isSelected()) {
+					localizacaoResultados.setEnabled(true);
+					bLocation.setEnabled(true);
+				} else {
+					localizacaoResultados.setEnabled(false);
+					bLocation.setEnabled(false);
+				}
+			}
+		});
+		keepResults.setBounds(6, 80, 113, 37);
+		detecaoPanel.add(keepResults);
+
+		bLocation = new JButton("Choose location");
+		bLocation.setEnabled(false);
+		bLocation.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(".xlsx", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showSaveDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+
+					String path = jfc.getSelectedFile().getAbsolutePath();
+					if (!path.endsWith(".txt")) {
+						path = path.replaceAll("\\.[^.]*$", "") + ".xlsx";
+						localizacaoResultados.setText(path);
+					}
+					if (pathToSave.isEmpty())
+						pathToSave = path;
+
+				}
+			}
+		});
+		bLocation.setBounds(626, 85, 174, 26);
+		detecaoPanel.add(bLocation);
+
+		testRuleEffiency = new JCheckBox("Test Rule Effiency");
+		testRuleEffiency.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (testRuleEffiency.isSelected()) {
+					buttonLocEfficency.setEnabled(true);
+					bTeoricos.setEnabled(true);
+					localTeoricos.setEnabled(true);
+				} else {
+					buttonLocEfficency.setEnabled(false);
+					bTeoricos.setEnabled(false);
+					localTeoricos.setEnabled(false);
+				}
+			}
+		});
+		testRuleEffiency.setBounds(263, 120, 139, 37);
+		detecaoPanel.add(testRuleEffiency);
+
+		buttonLocEfficency = new JButton("Choose location efficiency");
+		buttonLocEfficency.setEnabled(false);
+		buttonLocEfficency.setBounds(408, 125, 208, 26);
+		detecaoPanel.add(buttonLocEfficency);
+
+		localTeoricos = new JTextField();
+		localTeoricos.setEnabled(false);
+		localTeoricos.setEditable(false);
+		localTeoricos.setColumns(10);
+		localTeoricos.setBounds(125, 164, 491, 26);
+		detecaoPanel.add(localTeoricos);
+
+		bTeoricos = new JButton("Choose teoricos");
+		bTeoricos.setEnabled(false);
+		bTeoricos.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					pathToSave = jfc.getSelectedFile().getAbsolutePath();
+					localTeoricos.setText(pathToSave);
+				}
+			}
+		});
+
+		bTeoricos.setBounds(626, 164, 174, 26);
+		detecaoPanel.add(bTeoricos);
+		JTabbedPane panelResultados = new JTabbedPane(JTabbedPane.TOP);
+
+		runRules = new JButton("Run");
+		runRules.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricasGeradas.getText()),
+						Rule.allRules(new File(regras.getText())));
+				if (keepResults.isSelected()) {
+					new ExcelDealer("", false, new int[] {7,10}).createCodeSmellsExcelFile(localizacaoResultados.getText(),
+							mra.getResults());
+					panelResultados.setEnabled(true);
+				}
+				readCodeSmells(mra.getCodeSmellResults());
+				panelResultados.setEnabled(true);
+				// falta aqui então ele criar as tabelas
+
+			}
+
+		});
+		runRules.setBounds(372, 201, 174, 26);
+		detecaoPanel.add(runRules);
+
+		panelResultados.setBounds(10, 238, 931, 304);
+		detecaoPanel.add(panelResultados);
+		panelResultados.setEnabled(false);
+		JScrollPane sClasses = new JScrollPane();
+
+		panelResultados.addTab("Classes", null, sClasses, null);
+
+		tableModel1 = new DefaultTableModel();
+		table1 = new JTable() {
+			@Override
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				Component component = super.prepareRenderer(renderer, row, column);
+				int rendererWidth = component.getPreferredSize().width;
+				TableColumn tableColumn = getColumnModel().getColumn(column);
+				tableColumn.setPreferredWidth(
+						Math.max(rendererWidth + getIntercellSpacing().width + 10, tableColumn.getPreferredWidth()));
+				return component;
+			}
+		};
+
+		table1.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		table1.setModel(tableModel1);
+
+		table1.getTableHeader().setReorderingAllowed(false);
+		sClasses.setViewportView(table1);
+		JScrollPane sMetodos = new JScrollPane();
+
+		panelResultados.addTab("Methods", null, sMetodos, null);
+
+		tableModel2 = new DefaultTableModel();
+		table2 = new JTable() {
+			@Override
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				Component component = super.prepareRenderer(renderer, row, column);
+				int rendererWidth = component.getPreferredSize().width;
+				TableColumn tableColumn = getColumnModel().getColumn(column);
+				tableColumn.setPreferredWidth(
+						Math.max(rendererWidth + getIntercellSpacing().width + 10, tableColumn.getPreferredWidth()));
+				return component;
+			}
+		};
+
+		table2.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		table2.setModel(tableModel2);
+
+		table2.getTableHeader().setReorderingAllowed(false);
+		sMetodos.setViewportView(table2);
+
 	}
 
 	private void readExcel() {
@@ -469,7 +738,7 @@ public class GUI extends JFrame {
 		tableModel.setRowCount(0);
 		tableModel.setColumnCount(0);
 
-		Object[] header = dealer.getExcelHeader();
+		Object[] header = dealer.getExcelHeader(2);
 		tableModel.setColumnIdentifiers(header);
 
 		for (int i = 0; i != header.length; i++)
@@ -477,13 +746,58 @@ public class GUI extends JFrame {
 
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		for (Object[] row : dealer.getAllRows()) {
+		for (Object[] row : dealer.getAllRows(2)) {
 			tableModel.addRow(row);
 		}
 		Label_Classes.setText(String.valueOf((dealer.getClasses().size())));
 		Label_Packages.setText(String.valueOf(dealer.getAllCellsOfColumn(1).size()));
 		Label_LOC.setText(String.valueOf(dealer.sumLinesOfCode()));
 		Label_Methods.setText(String.valueOf(dealer.getAllCellsOfColumn(3).size()));
+	}
+
+	private void readCodeSmells(ArrayList<ArrayList<String[]>> list) {
+
+		tableModel1.setRowCount(0);
+		tableModel1.setColumnCount(0);
+		tableModel2.setRowCount(0);
+		tableModel2.setColumnCount(0);
+
+		for (int i = 0; i < list.get(0).get(0).length; i++) {
+			if (list.get(0).get(0)[i].equals("is_God_Class")) {
+				Object[] headerClass = { "class", "is_God_Class" };
+				tableModel1.setColumnIdentifiers(headerClass);
+				for (int j = 0; j != headerClass.length; j++) {
+					table1.getColumnModel().getColumn(j).setResizable(false);
+				}
+			} else {
+				Object[] headerMethod = { "MethodID", "method", "is_Long_Method" };
+				tableModel2.setColumnIdentifiers(headerMethod);
+				for (int j = 0; j != headerMethod.length; j++) {
+					table2.getColumnModel().getColumn(j).setResizable(false);
+				}
+
+			}
+      
+		}
+
+//		Object[] headerClass = {"class","is_God_Class"};
+//		Object[] headerMethod = {"MethodID","method","is_Long_Method"};
+//		tableModel1.setColumnIdentifiers(headerClass);
+//		tableModel2.setColumnIdentifiers(headerMethod);
+
+		table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		for (Object[] row : list.get(1)) {
+			System.out.println(Arrays.deepToString(row));
+			tableModel1.addRow(row);
+		}
+
+		for (Object[] row : list.get(2)) {
+			System.out.println(Arrays.deepToString(row));
+			tableModel2.addRow(row);
+		}
+
 	}
 
 	private void initiateConditionLongMethod() {
@@ -513,46 +827,43 @@ public class GUI extends JFrame {
 						GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)));
 	}
 
-	private void addNewConditionBox() {
-		if (isLongMethod) {
-			if (conditionsLongMethod.size() == 0)
-				addComponentsToGroupLayout(conditions_IsLongMethod_GL, getConditionPanel(),
-						addCondition_isLongMethod_Panel, null, conditionsLongMethod.size());
-			else
-				addComponentsToGroupLayout(conditions_IsLongMethod_GL, getConditionPanel(),
-						addCondition_isLongMethod_Panel, getCondionsSeparatorPanel(), conditionsLongMethod.size());
-		} else {
-			if (conditionsGodClass.size() == 0)
-				addComponentsToGroupLayout(conditions_IsGodClass_GL, getConditionPanel(), addCondition_isGodClass_Panel,
-						null, conditionsGodClass.size());
-			else
-				addComponentsToGroupLayout(conditions_IsGodClass_GL, getConditionPanel(), addCondition_isGodClass_Panel,
-						getCondionsSeparatorPanel(), conditionsGodClass.size());
+	private void addNewConditionBox(int number, boolean append) {
+		GroupLayout layout = isLongMethod ? conditions_IsLongMethod_GL : conditions_IsGodClass_GL;
+		ArrayList<ConditionsInfo> components = isLongMethod ? conditionsLongMethod : conditionsGodClass;
+
+		if (!append) {
+			JPanel panel = isLongMethod ? conditions_isLongMethod_Panel : conditions_isGodClass_Panel;
+			panel.removeAll();
+			layout = new GroupLayout(panel);
+			panel.setLayout(layout);
+			components.clear();
 		}
 
+		ParallelGroup hGroup = layout.createParallelGroup(Alignment.LEADING);
+		SequentialGroup vGroup = layout.createSequentialGroup();
+		JPanel addConditionPanel = isLongMethod ? addCondition_isLongMethod_Panel : addCondition_isGodClass_Panel;
+		for (int i = 0; i != number; i++) {
+			JPanel conditionPanel = getConditionPanel();
+
+			if (components.size() > 1) {
+				JPanel separator = getCondionsSeparatorPanel();
+				hGroup.addComponent(separator, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE);
+				if (i == 0)
+					vGroup.addGap(150 * components.size() - 200);
+				vGroup.addComponent(separator, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE);
+			}
+
+			hGroup.addComponent(conditionPanel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE);
+			vGroup.addComponent(conditionPanel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE);
+		}
+		hGroup.addComponent(addConditionPanel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE);
+		vGroup.addComponent(addConditionPanel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE);
+		addComponentsToGroupLayouts(layout, hGroup, vGroup);
 	}
 
-	private void addComponentsToGroupLayout(GroupLayout layout, JPanel panel, JPanel addCondition,
-			JPanel conditionSeparator, int size) {
-		if (conditionSeparator != null) {
-			layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
-					.addComponent(conditionSeparator, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE)
-					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE));
-			layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
-					.addGroup(layout.createSequentialGroup().addGap(150 * size - 200)
-							.addComponent(conditionSeparator, GroupLayout.PREFERRED_SIZE, 50,
-									GroupLayout.PREFERRED_SIZE)
-							.addComponent(panel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-							.addComponent(addCondition, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)));
-		} else {
-			layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(panel,
-					GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE));
-			layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
-					.addGroup(layout.createSequentialGroup().addGap(0)
-							.addComponent(panel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-							.addComponent(addCondition, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)));
-		}
-
+	private void addComponentsToGroupLayouts(GroupLayout layout, ParallelGroup hGroup, SequentialGroup vGroup) {
+		layout.setHorizontalGroup(hGroup);
+		layout.setVerticalGroup(vGroup);
 	}
 
 	private JPanel getConditionPanel() {
@@ -569,10 +880,11 @@ public class GUI extends JFrame {
 		lblSe.setBounds(12, 35, 43, 30);
 		panel.add(lblSe);
 
-		JComboBox<String> comboBox = getComoboBox(isLongMethod
-				? new DefaultComboBoxModel<String>(new String[] { "Linhas de código", "Número de ciclos" })
-				: new DefaultComboBoxModel<String>(
-						new String[] { "Número de métodos", "Linhas de código", "Número de ciclos" }),
+
+		JComboBox<String> comboBox = getComoboBox(
+				isLongMethod ? new DefaultComboBoxModel<String>(new String[] { "Linhas de código", "Número de ciclos" })
+						: new DefaultComboBoxModel<String>(
+								new String[] { "Número de métodos", "Linhas de código", "Número de ciclos" }),
 				240, 35, 200, 30);
 		panel.add(comboBox);
 
@@ -736,5 +1048,39 @@ public class GUI extends JFrame {
 			result += " " + condition.toString();
 		result += " )";
 		return result;
+	}
+
+	private void loadRule(String[] rule) {
+		boolean help = isLongMethod;
+		isLongMethod = true;
+		addConditionsBox(rule[0]);
+		isLongMethod = false;
+		addConditionsBox(rule[1]);
+		isLongMethod = help;
+		updateTA();
+	}
+
+	private void addConditionsBox(String conditionsRule) {
+		String[] conditionsStr = conditionsRule.split(" ");
+		addNewConditionBox((int) Math.ceil((conditionsStr.length - 3) / 4.0), false);
+		int i = 2;
+		int count = 0;
+		while (i < conditionsStr.length - 1) {
+			ConditionsInfo info = isLongMethod ? conditionsLongMethod.get(count) : conditionsGodClass.get(count);
+			while (conditionsStr[i].equals("(")) {
+				info.addOpenParentheses();
+				i++;
+			}
+
+			info.setNewValues(conditionsStr[i++], conditionsStr[i++], Integer.parseInt(conditionsStr[i++]));
+
+			while (i < conditionsStr.length - 1 && conditionsStr[i].equals(")")) {
+				info.addCloseParentheses();
+				i++;
+			}
+			if (i < conditionsStr.length - 1 && (conditionsStr[i].equals("OU") || conditionsStr[i].equals("E")))
+				info.setSeparatorValue(conditionsStr[i++]);
+			count++;
+		}
 	}
 }
