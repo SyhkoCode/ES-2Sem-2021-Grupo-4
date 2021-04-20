@@ -17,7 +17,7 @@ import org.junit.rules.TemporaryFolder;
 
 class ExcelDealerTest {
 	
-	File excel = new File("/src/test/resources/Code_Smells.xlsx");
+	File excel = new File(getClass().getResource("/Code_Smells.xlsx").getFile());
 	String excelName = excel.getName();
 	boolean read = true;
 	int[] arrayint = new int[]{7,10};

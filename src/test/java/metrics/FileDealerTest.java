@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 class FileDealerTest {
+	
+	File testeregras = new File(getClass().getResource("/testeregras.txt").getFile());
+	String testeregrasPath = testeregras.getAbsolutePath();
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -49,7 +53,16 @@ class FileDealerTest {
 	@Test
 	final void testReadFile() throws IOException {        
         assertThrows(IllegalArgumentException.class, ()->{FileDealer.readFile("naoexiste");});
-        assertNotNull(FileDealer.readFile("testeregras"));       
+        assertNotNull(FileDealer.readFile(testeregrasPath));
+        
+        String[] result = new String[2];
+        result[0]="SE ( ( LOC_method > 15 E CYCLO_method > 4 ) )";
+        result[1]="SE ( NOM_class > 5 OU LOC_class > 100 )";
+        
+        assertEquals(result.length,FileDealer.readFile(testeregrasPath).length);
+        assertEquals(Arrays.toString(result),Arrays.toString(FileDealer.readFile(testeregrasPath)));
+        assertEquals(result[0],FileDealer.readFile(testeregrasPath)[0]);
+        assertEquals(result[1],FileDealer.readFile(testeregrasPath)[1]);
 	}
 
 }

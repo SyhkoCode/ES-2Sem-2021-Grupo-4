@@ -1,4 +1,0 @@
-is_God_Class
-SE ( ( NOM_class > 5 E LOC_method > 20 ) OU ( LOC_class > 10 E WMC_class > 50 ) )
-is_Long_Method
-SE ( ( NOM_class > 5 OU LOC_class > 20 ) OU ( LOC_class > 10 E WMC_class > 50 ) )
