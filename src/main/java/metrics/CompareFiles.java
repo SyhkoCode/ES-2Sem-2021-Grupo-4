@@ -40,6 +40,8 @@ public class CompareFiles {
 		this.csFileDefault = csFileDefault;
 		this.metricsFile = metricsFile;
 		this.rulesFile = rulesFile;
+		this.excelDealerDefault = new ExcelDealer(csFileDefault, true, new int[] {});
+		this.excelDealerCreated = new ExcelDealer(metricsFile, true, new int[] {7,10});
 		this.booleanColumnsFilled = false;
 	}
 
@@ -67,62 +69,131 @@ public class CompareFiles {
 	public List<HashMap> testQuality(String[] titles) {
 		HashMap<String, Integer> indexesMap = getColIndexesByTitles(titles);
 
-		for (Object[] objDefaultExcel : excelDealerDefault.getAllRows(0)) {
-			for (Object[] objCreatedExcel : excelDealerCreated.getAllRows(0)) {			
+		for(Object[] objDefaultExcel : excelDealerDefault.getAllRows(0)) {
+			
+			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
+			
+			if (booleanColumnsFilled){
+				
+				for (Object[] objCreatedExcel : excelDealerCreated.getAllRows(0)) {			
 
-				MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
-				MethodData dataCreatedExcel = new MethodData(objCreatedExcel);
+					
+					MethodData dataCreatedExcel = new MethodData(objCreatedExcel);
 
-				if (dataDefaultExcel.getPackageName().equals(dataCreatedExcel.getPackageName())
-						&& dataDefaultExcel.getClassName().equals(dataCreatedExcel.getClassName())
-						&& dataDefaultExcel.getMethodName().equals(dataCreatedExcel.getMethodName())) {
+					if (dataDefaultExcel.getPackageName().equals(dataCreatedExcel.getPackageName())
+							&& dataDefaultExcel.getClassName().equals(dataCreatedExcel.getClassName())
+							&& dataDefaultExcel.getMethodName().equals(dataCreatedExcel.getMethodName())) {
 
-					if (booleanColumnsFilled) {
 
-						int arrayIndex = 0;
-						for (int i = 0; i < titles.length; i++) {
+							int arrayIndex = 0;
+							for (int i = 0; i < titles.length; i++) {
 
-							String colTitle = String.valueOf(indexesMap.keySet().toArray()[arrayIndex + 1]);
-							String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.values().toArray()[arrayIndex]]);
-							String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.values().toArray()[arrayIndex + 1]]);
-							String classe = String.valueOf(objCreatedExcel[2]);
-							String metodo = String.valueOf(objCreatedExcel[3]);
+								String colTitle = String.valueOf(indexesMap.keySet().toArray()[arrayIndex + 1]);
+								String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.values().toArray()[arrayIndex]]);
+								String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.values().toArray()[arrayIndex + 1]]);
+								String classe = String.valueOf(objCreatedExcel[2]);
+								String metodo = String.valueOf(objCreatedExcel[3]);
 
-							if (cellTextDefault.equals("TRUE") && cellTextCreated.equals("TRUE")) {
-								System.out.println(colTitle + ":  " +Indicator.VP.getName()+" no metodo: " + metodo+" da classe: " + classe);
-								saveIndsPerMethod.put(metodo, Indicator.VP);
-								saveIndsPerClass.put(classe, Indicator.VP);
+								if (cellTextDefault.equals("TRUE") && cellTextCreated.equals("TRUE")) {
+									System.out.println(colTitle + ":  " +Indicator.VP.getName()+" no metodo: " + metodo+" da classe: " + classe);
+									saveIndsPerMethod.put(metodo, Indicator.VP);
+									saveIndsPerClass.put(classe, Indicator.VP);
+								}
+
+								else if (cellTextDefault.equals("FALSE") && cellTextCreated.equals("TRUE")) {
+									System.out.println(colTitle + ":  " +Indicator.FP.getName()+" no metodo: " + metodo+" da classe: " + classe);
+									saveIndsPerMethod.put(metodo, Indicator.FP);
+									saveIndsPerClass.put(classe, Indicator.FP);
+								}
+
+								else if (cellTextDefault.equals("FALSE") && cellTextCreated.equals("FALSE")) {
+									System.out.println(colTitle + ":  " +Indicator.VN.getName()+" no metodo: " + metodo+" da classe: " + classe);
+									saveIndsPerMethod.put(metodo, Indicator.VN);
+									saveIndsPerClass.put(classe, Indicator.VN);
+								}
+
+								else if (cellTextDefault.equals("TRUE") && cellTextCreated.equals("FALSE")) {
+									System.out.println(colTitle + ":  " +Indicator.FN.getName()+" no metodo: " + metodo+" da classe: " + classe);
+									saveIndsPerMethod.put(metodo, Indicator.FN);
+									saveIndsPerClass.put(classe, Indicator.FN);
+								}
+								arrayIndex += 2;
 							}
 
-							else if (cellTextDefault.equals("FALSE") && cellTextCreated.equals("TRUE")) {
-								System.out.println(colTitle + ":  " +Indicator.FP.getName()+" no metodo: " + metodo+" da classe: " + classe);
-								saveIndsPerMethod.put(metodo, Indicator.FP);
-								saveIndsPerClass.put(classe, Indicator.FP);
-							}
-
-							else if (cellTextDefault.equals("FALSE") && cellTextCreated.equals("FALSE")) {
-								System.out.println(colTitle + ":  " +Indicator.VN.getName()+" no metodo: " + metodo+" da classe: " + classe);
-								saveIndsPerMethod.put(metodo, Indicator.VN);
-								saveIndsPerClass.put(classe, Indicator.VN);
-							}
-
-							else if (cellTextDefault.equals("TRUE") && cellTextCreated.equals("FALSE")) {
-								System.out.println(colTitle + ":  " +Indicator.FN.getName()+" no metodo: " + metodo+" da classe: " + classe);
-								saveIndsPerMethod.put(metodo, Indicator.FN);
-								saveIndsPerClass.put(classe, Indicator.FN);
-							}
-							arrayIndex += 2;
-						}
-
+						}}}
+				
+				
+				
+				
+				
+	 else{
+		 
+		 MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(new File(rulesFile)));
+			
+			
+			
+		 for (int i = 0; i < mra.getMethods().size(); i++) {
+			 
+			 String god_class = String.valueOf(mra.getMap().get("is_God_Class").get(i));
+			 String long_method = String.valueOf(mra.getMap().get("is_God_Class").get(i));
+				
+			 if(dataDefaultExcel.getPackageName().equals(mra.getMethods().get(i).getPackageName()) 
+					 && dataDefaultExcel.getClassName().equals(mra.getMethods().get(i).getClassName())
+					 && dataDefaultExcel.getMethodName().equals(mra.getMethods().get(i).getMethodName())) {
+				 
+				 
+						
+					 if(String.valueOf(objDefaultExcel[7]).equals("TRUE") && god_class.equals("true")){
+						System.out.println("Verdadeiro Positivo: is_God_Class   " + dataDefaultExcel.getMethodName()); 
+					 }
+					 
+					 else if(String.valueOf(objDefaultExcel[10]).equals("TRUE") && long_method.equals("true")) {
+						 System.out.println("Verdadeiro Positivo: is_Long_Method   " + dataDefaultExcel.getMethodName()); 
+					 }
+						 
+					 else if(String.valueOf(objDefaultExcel[7]).equals("TRUE") && god_class.equals("false")) {
+						 System.out.println("Falso Negativo: is_God_Class    " + dataDefaultExcel.getMethodName()); 
+					 }
+						 
+					 else if(String.valueOf(objDefaultExcel[10]).equals("TRUE") && long_method.equals("false")) {
+						 System.out.println("Falso Negativo: is_Long_Method     " + dataDefaultExcel.getMethodName()); 
+					 }
+							 
+					
+					 else if(String.valueOf(objDefaultExcel[7]).equals("FALSE") && god_class.equals("true")) {
+						 System.out.println("Falso Positivo: is_God_Class    " + dataDefaultExcel.getMethodName()); 
+					 }
+					 
+					 else if(String.valueOf(objDefaultExcel[10]).equals("FALSE") && long_method.equals("true")) {
+						 System.out.println("Falso Positivo: is_Long_Method    " + dataDefaultExcel.getMethodName()); 
+					 }
+					 
+					 else if(String.valueOf(objDefaultExcel[7]).equals("FALSE") && god_class.equals("false")) {
+						 System.out.println("Verdadeiro Negativo: is_God_Class    " + dataDefaultExcel.getMethodName()); 
+					 }
+						 
+					 else if(String.valueOf(objDefaultExcel[10]).equals("FALSE") && long_method.equals("false")) {
+						 System.out.println("Verdadeiro Negativo: is_Long_Method     " + dataDefaultExcel.getMethodName()); 
+					 }
+				 
+			 }
+					
+			 
+			 
 					}
-					else {
-						
-						
-						
-//						MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(new File(rulesFile)));
-//						for (int i = 0; i < mra.getCodeSmellResults().get(0).get(0).length; i++) {
-//							System.out.println(mra.getCodeSmellResults());
-//						}
+			
+			
+					
+				
+				
+				
+			
+										
+					
+					
+					
+					
+					
 //						readCodeSmells(mra.getCodeSmellResults());
 //											int b = 0;
 //											try {
@@ -141,12 +212,12 @@ public class CompareFiles {
 //												e.printStackTrace();
 //											}
 //										}
-					}
+//					}
+//
+	//			}
 
-				}
-
-			}
-		}
+			}}
+		
 //		System.out.println(saveIndsPerMethod.size());
 //		System.out.println(saveIndsPerMethod.entrySet());
 //		System.out.println(saveIndsPerClass.size());
@@ -172,7 +243,10 @@ public class CompareFiles {
 	}
 
 	public static void main(String[] args) throws IOException {
-		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
+	//	CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
+		
+		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Pictures\\jasml_0.10_metrics.xlsx", "C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt");
+
 		
 		List<HashMap> indicators = cf.testQuality(new String[]{"is_god_class","is_long_method"});	
 		HashMap<String,Indicator> indicatorsPerClassMap = cf.getIndicatorsPerClass(indicators);
@@ -180,8 +254,8 @@ public class CompareFiles {
 		
 		System.out.println(indicatorsPerClassMap.entrySet());
 		System.out.println(indicatorsPerMethodMap.entrySet());
-		System.out.println("Nº de FPs: "+cf.countIndicatorInMap(Indicator.FP,indicatorsPerClassMap)+ " em "+indicatorsPerClassMap.size()+" classes");
-		System.out.println("Nº de FPs: "+cf.countIndicatorInMap(Indicator.FP,indicatorsPerMethodMap)+ " em "+indicatorsPerMethodMap.size()+" metodos");
+		System.out.println("NÂº de FPs: "+cf.countIndicatorInMap(Indicator.FP,indicatorsPerClassMap)+ " em "+indicatorsPerClassMap.size()+" classes");
+		System.out.println("NÂº de FPs: "+cf.countIndicatorInMap(Indicator.FP,indicatorsPerMethodMap)+ " em "+indicatorsPerMethodMap.size()+" metodos");
 
 //		CompareFiles cf2 = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics - Copy.xlsx", "testeregras");
 //		cf2.testQuality(new String[]{"is_god_class","is_long_method"});
