@@ -1,5 +1,6 @@
 package metrics;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -76,12 +77,6 @@ public class MethodData {
 		return "MethodData [map=" + map + ", packageName=" + packageName + ", className=" + className + ", methodName="
 				+ methodName + "]";
 	}
-
-	public static void main(String[] args) {
-		String path = "C:\\Users\\tiago\\OneDrive\\Ambiente de Trabalho\\CoordenacaoIII_metrics.xlsx";
-//		System.out.println(MethodData.excelToMetricsMap(path));
-	}
-
 
 		
 }

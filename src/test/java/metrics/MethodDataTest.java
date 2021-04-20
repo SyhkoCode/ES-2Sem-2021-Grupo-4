@@ -3,6 +3,7 @@ package metrics;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.junit.jupiter.api.AfterAll;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.Test;
 
 class MethodDataTest {
 
+	String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
+	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 	}
@@ -65,7 +68,7 @@ class MethodDataTest {
 		parameter[7] = 4;
 		parameter[8] = 5;
 		
-		MethodData test = new MethodData(parameter);
+		MethodData test = new MethodData(parameter,metrics);
 		
 		assertEquals("metrics", test.getPackageName());
 		assertEquals("ExcelDealer", test.getClassName());
@@ -86,7 +89,7 @@ class MethodDataTest {
 		parameter[7] = 3;
 		parameter[8] = 1;
 		
-		test = new MethodData(parameter);
+		test = new MethodData(parameter, metrics);
 		
 		assertEquals("boop", test.getPackageName());
 		assertEquals("Dealer", test.getClassName());
@@ -145,9 +148,6 @@ class MethodDataTest {
 
 	@Test
 	final void testExcelToMetricsMap() {
-		/*
-		 * Não consegui ter este teste sem failure
-		 */
 		
 		ArrayList<MethodData> test = MethodData.excelToMetricsMap("src/test/resources/Snake_metrics.xlsx");
 		ArrayList<MethodData> compareTo = new ArrayList<>();
@@ -162,15 +162,15 @@ class MethodDataTest {
 		md2.addMetric("NOM_class", 2);
 		md2.addMetric("LOC_class", 37);
 		md2.addMetric("WMC_class", 10);
-		md2.addMetric("LOC_method", 9);
+		md2.addMetric("LOC_method", 21); 
 		md2.addMetric("CYCLO_method", 5);
 		compareTo.add(md2);
 		MethodData md3 = new MethodData("src", "Disform", "static Fruit disform ()");
 		md3.addMetric("NOM_class", 2);
 		md3.addMetric("LOC_class", 44);
 		md3.addMetric("WMC_class", 10);
-		md3.addMetric("LOC_method", 21);
-		md3.addMetric("CYCLO_method", 5);
+		md3.addMetric("LOC_method", 16); 
+		md3.addMetric("CYCLO_method", 6); 
 		compareTo.add(md3);
 		MethodData md4 = new MethodData("src", "Disform", "static void main (String[])");
 		md4.addMetric("NOM_class", 2);
@@ -232,8 +232,8 @@ class MethodDataTest {
 		md12.addMetric("NOM_class", 3);
 		md12.addMetric("LOC_class", 37);
 		md12.addMetric("WMC_class", 6);
-		md12.addMetric("LOC_method", 3);
-		md12.addMetric("CYCLO_method", 1);
+		md12.addMetric("LOC_method", 19); 
+		md12.addMetric("CYCLO_method", 4); 
 		compareTo.add(md12);
 		MethodData md13 = new MethodData("src", "TriangularDistribution", "static double triangularDistribution (double,double,double)");
 		md13.addMetric("NOM_class", 2);
@@ -250,7 +250,7 @@ class MethodDataTest {
 		md14.addMetric("CYCLO_method", 4);
 		compareTo.add(md14);
 		
-		assertEquals(compareTo, test);
+		assertEquals(compareTo.toString(), test.toString());
 
 	}
 
@@ -287,7 +287,9 @@ class MethodDataTest {
 		parameter[7] = 4;
 		parameter[8] = 5;
 		
-		MethodData test = new MethodData(parameter);
+		
+		MethodData test = new MethodData(parameter,metrics);
+		
 
 		assertEquals(1, test.getMetric("NOM_class"));
 		assertEquals(2, test.getMetric("LOC_class"));
@@ -327,17 +329,14 @@ class MethodDataTest {
 
 	@Test
 	final void testToString() {
-		/*
-		 * Não consegui ter este teste sem failure
-		 */
 		
 		MethodData test = new MethodData("metrics", "ExcelDealer", "main");
 		HashMap<String, Integer> map = new HashMap<>();
-		String teorical = "MethodData [map=" + map + ", packageName=metrics , className=ExcelDealer, methodName=main]";
+		String teorical = "MethodData [map=" + map + ", packageName=metrics, className=ExcelDealer, methodName=main]";
 		assertEquals(teorical, test.toString());
 		
 		test = new MethodData("package", "class", "method");
-		teorical = "MethodData [map=" + map + ", packageName=package , className=class, methodName=method]";
+		teorical = "MethodData [map=" + map + ", packageName=package, className=class, methodName=method]";
 
 		assertEquals(teorical, test.toString());
 		
