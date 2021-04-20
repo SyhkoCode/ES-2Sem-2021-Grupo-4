@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,9 +22,6 @@ public class CompareFiles {
 	private ExcelDealer excelDealerDefault;
 	private ExcelDealer excelDealerCreated;
 	private boolean booleanColumnsFilled;
-
-
-
 
 	HashMap<String,Indicator> saveIndsPerMethod = new HashMap<>();
 	HashMap<String,Indicator> saveIndsPerClass = new HashMap<>();
@@ -60,11 +58,26 @@ public class CompareFiles {
 				}
 			}
 		}
-		System.out.println(indexesMap.size());
+//		System.out.println(indexesMap.size());
 		return indexesMap;
 	}
+	
+	
+	private static Indicator parseIndicator(String defaultText, String createdText) {
+		List<String> valid = Arrays.asList("TRUE", "FALSE");
+		if (!valid.contains(defaultText) || !valid.contains(defaultText)) {
+			throw new IllegalStateException("Ficheiro mal formatado");
+		}
+		return (defaultText.equals("TRUE") ? (createdText.equals("TRUE") ? Indicator.VP : Indicator.VN) : (createdText.equals("TRUE") ? Indicator.FP : Indicator.FN));
+		
+//		if (defaultText.equals("TRUE")) {
+//			return createdText.equals("TRUE") ? Indicator.VP : Indicator.VN;
+//		} else {
+//			return createdText.equals("TRUE") ? Indicator.FP : Indicator.FN;
+//		}
+	}
 
-	public List<HashMap> testQuality(String[] titles) {
+	public List<HashMap<String, Indicator>> testQuality(String[] titles) {
 		HashMap<String, Integer> indexesMap = getColIndexesByTitles(titles);
 
 		for (Object[] objDefaultExcel : excelDealerDefault.getAllRows(0)) {
@@ -81,43 +94,20 @@ public class CompareFiles {
 
 						int arrayIndex = 0;
 						for (int i = 0; i < titles.length; i++) {
-
-							String colTitle = String.valueOf(indexesMap.keySet().toArray()[arrayIndex + 1]);
+//							String colTitle = String.valueOf(indexesMap.keySet().toArray()[arrayIndex + 1]);
 							String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.values().toArray()[arrayIndex]]);
 							String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.values().toArray()[arrayIndex + 1]]);
 							String classe = String.valueOf(objCreatedExcel[2]);
 							String metodo = String.valueOf(objCreatedExcel[3]);
-
-							if (cellTextDefault.equals("TRUE") && cellTextCreated.equals("TRUE")) {
-								System.out.println(colTitle + ":  " +Indicator.VP.getName()+" no metodo: " + metodo+" da classe: " + classe);
-								saveIndsPerMethod.put(metodo, Indicator.VP);
-								saveIndsPerClass.put(classe, Indicator.VP);
-							}
-
-							else if (cellTextDefault.equals("FALSE") && cellTextCreated.equals("TRUE")) {
-								System.out.println(colTitle + ":  " +Indicator.FP.getName()+" no metodo: " + metodo+" da classe: " + classe);
-								saveIndsPerMethod.put(metodo, Indicator.FP);
-								saveIndsPerClass.put(classe, Indicator.FP);
-							}
-
-							else if (cellTextDefault.equals("FALSE") && cellTextCreated.equals("FALSE")) {
-								System.out.println(colTitle + ":  " +Indicator.VN.getName()+" no metodo: " + metodo+" da classe: " + classe);
-								saveIndsPerMethod.put(metodo, Indicator.VN);
-								saveIndsPerClass.put(classe, Indicator.VN);
-							}
-
-							else if (cellTextDefault.equals("TRUE") && cellTextCreated.equals("FALSE")) {
-								System.out.println(colTitle + ":  " +Indicator.FN.getName()+" no metodo: " + metodo+" da classe: " + classe);
-								saveIndsPerMethod.put(metodo, Indicator.FN);
-								saveIndsPerClass.put(classe, Indicator.FN);
-							}
+							
+							Indicator indicator = parseIndicator(cellTextDefault, cellTextCreated);
+							saveIndsPerMethod.put(metodo, indicator);
+							saveIndsPerClass.put(classe, indicator);
+							
 							arrayIndex += 2;
 						}
-
 					}
-					else {
-						
-						
+					else {			
 						
 //						MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(new File(rulesFile)));
 //						for (int i = 0; i < mra.getCodeSmellResults().get(0).get(0).length; i++) {
@@ -152,18 +142,17 @@ public class CompareFiles {
 //		System.out.println(saveIndsPerClass.size());
 //		System.out.println(saveIndsPerClass.entrySet());
 
-		List<HashMap> indicators = new ArrayList<>();
+		List<HashMap<String, Indicator>> indicators = new ArrayList<>();
 		indicators.add(saveIndsPerClass);
 		indicators.add(saveIndsPerMethod);
-
 		return indicators;
 	}
 	
-	public HashMap<String,Indicator> getIndicatorsPerClass(List<HashMap> indicators) {
+	public HashMap<String,Indicator> getIndicatorsPerClass(List<HashMap<String, Indicator>> indicators) {
 		return indicators.get(0);
 	}
 	
-	public HashMap<String,Indicator> getIndicatorsPerMethod(List<HashMap> indicators) {
+	public HashMap<String,Indicator> getIndicatorsPerMethod(List<HashMap<String, Indicator>> indicators) {
 		return indicators.get(1);
 	}
 	
@@ -174,7 +163,7 @@ public class CompareFiles {
 	public static void main(String[] args) throws IOException {
 		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
 		
-		List<HashMap> indicators = cf.testQuality(new String[]{"is_god_class","is_long_method"});	
+		List<HashMap<String, Indicator>> indicators = cf.testQuality(new String[]{"is_god_class","is_long_method"});	
 		HashMap<String,Indicator> indicatorsPerClassMap = cf.getIndicatorsPerClass(indicators);
 		HashMap<String,Indicator> indicatorsPerMethodMap = cf.getIndicatorsPerMethod(indicators);
 		
