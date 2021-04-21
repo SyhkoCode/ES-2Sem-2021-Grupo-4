@@ -69,7 +69,82 @@ public class CompareFiles {
 		return (defaultText.equals("TRUE") ? (createdText.equals("TRUE") ? Indicator.VP : Indicator.FN) : (createdText.equals("TRUE") ? Indicator.FP : Indicator.VN));
 	}
 
+	public void compareWith2Files(String[] titles) {
+		HashMap<String, Integer> indexesMap = getColIndexesByTitles(titles);
+		
+		for(Object[] objDefaultExcel : excelDealerDefault.getAllRows(0)) {
+
+			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
+
+				for (Object[] objCreatedExcel : excelDealerCreated.getAllRows(0)) {
+
+					MethodData dataCreatedExcel = new MethodData(objCreatedExcel);
+
+					if (dataDefaultExcel.getPackageName().equals(dataCreatedExcel.getPackageName())
+							&& dataDefaultExcel.getClassName().equals(dataCreatedExcel.getClassName())
+							&& dataDefaultExcel.getMethodName().equals(dataCreatedExcel.getMethodName())) {
+
+						int arrayIndex = 0;
+						for (int i = 0; i < titles.length; i++) {
+							String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.values().toArray()[arrayIndex]]);
+							String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.values().toArray()[arrayIndex + 1]]);
+							String classe = String.valueOf(objCreatedExcel[2]);
+							String metodo = String.valueOf(objCreatedExcel[3]);
+
+							Indicator indicator = parseIndicator(cellTextDefault, cellTextCreated);
+							saveIndsPerMethod.put(metodo, indicator);
+							saveIndsPerClass.put(classe, indicator);
+
+							arrayIndex += 2;
+						}
+					}
+				}
+			}	
+	}
+	
+	public void compareWith3Files() {
+		MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(new File(rulesFile)));
+		
+		for(Object[] objDefaultExcel : excelDealerDefault.getAllRows(0)) {
+
+			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
+			
+			for (int i = 0; i < mra.getMethods().size(); i++) {
+				String god_class = String.valueOf(mra.getMap().get("is_God_Class").get(i)).toUpperCase();
+				String long_method = String.valueOf(mra.getMap().get("is_Long_Method").get(i)).toUpperCase();
+				
+				String cellTextDefault_godclass = String.valueOf(objDefaultExcel[7]);
+				String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[10]);
+				String classe = dataDefaultExcel.getClassName();
+				String metodo = dataDefaultExcel.getMethodName();
+
+				if(dataDefaultExcel.getPackageName().equals(mra.getMethods().get(i).getPackageName()) 
+						&& dataDefaultExcel.getClassName().equals(mra.getMethods().get(i).getClassName())
+						&& dataDefaultExcel.getMethodName().equals(mra.getMethods().get(i).getMethodName())) {
+					
+					Indicator indicator_godclass = parseIndicator(cellTextDefault_godclass, god_class);
+					saveIndsPerClass.put(classe, indicator_godclass);
+					
+					Indicator indicator_longmethod = parseIndicator(cellTextDefault_longmethod, long_method);
+					saveIndsPerMethod.put(metodo, indicator_longmethod);
+				}
+			}
+		}
+	}
+	
 	public List<HashMap<String, Indicator>> testQuality(String[] titles) {
+		List<HashMap<String, Indicator>> indicators = new ArrayList<>();
+		if (booleanColumnsFilled){
+			compareWith2Files(titles);
+		} else {
+			compareWith3Files();
+		}
+		indicators.add(saveIndsPerClass);
+		indicators.add(saveIndsPerMethod);
+		return indicators;
+	}
+	
+	public List<HashMap<String, Indicator>> testQualityAntigo(String[] titles) {
 		HashMap<String, Integer> indexesMap = getColIndexesByTitles(titles);
 
 		for(Object[] objDefaultExcel : excelDealerDefault.getAllRows(0)) {
@@ -102,6 +177,7 @@ public class CompareFiles {
 					}
 				}
 			} else {
+				/* o mra estar dentro de cada iteracao por row do objDefaultExcel era o q estava a fazer demorar imenso tempo*/
 				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(new File(rulesFile)));
 				for (int i = 0; i < mra.getMethods().size(); i++) {
 
