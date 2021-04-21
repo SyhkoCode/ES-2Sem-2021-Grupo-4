@@ -75,8 +75,7 @@ public class CompareFiles {
 			
 			if (booleanColumnsFilled){
 				
-				for (Object[] objCreatedExcel : excelDealerCreated.getAllRows(0)) {			
-
+				for (Object[] objCreatedExcel : excelDealerCreated.getAllRows(0)) {
 					
 					MethodData dataCreatedExcel = new MethodData(objCreatedExcel);
 
@@ -120,103 +119,56 @@ public class CompareFiles {
 								arrayIndex += 2;
 							}
 
-						}}}
-				
-				
-				
-				
-				
-	 else{
-		 
+						}
+					}
+				}else{
 		 MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(new File(rulesFile)));
-			
-			
-			
 		 for (int i = 0; i < mra.getMethods().size(); i++) {
-			 
+			
 			 String god_class = String.valueOf(mra.getMap().get("is_God_Class").get(i));
-			 String long_method = String.valueOf(mra.getMap().get("is_God_Class").get(i));
-				
+			 String long_method = String.valueOf(mra.getMap().get("is_Long_Method").get(i));
+
 			 if(dataDefaultExcel.getPackageName().equals(mra.getMethods().get(i).getPackageName()) 
 					 && dataDefaultExcel.getClassName().equals(mra.getMethods().get(i).getClassName())
 					 && dataDefaultExcel.getMethodName().equals(mra.getMethods().get(i).getMethodName())) {
 				 
-				 
-						
 					 if(String.valueOf(objDefaultExcel[7]).equals("TRUE") && god_class.equals("true")){
 						System.out.println("Verdadeiro Positivo: is_God_Class   " + dataDefaultExcel.getMethodName()); 
 					 }
 					 
-					 else if(String.valueOf(objDefaultExcel[10]).equals("TRUE") && long_method.equals("true")) {
+					 if(String.valueOf(objDefaultExcel[10]).equals("TRUE") && long_method.equals("true")) {
 						 System.out.println("Verdadeiro Positivo: is_Long_Method   " + dataDefaultExcel.getMethodName()); 
 					 }
 						 
-					 else if(String.valueOf(objDefaultExcel[7]).equals("TRUE") && god_class.equals("false")) {
+					 if(String.valueOf(objDefaultExcel[7]).equals("TRUE") && god_class.equals("false")) {
 						 System.out.println("Falso Negativo: is_God_Class    " + dataDefaultExcel.getMethodName()); 
 					 }
 						 
-					 else if(String.valueOf(objDefaultExcel[10]).equals("TRUE") && long_method.equals("false")) {
+					 if(String.valueOf(objDefaultExcel[10]).equals("TRUE") && long_method.equals("false")) {
 						 System.out.println("Falso Negativo: is_Long_Method     " + dataDefaultExcel.getMethodName()); 
 					 }
 							 
 					
-					 else if(String.valueOf(objDefaultExcel[7]).equals("FALSE") && god_class.equals("true")) {
+					 if(String.valueOf(objDefaultExcel[7]).equals("FALSE") && god_class.equals("true")) {
 						 System.out.println("Falso Positivo: is_God_Class    " + dataDefaultExcel.getMethodName()); 
 					 }
 					 
-					 else if(String.valueOf(objDefaultExcel[10]).equals("FALSE") && long_method.equals("true")) {
+					 if(String.valueOf(objDefaultExcel[10]).equals("FALSE") && long_method.equals("true")) {
 						 System.out.println("Falso Positivo: is_Long_Method    " + dataDefaultExcel.getMethodName()); 
 					 }
 					 
-					 else if(String.valueOf(objDefaultExcel[7]).equals("FALSE") && god_class.equals("false")) {
+					 if(String.valueOf(objDefaultExcel[7]).equals("FALSE") && god_class.equals("false")) {
 						 System.out.println("Verdadeiro Negativo: is_God_Class    " + dataDefaultExcel.getMethodName()); 
 					 }
 						 
-					 else if(String.valueOf(objDefaultExcel[10]).equals("FALSE") && long_method.equals("false")) {
+					 if(String.valueOf(objDefaultExcel[10]).equals("FALSE") && long_method.equals("false")) {
 						 System.out.println("Verdadeiro Negativo: is_Long_Method     " + dataDefaultExcel.getMethodName()); 
 					 }
 				 
-			 }
-					
-			 
-			 
+			 			}
 					}
-			
-			
-					
-				
-				
-				
-			
-										
-					
-					
-					
-					
-					
-//						readCodeSmells(mra.getCodeSmellResults());
-//											int b = 0;
-//											try {
-//												String[] content = new String(Files.readAllBytes(Paths.get(rulesFile))).split("\\n");
-//					
-//												for (int i = 0; i < content.length; i += 2) {
-//													if (String.valueOf(objDefaultExcel[(int) indexesList.values().toArray()[b]])
-//															.equals("TRUE") &&
-//					
-//															String.valueOf(objCreatedExcel[(int) indexesList.values().toArray()[b + 1]])
-//																	.equals("TRUE")) {
-//													}
-//												}
-//					
-//											} catch (IOException e) {
-//												e.printStackTrace();
-//											}
-//										}
-//					}
-//
-	//			}
-
-			}}
+				}
+			}
 		
 //		System.out.println(saveIndsPerMethod.size());
 //		System.out.println(saveIndsPerMethod.entrySet());
@@ -245,7 +197,7 @@ public class CompareFiles {
 	public static void main(String[] args) throws IOException {
 	//	CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
 		
-		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Pictures\\jasml_0.10_metrics.xlsx", "C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt");
+		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Pictures\\jasml_0.10_metrics.xlsx","C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt" );
 
 		
 		List<HashMap> indicators = cf.testQuality(new String[]{"is_god_class","is_long_method"});	
