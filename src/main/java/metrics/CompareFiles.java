@@ -194,10 +194,12 @@ public class CompareFiles {
 	public static void main(String[] args) throws IOException {
 //		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Pictures\\jasml_0.10_metrics.xlsx","C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt" );
 //		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
-		CompareFiles cf2 = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx", "testeregras");		
+		CompareFiles cf2 = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx", "testeregras.txt");		
 		Quality result = cf2.testQuality(new String[]{"is_god_class","is_long_method"});
 		result.getIndicatorsPerClass();	
+		result.getIndicatorsPerMethod();	
 		System.out.println(result.getIndicatorsPerMethod());
+		System.out.println(result.getIndicatorsPerClass());
 		System.out.println("No de FPs: "+result.countIndicatorInMethods(Indicator.FP)+" em "+ result.getIndicatorsPerMethod().size());
 	}
 
