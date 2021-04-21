@@ -1,4 +1,4 @@
-package metrics;
+package gui;
 
 import java.awt.EventQueue; 
 
@@ -28,6 +28,14 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+
+import metrics.ExcelDealer;
+import metrics.FileDealer;
+import metrics.MethodData;
+import metrics.MethodRuleAnalysis;
+import metrics.ReadJavaProject;
+import metrics.Rule;
+
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
