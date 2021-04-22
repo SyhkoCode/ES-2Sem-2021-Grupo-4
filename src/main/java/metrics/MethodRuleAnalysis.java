@@ -94,17 +94,17 @@ public class MethodRuleAnalysis {
 		return result;
 	}
 
-	public static void main(String[] args) {
-		String path = "C:\\Users\\sophi\\Desktop\\CoordenacaoIII_metrics.xlsx";
-
-		MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(path),Rule.allRules(new File("testeregras")));
-		mra.getCodeSmellResults();
-//		for (int i = 0; i < mra.getMethods().size(); i++) {
-//			System.out.println(mra.getMethods().get(i).getMethodName());
-//			for (String nome : mra.getMap().keySet()) {
-//				System.out.println(mra.getMap().get(nome).get(i));
-//			}
-//		}
-	}
+//	public static void main(String[] args) {
+//		String path = "C:\\Users\\sophi\\Desktop\\CoordenacaoIII_metrics.xlsx";
+//
+//		MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(path),Rule.allRules(new File("testeregras")));
+//		mra.getCodeSmellResults();
+////		for (int i = 0; i < mra.getMethods().size(); i++) {
+////			System.out.println(mra.getMethods().get(i).getMethodName());
+////			for (String nome : mra.getMap().keySet()) {
+////				System.out.println(mra.getMap().get(nome).get(i));
+////			}
+////		}
+//	}
 
 }
