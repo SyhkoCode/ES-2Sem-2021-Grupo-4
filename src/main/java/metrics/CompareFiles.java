@@ -70,12 +70,12 @@ public class CompareFiles {
 		for (String title : titles) {
 			for (int i = 0; i < excelDealerDefault.getExcelHeader(0).length; i++) {
 				if (String.valueOf(excelDealerDefault.getExcelHeader(0)[i]).equalsIgnoreCase(title)) {
-					indexesMap.put("default " + String.valueOf(excelDealerDefault.getExcelHeader(0)[i]), i);
+					indexesMap.put("default " + String.valueOf(excelDealerDefault.getExcelHeader(0)[i]).toLowerCase(), i);
 				}
 			}
 			for (int i = 0; i < excelDealerCreated.getExcelHeader(0).length; i++) {
 				if (String.valueOf(excelDealerCreated.getExcelHeader(0)[i]).equalsIgnoreCase(title)) {
-					indexesMap.put(String.valueOf(excelDealerCreated.getExcelHeader(0)[i]), i);
+					indexesMap.put(String.valueOf(excelDealerCreated.getExcelHeader(0)[i]).toLowerCase(), i);
 				}
 			}
 		}
@@ -119,18 +119,15 @@ public class CompareFiles {
 							&& dataDefaultExcel.getClassName().equals(dataCreatedExcel.getClassName())
 							&& dataDefaultExcel.getMethodName().equals(dataCreatedExcel.getMethodName())) {
 
-						int arrayIndex = 0;
-						for (int i = 0; i < titles.length; i++) {
-							String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.values().toArray()[arrayIndex]]);
-							String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.values().toArray()[arrayIndex + 1]]);
+						for (String title: titles) {
+							String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + title.toLowerCase())]);
+							String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.get(title.toLowerCase())]);
 							String classe = String.valueOf(objCreatedExcel[2]);
 							String metodo = String.valueOf(objCreatedExcel[3]);
 
 							Indicator indicator = parseIndicator(cellTextDefault, cellTextCreated);
 							saveIndsPerMethod.put(metodo, indicator);
 							saveIndsPerClass.put(classe, indicator);
-
-							arrayIndex += 2;
 						}
 					}
 				}
@@ -192,11 +189,12 @@ public class CompareFiles {
 	 * este main vai desaparecer
 	 */
 	public static void main(String[] args) throws IOException {
-//		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Pictures\\jasml_0.10_metrics.xlsx","C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt" );
-//		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
-		CompareFiles cf2 = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx", "testeregras");		
-		Quality result = cf2.testQuality(new String[]{"is_god_class","is_long_method"});
-		result.getIndicatorsPerClass();	
+		CompareFiles cf2 = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Desktop\\Snake_test.xlsx", "C:\\Users\\Pedro Pinheiro\\Downloads\\boop.xlsx");
+		//CompareFiles cf2 = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx", "testeregras");		
+		Quality result = cf2.testQuality(new String[] {"is_god_class","is_long_method"});
+		//result.getIndicatorsPerClass();	
+		System.out.println(result.getIndicatorsPerClass());
+		System.out.println("No de FPs: "+result.countIndicatorInClasses(Indicator.FP)+" em "+ result.getIndicatorsPerClass().size());
 		System.out.println(result.getIndicatorsPerMethod());
 		System.out.println("No de FPs: "+result.countIndicatorInMethods(Indicator.FP)+" em "+ result.getIndicatorsPerMethod().size());
 	}
