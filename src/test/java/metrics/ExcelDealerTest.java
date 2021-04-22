@@ -3,7 +3,6 @@ package metrics;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +16,19 @@ import org.junit.rules.TemporaryFolder;
 
 class ExcelDealerTest {
 	
+	File testeregras = new File(getClass().getResource("/testeregras.txt").getFile());
 	File excel = new File(getClass().getResource("/Code_Smells.xlsx").getFile());
 	String excelPath = excel.getAbsolutePath();
 	boolean read = true;
 	int[] arrayint = new int[]{7,10};
 	ExcelDealer ed = new ExcelDealer(excelPath, read, arrayint);
+	ExcelDealer edFalse = new ExcelDealer(excelPath, false, arrayint);
+	static TemporaryFolder tempFolder;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		tempFolder = new TemporaryFolder();
+        tempFolder.create();
 	}
 
 	@AfterAll
@@ -46,30 +50,37 @@ class ExcelDealerTest {
 
 	@Test
 	final void testCreateExcelFile() throws IOException {
-		
-		TemporaryFolder tempFolder = new TemporaryFolder();
-        tempFolder.create();
-        File output = tempFolder.newFile(excelPath);
-        String outputPath = output.getPath();
+        File output = tempFolder.newFile("jasml_0.10.xlsx");
+        String outputPath = output.getAbsolutePath();
         
         List<String[]> rows = ReadJavaProject.readJavaProject("src\\test\\resources\\jasml_0.10");
+        ed.createExcelFile(excel.getName(), outputPath, rows);
+        assertTrue(output.exists());
         
-        ed.createExcelFile(excelPath, outputPath, rows);
+        edFalse.createExcelFile(excel.getName(), outputPath, rows);
         assertTrue(output.exists());
 	}
 
 	@Test
-	final void testCreateCodeSmellsExcelFile() {
-//		ArrayList<String[]> rows = ReadJavaProject.readJavaProject("src\\test\\resources\\jasml_0.10");
-//		assertNotNull(ed.createCodeSmellsExcelFile(excelPath, rows));
+	final void testCreateCodeSmellsExcelFile() throws IOException {
+        File output = tempFolder.newFile("output.xlsx");
+        String outputPath = output.getAbsolutePath();
+        
+        ArrayList<String []> a = new ArrayList<>();
+        String b[] = {"not here","not here2"};
+        String c[] = {"not here3","i'm here"};
+        a.add(b);
+        a.add(c);
+
+		ed.createCodeSmellsExcelFile(outputPath, a);
+		assertTrue(output.exists());
+
 	}
 
 	@Test
 	final void testGetClassMethods() {
-		List<String> list = new ArrayList<>();	
 		int col_index = 6;
-		String classname = "LOC_method";
-		
+		String classname = "LOC_method";		
 		assertNotNull(ed.getClassMethods(col_index, classname));
 	}
 
@@ -80,7 +91,7 @@ class ExcelDealerTest {
 
 	@Test
 	final void testGetAllRows() {
-		assertNotNull(ed.getExcelHeader(2));
+		assertNotNull(ed.getAllRows(2));
 	}
 
 	@Test
