@@ -39,7 +39,7 @@ class MetricsTest {
 	@Test
 	final void testGetLines() throws Exception {
 		Exception exception = assertThrows(NullPointerException.class, ()->{Metrics.getLines(null);});
-		String expectedMessage = "Ficheiro não pode ser nulo.";
+		String expectedMessage = "Ficheiro nÃ£o pode ser nulo.";
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 
@@ -53,7 +53,7 @@ class MetricsTest {
 	final void testCountMethods() {
 		assertThrows(NullPointerException.class, ()->{Metrics.countMethods(null);});
 		Exception exception = assertThrows(IllegalArgumentException.class, ()->{Metrics.countMethods(new File("/naoexiste"));});
-		String expectedMessage = "Ficheiro especificado não existe.";
+		String expectedMessage = "Ficheiro especificado nÃ£o existe.";
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 		

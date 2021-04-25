@@ -41,7 +41,6 @@ public class ExcelDealer {
 				wb = new XSSFWorkbook();
 			}
 		} catch (InvalidFormatException | IOException e) {
-			e.printStackTrace();
 		}
 
 	}

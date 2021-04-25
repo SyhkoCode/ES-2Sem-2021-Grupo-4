@@ -1,5 +1,6 @@
 package metrics;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,23 +10,31 @@ public class MethodData {
 	private String className;
 	private String methodName;
 
-	
 	public MethodData(Object[] array, String[] metrics) {
-		this.packageName = array[1].toString();
+    this(array[1].toString(), array[2].toString(), array[3].toString());
+		/*this.packageName = array[1].toString();
 		this.className = array[2].toString();
-		this.methodName =  array[3].toString();
+		this.methodName =  array[3].toString();*/
 //		String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
 		for(int i=4,j=0;i<array.length;i++,j++) {
 			map.put(metrics[j], Integer.parseInt(array[i].toString()));
 		}
-	}
+  }
 	
 	// Só para facilitar criação de testes
 	
+
+	public MethodData(String packageName, String className, String methodName) {
+		this.packageName = packageName;
+		this.className = className;
+		this.methodName =  methodName;
+  }
+  
 	public MethodData(Object[] array) {
-		this.packageName = array[1].toString();
+    this(array[1].toString(), array[2].toString(), array[3].toString());
+		/*this.packageName = array[1].toString();
 		this.className = array[2].toString();
-		this.methodName =  array[3].toString();
+		this.methodName =  array[3].toString();*/
 	}
 
 	public void addMetric(String key, int value) {
@@ -68,12 +77,6 @@ public class MethodData {
 		return "MethodData [map=" + map + ", packageName=" + packageName + ", className=" + className + ", methodName="
 				+ methodName + "]";
 	}
-
-	public static void main(String[] args) {
-		String path = "C:\\Users\\tiago\\OneDrive\\Ambiente de Trabalho\\CoordenacaoIII_metrics.xlsx";
-//		System.out.println(MethodData.excelToMetricsMap(path));
-	}
-
 
 		
 }
