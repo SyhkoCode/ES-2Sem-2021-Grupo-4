@@ -18,7 +18,10 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Component;
 
@@ -35,6 +38,7 @@ import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.Cursor;
 import java.awt.BorderLayout;
@@ -53,6 +57,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.JCheckBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.JRadioButton;
 
 public class GUI extends JFrame {
 
@@ -186,6 +193,20 @@ public class GUI extends JFrame {
 	private JButton bTeoricos;
 	private JButton runRules;
 	private JButton btnSaveFile;
+	private JPanel matrizConfusao_1;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private int cVPs, cFP, cVN, cFN;
+	private int mVPs, mFP, mVN, mFN;
+	private JTextField textFieldTeoricos;
+	private JTextField textFieldCreated;
+	private JTextField textFieldMetricas;
+	private JTextField textFieldRules;
+	
+	private String csDefault, csCreated, metricsFile, rulesFile;
+	private HashMap <String, Indicator> classesMap, methodsMap;
 
 	/**
 	 * Launch the application.
@@ -675,7 +696,7 @@ public class GUI extends JFrame {
 				}
 				readCodeSmells(mra.getCodeSmellResults());
 				panelResultados.setEnabled(true);
-				// falta aqui então ele criar as tabelas
+				
 
 			}
 
@@ -730,7 +751,217 @@ public class GUI extends JFrame {
 
 		table2.getTableHeader().setReorderingAllowed(false);
 		sMetodos.setViewportView(table2);
+		
+		JPanel avaliacaoRegras = new JPanel();
+		tabbedPane.addTab("Avaliação Regras", null, avaliacaoRegras, null);
+		avaliacaoRegras.setLayout(null);
+		
+		//Avaliação Regras
+		JPanel matrizConfusao = new JPanel();
+		matrizConfusao.setBounds(26, 233, 354, 66);
+		avaliacaoRegras.add(matrizConfusao);
+		matrizConfusao.setLayout(new GridLayout(2,2));
+		
+		JTextField nVP = new JTextField ("- Verdadeiros Positivos");
+		nVP.setHorizontalAlignment(JTextField.CENTER);
+		nVP.setEditable(false);
+		nVP.setBackground(new Color (0,255,51));
+		matrizConfusao.add(nVP);
 
+		JTextField nFP = new JTextField ("- Falsos Positivos");
+		nFP.setEditable(false);
+		nFP.setHorizontalAlignment(JTextField.CENTER);
+		nFP.setBackground(new Color (255,51,51));
+		matrizConfusao.add(nFP);
+		
+		JTextField nFN = new JTextField ("- Falsos Negativos");
+		nFN.setEditable(false);
+		nFN.setHorizontalAlignment(JTextField.CENTER);
+		nFN.setBackground(new Color (204,0,0));
+		matrizConfusao.add(nFN);
+		
+		JTextField nVN = new JTextField ("- Verdadeiros Negativos");
+		nVN.setEditable(false);
+		nVN.setHorizontalAlignment(JTextField.CENTER);
+		nVN.setBackground(new Color (0,153,0));
+		matrizConfusao.add(nVN);
+	
+		JLabel lblNewLabel = new JLabel("Classes");
+		lblNewLabel.setBounds(25, 210, 42, 23);
+		avaliacaoRegras.add(lblNewLabel);
+		
+		textFieldTeoricos = new JTextField();
+		textFieldTeoricos.setEditable(false);
+		textFieldTeoricos.setBounds(91, 44, 594, 20);
+		avaliacaoRegras.add(textFieldTeoricos);
+		textFieldTeoricos.setColumns(10);
+		
+		JButton buttonDefault = new JButton("CSDefault");
+		buttonDefault.setEnabled(false);
+		buttonDefault.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					csDefault = jfc.getSelectedFile().getAbsolutePath();
+					textFieldTeoricos.setText(csDefault);
+				}
+			}
+		});
+		buttonDefault.setBounds(709, 43, 89, 23);
+		avaliacaoRegras.add(buttonDefault);
+		
+		textFieldCreated = new JTextField();
+		textFieldCreated.setEditable(false);
+		textFieldCreated.setColumns(10);
+		textFieldCreated.setBounds(91, 75, 594, 20);
+		avaliacaoRegras.add(textFieldCreated);
+		
+		JButton buttonCreated = new JButton("CSCreated");
+		buttonCreated.setEnabled(false);
+		buttonCreated.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					csCreated = jfc.getSelectedFile().getAbsolutePath();
+					textFieldCreated.setText(csDefault);
+				}
+			}
+		});
+		buttonCreated.setBounds(709, 74, 89, 23);
+		avaliacaoRegras.add(buttonCreated);
+		
+		textFieldMetricas = new JTextField();
+		textFieldMetricas.setEditable(false);
+		textFieldMetricas.setColumns(10);
+		textFieldMetricas.setBounds(91, 107, 594, 20);
+		avaliacaoRegras.add(textFieldMetricas);
+		
+		JButton metricsButton = new JButton("Metrics");
+		metricsButton.setEnabled(false);
+		metricsButton.setBounds(709, 106, 89, 23);
+		metricsButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					metricsFile = jfc.getSelectedFile().getAbsolutePath();
+					textFieldMetricas.setText(metricsFile);
+
+				}
+			}
+		});
+		avaliacaoRegras.add(metricsButton);
+		
+		textFieldRules = new JTextField();
+		textFieldRules.setEditable(false);
+		textFieldRules.setColumns(10);
+		textFieldRules.setBounds(91, 139, 594, 20);
+		avaliacaoRegras.add(textFieldRules);
+		
+		JButton rulesButton = new JButton("Rules");
+		rulesButton.setEnabled(false);
+		rulesButton.setBounds(709, 138, 89, 23);
+		rulesButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt files", "txt");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					rulesFile = jfc.getSelectedFile().getAbsolutePath();
+					textFieldRules.setText(rulesFile);
+				}
+			}
+		});
+		avaliacaoRegras.add(rulesButton);
+		
+		JButton buttonAvaliar = new JButton("Avaliar");
+		
+		ButtonGroup buttonGroup = new ButtonGroup();
+		
+		JRadioButton compare2 = new JRadioButton("Comparar 2");
+		compare2.setBounds(186, 14, 109, 23);
+		compare2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				buttonDefault.setEnabled(true);
+				buttonCreated.setEnabled(true);
+				metricsButton.setEnabled(false);
+				rulesButton.setEnabled(false);
+				buttonAvaliar.setEnabled(true);
+			}
+		});
+		avaliacaoRegras.add(compare2);
+		buttonGroup.add(compare2);
+		
+		JRadioButton compare3 = new JRadioButton("Comparar 3");
+		compare3.setBounds(576, 14, 109, 23);
+		compare3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				buttonDefault.setEnabled(true);
+				buttonCreated.setEnabled(false);
+				metricsButton.setEnabled(true);
+				rulesButton.setEnabled(true);
+				buttonAvaliar.setEnabled(true);
+			}
+		});
+		avaliacaoRegras.add(compare3);
+		buttonGroup.add(compare3);
+		
+		
+		buttonAvaliar.setEnabled(false);
+		buttonAvaliar.setBounds(417, 170, 89, 23);
+		buttonAvaliar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (compare2.isSelected()) {
+					CompareFiles comparef = new CompareFiles (csDefault, csCreated);
+					Quality quality = comparef.compareWith2Files(null);
+					classesMap = quality.getIndicatorsPerClass();
+					methodsMap = quality.getIndicatorsPerMethod();
+					
+				}
+				if (compare3.isSelected()) {
+					CompareFiles comparef = new CompareFiles (csDefault, metricsFile, rulesFile);
+					Quality quality = comparef.compareWith2Files(null);
+					classesMap = quality.getIndicatorsPerClass();
+					methodsMap = quality.getIndicatorsPerMethod();
+					
+				}
+			}
+		});
+		avaliacaoRegras.add(buttonAvaliar);
+		
+
+		
+		
+		
+		//Calcular quantos VPs, VNs encontra 
+
+		//Criar gráficos apartir disso 
+		//
+		
 	}
 
 	private void readExcel() {

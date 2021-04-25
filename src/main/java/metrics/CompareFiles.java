@@ -102,7 +102,7 @@ public class CompareFiles {
 	 * @param titles These are the Title Columns required to get their indexes.
 	 * @return Quality object that contains both HashMaps with Indicators per Method and per Class
 	 */
-	private Quality compareWith2Files(String[] titles) {
+	protected Quality compareWith2Files(String[] titles) {
 		HashMap<String, Integer> indexesMap = getColIndexesByTitles(titles);
 		HashMap<String,Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String,Indicator> saveIndsPerClass = new HashMap<>();
@@ -144,7 +144,7 @@ public class CompareFiles {
 	 * When CompareFiles receives 3 files, this is the method that allows the comparison between them and the code smell detection quality evaluation.
 	 * @return Quality object that contains both HashMaps with Indicators per Method and per Class
 	 */
-	private Quality compareWith3Files() {
+	protected Quality compareWith3Files() {
 		HashMap<String,Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String,Indicator> saveIndsPerClass = new HashMap<>();
 		MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(new File(rulesFile)));
