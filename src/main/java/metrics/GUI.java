@@ -206,21 +206,18 @@ public class GUI extends JFrame {
 	private JTextField textField_1;
 	private JTextField textField_2;
 	private JTextField textField_3;
-	private int cVPs, cFP, cVN, cFN;
-	private int mVPs, mFP, mVN, mFN;
 	private JTextField textFieldTeoricos;
 	private JTextField textFieldCreated;
 	private JTextField textFieldMetricas;
 	private JTextField textFieldRules;
-	
+	private JPanel avaliacaoRegras;
 	private JTextField nVP, nVN, nFP, nFN;
-	private int nVPs, nVNs, nFPs, nFNs;
 	private String csDefault, csCreated, metricsFile, rulesFile;
 	private HashMap <String, Indicator> classesMap, methodsMap;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTextField textField_6;
-	private JTextField textField_7;
+	private JTextField mVP;
+	private JTextField mFP;
+	private JTextField mFN;
+	private JTextField mVN;
 
 	/**
 	 * Launch the application.
@@ -766,7 +763,7 @@ public class GUI extends JFrame {
 		table2.getTableHeader().setReorderingAllowed(false);
 		sMetodos.setViewportView(table2);
 		
-		JPanel avaliacaoRegras = new JPanel();
+		avaliacaoRegras = new JPanel();
 		tabbedPane.addTab("Avaliação Regras", null, avaliacaoRegras, null);
 		avaliacaoRegras.setLayout(null);
 		
@@ -805,29 +802,29 @@ public class GUI extends JFrame {
 		avaliacaoRegras.add(matrizConfusao_2);
 		matrizConfusao_2.setLayout(new GridLayout(2, 2));
 		
-		textField_4 = new JTextField("- Verdadeiros Positivos");
-		textField_4.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_4.setEditable(false);
-		textField_4.setBackground(new Color(0, 255, 51));
-		matrizConfusao_2.add(textField_4);
+		mVP = new JTextField("- Verdadeiros Positivos");
+		mVP.setHorizontalAlignment(SwingConstants.CENTER);
+		mVP.setEditable(false);
+		mVP.setBackground(new Color(0, 255, 51));
+		matrizConfusao_2.add(mVP);
 		
-		textField_5 = new JTextField("- Falsos Positivos");
-		textField_5.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_5.setEditable(false);
-		textField_5.setBackground(new Color(255, 51, 51));
-		matrizConfusao_2.add(textField_5);
+		mFP = new JTextField("- Falsos Positivos");
+		mFP.setHorizontalAlignment(SwingConstants.CENTER);
+		mFP.setEditable(false);
+		mFP.setBackground(new Color(255, 51, 51));
+		matrizConfusao_2.add(mFP);
 		
-		textField_6 = new JTextField("- Falsos Negativos");
-		textField_6.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_6.setEditable(false);
-		textField_6.setBackground(new Color(204, 0, 0));
-		matrizConfusao_2.add(textField_6);
+		mFN = new JTextField("- Falsos Negativos");
+		mFN.setHorizontalAlignment(SwingConstants.CENTER);
+		mFN.setEditable(false);
+		mFN.setBackground(new Color(204, 0, 0));
+		matrizConfusao_2.add(mFN);
 		
-		textField_7 = new JTextField("- Verdadeiros Negativos");
-		textField_7.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_7.setEditable(false);
-		textField_7.setBackground(new Color(0, 153, 0));
-		matrizConfusao_2.add(textField_7);
+		mVN = new JTextField("- Verdadeiros Negativos");
+		mVN.setHorizontalAlignment(SwingConstants.CENTER);
+		mVN.setEditable(false);
+		mVN.setBackground(new Color(0, 153, 0));
+		matrizConfusao_2.add(mVN);
 	
 		JLabel lblNewLabel = new JLabel("Classes");
 		lblNewLabel.setBounds(25, 210, 42, 23);
@@ -984,7 +981,7 @@ public class GUI extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 				if (compare2.isSelected()) {
 					CompareFiles comparef = new CompareFiles (csDefault, csCreated);
-					Quality quality = comparef.compareWith2Files(null);
+					Quality quality = comparef.testQuality(new String[] {"is_God_Class", "is_Long_Method"});
 					classesMap = quality.getIndicatorsPerClass();
 					methodsMap = quality.getIndicatorsPerMethod();
 					updateEvaluationInfo();
@@ -992,7 +989,7 @@ public class GUI extends JFrame {
 				}
 				if (compare3.isSelected()) {
 					CompareFiles comparef = new CompareFiles (csDefault, metricsFile, rulesFile);
-					Quality quality = comparef.compareWith3Files();
+					Quality quality = comparef.testQuality(new String[] {"is_God_Class", "is_Long_Method"});
 					classesMap = quality.getIndicatorsPerClass();
 					methodsMap = quality.getIndicatorsPerMethod();
 					updateEvaluationInfo();
@@ -1000,31 +997,6 @@ public class GUI extends JFrame {
 			}
 		});
 		avaliacaoRegras.add(buttonAvaliar);
-
-		
-		DefaultPieDataset pieDataSet = new DefaultPieDataset();
-		pieDataSet.setValue("VP", 20);
-		pieDataSet.setValue("VN", 40);
-		
-		JFreeChart chart = ChartFactory.createPieChart("", pieDataSet, true, true, true);
-		PiePlot plot = (PiePlot)chart.getPlot();
-		ChartPanel chartFrame = new ChartPanel(chart);
-		chartFrame.setBounds(26, 310, 354, 234);
-		chartFrame.setVisible(true);
-		
-		avaliacaoRegras.add(chartFrame);
-		
-		DefaultPieDataset pieDataSet2 = new DefaultPieDataset();
-		pieDataSet2.setValue("VP", 20);
-		pieDataSet2.setValue("VN", 40);
-		
-		JFreeChart chart2 = ChartFactory.createPieChart("", pieDataSet2, true, true, true);
-		PiePlot plot2 = (PiePlot)chart2.getPlot();
-		ChartPanel chartFrame2 = new ChartPanel(chart2);
-		chartFrame2.setBounds(563, 310, 354, 234);
-		chartFrame2.setVisible(true);
-		
-		avaliacaoRegras.add(chartFrame2);
 
 		
 	}
@@ -1381,25 +1353,133 @@ public class GUI extends JFrame {
 	}
 	
 	private void updateEvaluationInfo() {
-		nVPs = 0;
-		nVNs = 0;
-		nFPs = 0;
-		nFNs = 0;
+		int cVP = 0;
+		int cVN = 0;
+		int cFP = 0;
+		int cFN = 0;
+		int mVPs = 0;
+		int mVNs = 0;
+		int mFPs = 0;
+		int mFNs = 0;
+		
 		for (String key : classesMap.keySet()) {
-			switch (classesMap.get(key)) {
+			Indicator indy = classesMap.get(key);
+			System.out.println("Na GUI " + indy);
+			switch (indy) {
 			case VP:
-				nVPs = nVPs++;
+				cVP = cVP+1;
+				System.out.println("Encontrei " + cVP + " VP");
+				break;
 			case VN:
-				nVNs = nVNs++;
+				cVN = cVN+1;
+				System.out.println("Encontrei " + cVN + " VN");
+				break;
 			case FP:
-				nFPs = nFPs++;
+				cFP = cFP+1;
+				System.out.println("Encontrei " + cFP + " FP");
+				break;
 			case FN:
-				nFNs = nFNs++;
+				cFN = cFN+1;
+				System.out.println("Encontrei " + cFN + " FN");
+				break;
 			}
 		}
-		nVP.setText(nVPs + " Verdadeiros Positivos");
-		nVN.setText(nVNs + " Verdadeiros Negativos");
-		nFP.setText(nFPs + " Falsos Positivos");
-		nFN.setText(nFNs + " Falsos Negativos");
+		
+		for (String key : methodsMap.keySet()) {
+			Indicator indy = methodsMap.get(key);
+			System.out.println("Na GUI " + indy);
+			switch (indy) {
+			case VP:
+				mVPs = mVPs+1;
+				System.out.println("Encontrei " + mVPs + " mVP");
+				break;
+			case VN:
+				mVNs = mVNs+1;
+				System.out.println("Encontrei " + mVNs + " mVN");
+				break;
+			case FP:
+				mFPs = mFPs+1;
+				System.out.println("Encontrei " + mFPs + " mFP");
+				break;
+			case FN:
+				mFNs = mFNs+1;
+				System.out.println("Encontrei " + mFNs + " mFN");
+				break;
+			}
+		}
+		
+		nVP.setText(cVP + " Verdadeiros Positivos");
+		nVN.setText(cVN + " Verdadeiros Negativos");
+		nFP.setText(cFP + " Falsos Positivos");
+		nFN.setText(cFN + " Falsos Negativos");
+		
+		mVP.setText(mVPs + " Verdadeiros Positivos");
+		mVN.setText(mVNs + " Verdadeiros Negativos");
+		mFP.setText(mFPs + " Falsos Positivos");
+		mFN.setText(mFNs + " Falsos Negativos");
+		
+		
+		DefaultPieDataset pieDataSet = new DefaultPieDataset();
+		JFreeChart chart = ChartFactory.createPieChart("", pieDataSet, true, true, true);
+		PiePlot plot = (PiePlot)chart.getPlot();
+		
+		if (cVP>0) {
+			pieDataSet.setValue("VP", cVP);
+		}
+		
+		if (cVN>0) {
+			pieDataSet.setValue("VN", cVN);
+		}
+		
+		if (cFP>0) {
+			pieDataSet.setValue("FP", cFP);
+		}
+		if (cFN>0) {
+			pieDataSet.setValue("FN", cFN);
+		}
+		
+		if (mVPs>0) {
+			pieDataSet.setValue("VP", mVPs);
+		}
+		
+		if (mVNs>0) {
+			pieDataSet.setValue("VN", mVNs);
+		}
+		
+		if (mFPs>0) {
+			pieDataSet.setValue("FP", mFPs);
+		}
+		if (mFNs>0) {
+			pieDataSet.setValue("FN", mFNs);
+		}
+		plot.setSectionPaint("VP", new Color (0,255,51));
+		plot.setSectionPaint("VN", new Color (0,153,0));
+		plot.setSectionPaint("FP", new Color (255,51,51));
+		plot.setSectionPaint("FN", new Color (204,0,0));
+		
+		ChartPanel chartFrame = new ChartPanel(chart);
+		chartFrame.setBounds(26, 310, 354, 234);
+		chartFrame.setVisible(true);
+		
+		avaliacaoRegras.add(chartFrame);
+		
+		DefaultPieDataset pieDataSet2 = new DefaultPieDataset();
+		pieDataSet2.setValue("VP", mVPs);
+		pieDataSet2.setValue("VN", mVNs);
+		pieDataSet2.setValue("FP", mFPs);
+		pieDataSet2.setValue("FN", mFNs);
+		
+		JFreeChart chart2 = ChartFactory.createPieChart("", pieDataSet2, true, true, true);
+		PiePlot plot2 = (PiePlot)chart2.getPlot();
+		plot2.setSectionPaint("VP", new Color (0,255,51));
+		plot2.setSectionPaint("VN", new Color (0,153,0));
+		plot2.setSectionPaint("FP", new Color (255,51,51));
+		plot2.setSectionPaint("FN", new Color (204,0,0));
+		ChartPanel chartFrame2 = new ChartPanel(chart2);
+		chartFrame2.setBounds(563, 310, 354, 234);
+		chartFrame2.setVisible(true);
+		
+		avaliacaoRegras.add(chartFrame2);
+		
 	}
 }
