@@ -1,45 +1,47 @@
 package metrics;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Metrics {
+
 
 	/**
 	 * LOC_class
 	 */
-	public static int getLines(File f) throws IOException {
+	public static int getLOC_class(File f) throws IOException {
 		if(f == null) {
-			throw new NullPointerException("Ficheiro não pode ser nulo.");
+			throw new NullPointerException("Ficheiro nao pode ser nulo.");
+		}
+		Integer min = null;
+		Integer max = null;
+		
+		List<String> lines = Files.lines(f.toPath()).collect(Collectors.toList());
+		String primaryClassName = f.getName().replaceFirst("\\.java", "");
+		
+		for (int i = 0; i < lines.size(); i++) {
+			String line = lines.get(i);
+			if (line.indexOf("class "+primaryClassName) != -1 && min == null) 
+				min = i;
+			if (line.indexOf("}") != -1)
+				max = i;
 		}
 		
-		FileReader fr = new FileReader(f);
-		BufferedReader br = new BufferedReader(fr);
-		int i = 0;
-		String line = br.readLine();
-		while (line != null) {
-			if (line.indexOf("{") != -1) {
-				i++; //nao estava a contar tb esta linha do bracket
-				while (br.readLine() != null)
-					i++;
-				break;
-			}			
-			line = br.readLine();
+		if (min == null || max == null) {
+			return 0;
 		}
 		
-		br.close();
-		fr.close();
-		return i;
+		return 1 + max - min;
 	}
 
 	/**
@@ -73,7 +75,7 @@ public class Metrics {
 			}
 			scanner.close();
 		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException("Ficheiro especificado não existe.");
+			throw new IllegalArgumentException("Ficheiro especificado nao existe.");
 		}
 
 		return nomMethod;

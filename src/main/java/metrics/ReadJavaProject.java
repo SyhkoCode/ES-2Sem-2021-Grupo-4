@@ -57,7 +57,7 @@ public class ReadJavaProject {
 										lines[2] = finalstr.replaceFirst("^\\s*\\S+\\s+\\S+\\s*", "");
 									}
 									lines[3] = "" + methods.size(); // NOM_class
-									lines[4] = Metrics.getLines(packageFile) + ""; // LOC_class
+									lines[4] = Metrics.getLOC_class(packageFile) + ""; // LOC_class
 									lines[5] = "" + wmc; // WMC_class
 									lines[7] = "" + countLinesOfMethods.get(i); // LOC_method
 									lines[8] = "" + cycloOfAllMethods.get(i); // CYCLO_method

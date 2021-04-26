@@ -19,6 +19,9 @@ class MetricsTest {
 	File ParsingExceptionTestFile = new File(getClass().getResource("/ParsingException.java").getFile());
 	File SourceCodeParserTestFile = new File(getClass().getResource("/SourceCodeParser.java").getFile());
 	File emptyTestFile = new File(getClass().getResource("/empty.java").getFile());
+	
+	File GrammerExceptionExtraTestFile = new File(getClass().getResource("/GrammerExceptionExtra.java").getFile());
+	File ClassOnlyOpeningFile = new File(getClass().getResource("/ClassOnlyOpening.java").getFile());
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -37,23 +40,26 @@ class MetricsTest {
 	}
 
 	@Test
-	final void testGetLines() throws Exception {
-		Exception exception = assertThrows(NullPointerException.class, ()->{Metrics.getLines(null);});
-		String expectedMessage = "Ficheiro nÃ£o pode ser nulo.";
+	final void testGetLOC_class() throws Exception {
+		Exception exception = assertThrows(NullPointerException.class, ()->{Metrics.getLOC_class(null);});
+		String expectedMessage = "Ficheiro nao pode ser nulo.";
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 
-		assertEquals(0, Metrics.getLines(emptyTestFile));		
-		assertEquals(18, Metrics.getLines(GrammerExceptionTestFile)); // LOC_class[GrammerException]=18
-		assertEquals(50, Metrics.getLines(ParsingExceptionTestFile)); // LOC_class[ParsingException]=50
-		assertEquals(1371, Metrics.getLines(SourceCodeParserTestFile)); // LOC_class[SourceCodeParser]=1371	
+//		assertEquals(0, Metrics.getLines(emptyTestFile));		
+		assertEquals(18, Metrics.getLOC_class(GrammerExceptionTestFile)); // LOC_class[GrammerException]=18
+		assertEquals(50, Metrics.getLOC_class(ParsingExceptionTestFile)); // LOC_class[ParsingException]=50
+		assertEquals(1371, Metrics.getLOC_class(SourceCodeParserTestFile)); // LOC_class[SourceCodeParser]=1371	
+		
+		assertEquals(18, Metrics.getLOC_class(GrammerExceptionExtraTestFile)); // LOC_class[GrammerException]=18
+		assertEquals(0, Metrics.getLOC_class(ClassOnlyOpeningFile));
 	}
 
 	@Test
 	final void testCountMethods() {
 		assertThrows(NullPointerException.class, ()->{Metrics.countMethods(null);});
 		Exception exception = assertThrows(IllegalArgumentException.class, ()->{Metrics.countMethods(new File("/naoexiste"));});
-		String expectedMessage = "Ficheiro especificado nÃ£o existe.";
+		String expectedMessage = "Ficheiro especificado nao existe.";
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 		
