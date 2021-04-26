@@ -169,6 +169,7 @@ public class CompareFiles {
 					Indicator indicator_godclass = parseIndicator(cellTextDefault_godclass, god_class);
 					saveIndsPerClass.put(classe, indicator_godclass);
 					System.out.println(indicator_godclass);
+				
 					
 					Indicator indicator_longmethod = parseIndicator(cellTextDefault_longmethod, long_method);
 					saveIndsPerMethod.put(metodo, indicator_longmethod);
