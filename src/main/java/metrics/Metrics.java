@@ -17,7 +17,10 @@ public class Metrics {
 
 
 	/**
-	 * LOC_class
+	 * Represents LOC_class metric.
+	 * @param f This is the given Java file from which this metric is extracted. 
+	 * @return The Number of Lines of Code in Java file, between class declaration and last bracket, including blank lines and comments inside.
+	 * @throws IOException If an I/O error occurs.
 	 */
 	public static int getLOC_class(File f) throws IOException {
 		if(f == null) {
