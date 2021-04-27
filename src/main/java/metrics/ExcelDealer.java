@@ -167,8 +167,8 @@ public class ExcelDealer {
 		List<String> list = getAllCellsOfColumn(5);
 		double total = 0;
 		
-		for (int i = 0; i < list.size()-1; i++)
-			total += Double.parseDouble(list.get(i+1));
+		for (int i = 1; i < list.size(); i++)
+			total += Double.parseDouble(list.get(i));
 
 		return (int) total;
 	}
