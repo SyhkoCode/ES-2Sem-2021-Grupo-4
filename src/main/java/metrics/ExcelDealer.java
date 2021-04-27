@@ -1,11 +1,9 @@
 package metrics;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -26,7 +24,8 @@ public class ExcelDealer {
 	public ExcelDealer(String filename) {
 		excel_file = filename;
 		try {
-			packet = OPCPackage.open(new File(excel_file));
+			System.out.println(filename);
+			packet = OPCPackage.open(new File(filename));
 			wb = new XSSFWorkbook(packet);
 		} catch (IOException | InvalidFormatException e) {
 			e.printStackTrace();
@@ -136,10 +135,10 @@ public class ExcelDealer {
 		return list;
 	}
 
-	public Object[] getExcelHeader(int columnsToDiscard) { // Devolve o cabeçalho de cada coluna do Excel - útil para a
+	public Object[] getExcelHeader() { // Devolve o cabeçalho de cada coluna do Excel - útil para a
 															// GUI, i.e, "package","class","NOM_Class", etc
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
-		Object[] rowList = new Object[row_size - columnsToDiscard];
+		Object[] rowList = new Object[row_size];
 		XSSFRow row = sheet.getRow(0);
 		int counter = 0;
 		for (int i = 0; i < row_size; i++) {

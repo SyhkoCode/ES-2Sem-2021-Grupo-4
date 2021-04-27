@@ -68,14 +68,14 @@ public class CompareFiles {
 		LinkedHashMap<String, Integer> indexesMap = new LinkedHashMap<>();
 
 		for (String title : titles) {
-			for (int i = 0; i < excelDealerDefault.getExcelHeader(0).length; i++) {
-				if (String.valueOf(excelDealerDefault.getExcelHeader(0)[i]).equalsIgnoreCase(title)) {
-					indexesMap.put("default " + String.valueOf(excelDealerDefault.getExcelHeader(0)[i]).toLowerCase(), i);
+			for (int i = 0; i < excelDealerDefault.getExcelHeader().length; i++) {
+				if (String.valueOf(excelDealerDefault.getExcelHeader()[i]).equalsIgnoreCase(title)) {
+					indexesMap.put("default " + String.valueOf(excelDealerDefault.getExcelHeader()[i]).toLowerCase(), i);
 				}
 			}
-			for (int i = 0; i < excelDealerCreated.getExcelHeader(0).length; i++) {
-				if (String.valueOf(excelDealerCreated.getExcelHeader(0)[i]).equalsIgnoreCase(title)) {
-					indexesMap.put(String.valueOf(excelDealerCreated.getExcelHeader(0)[i]).toLowerCase(), i);
+			for (int i = 0; i < excelDealerCreated.getExcelHeader().length; i++) {
+				if (String.valueOf(excelDealerCreated.getExcelHeader()[i]).equalsIgnoreCase(title)) {
+					indexesMap.put(String.valueOf(excelDealerCreated.getExcelHeader()[i]).toLowerCase(), i);
 				}
 			}
 		}

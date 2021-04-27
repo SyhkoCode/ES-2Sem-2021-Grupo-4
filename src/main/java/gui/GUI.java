@@ -749,7 +749,7 @@ public class GUI extends JFrame {
 		tableModel.setRowCount(0);
 		tableModel.setColumnCount(0);
 
-		Object[] header = dealer.getExcelHeader(2);
+		Object[] header = dealer.getExcelHeader();
 		tableModel.setColumnIdentifiers(header);
 
 		for (int i = 0; i != header.length; i++)
