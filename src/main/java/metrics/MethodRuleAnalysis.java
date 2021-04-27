@@ -40,11 +40,11 @@ public class MethodRuleAnalysis {
 		ArrayList<String[]> headerList = new ArrayList<>();
 		String[] auxHeader = new String[map.keySet().size()];
 		int counterHeader = 0;
-		for(String s : map.keySet()) {
+		for (String s : map.keySet()) {
 			auxHeader[counterHeader] = s;
 			counterHeader++;
 		}
-		headerList.add(auxHeader);		
+		headerList.add(auxHeader);
 //		System.out.println(Arrays.toString(headerList.get(0)));
 		result.add(headerList.get(0));
 		for (int i = 0; i < getMethods().size(); i++) {
@@ -122,6 +122,25 @@ public class MethodRuleAnalysis {
 				aux.add(s);
 		}
 		return aux;
+	}
+
+	private String[] classHeader() {
+		String[] header = new String[1 + getClassSmells().size()];
+		header[0] = "Class";
+		for (int i = 1; i < header.length; i++) {
+			header[i] = getClassSmells().get(i - 1);
+		}
+		return header;
+	}
+
+	private String[] methodHeader() {
+		String[] header = new String[2 + getMethodSmells().size()];
+		header[0] = "ID";
+		header[1] = "Method";
+		for (int i = 2; i < header.length; i++) {
+			header[i] = getMethodSmells().get(i - 2);
+		}
+		return header;
 	}
 
 //	public static void main(String[] args) {
