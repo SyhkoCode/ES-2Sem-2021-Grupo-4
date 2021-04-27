@@ -3,7 +3,6 @@ package metrics;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,10 +22,11 @@ public class ReadJavaProject {
 					if (packageFile.getName().endsWith(".java")) {
 						try {
 							LinkedHashSet<String> methods = Metrics.countMethods(packageFile);
-							LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile,methods);
+							LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile,
+									methods);
 							ArrayList<Integer> countLinesOfMethods = Metrics.countLinesOfMethods(linesOfMethods);
 							ArrayList<Integer> cycloOfAllMethods = Metrics.allCyclos(linesOfMethods);
-							
+
 							int wmc = Metrics.wmc(cycloOfAllMethods);
 							int i = 0;
 							if (current.getAbsolutePath().contains("\\src")) {
@@ -38,29 +38,33 @@ public class ReadJavaProject {
 									for (String substr : strs) {
 										strFormatted += substr.trim().split("\\s+")[0] + ",";
 									}
-									String[] lines = new String[11];
+									String[] lines = new String[8];
 									if (current.getAbsolutePath().contains("\\src\\")) {
-										lines[0] = current.getAbsolutePath().replaceFirst(".*\\\\src\\\\", "").replace("\\", "."); 
-									} else {	//package name
+										lines[0] = current.getAbsolutePath().replaceFirst(".*\\\\src\\\\", "")
+												.replace("\\", ".");
+									} else { // package name
 										lines[0] = "package default";
 									}
 
-									lines[1] = packageFile.getName().substring(0,packageFile.getName().lastIndexOf('.')); // class name
+									lines[1] = packageFile.getName().substring(0,
+											packageFile.getName().lastIndexOf('.')); // class name
 
 									String finalstr = method.replaceAll("\\s*\\((.|\\n|\\r)*\\)\\s*", "") + "("
 											+ strFormatted.substring(0, strFormatted.length() - 1) + ")";
 									String[] words = method.replaceAll("\\([^(]*$", "").split("\\s+");
-									
+
 									if (words.length == 2) {
 										lines[2] = finalstr.replaceFirst("^\\s*\\S+\\s*", "");
-									} else {	// method name
+									} else if ((words.length == 4)) {
+										lines[2] = finalstr.replaceFirst("^\\s*\\S+\\s+\\S+\\s+\\S+\\s*", "");
+									} else { // method name
 										lines[2] = finalstr.replaceFirst("^\\s*\\S+\\s+\\S+\\s*", "");
 									}
 									lines[3] = "" + methods.size(); // NOM_class
 									lines[4] = Metrics.getLines(packageFile) + ""; // LOC_class
 									lines[5] = "" + wmc; // WMC_class
-									lines[7] = "" + countLinesOfMethods.get(i); // LOC_method
-									lines[8] = "" + cycloOfAllMethods.get(i); // CYCLO_method
+									lines[6] = "" + countLinesOfMethods.get(i); // LOC_method
+									lines[7] = "" + cycloOfAllMethods.get(i); // CYCLO_method
 									result.add(lines);
 									i++;
 								}

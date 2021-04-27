@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 public class MethodRuleAnalysis {
 	private HashMap<String, ArrayList<Boolean>> map = new HashMap<>();
@@ -18,13 +19,6 @@ public class MethodRuleAnalysis {
 				map.get(r.getNome()).add(r.smellDetected(md));
 			}
 		}
-//		
-//		for(int i=0;i<getMethods().size();i++) {
-//			System.out.println(getMethods().get(i).getMethodName());
-//			for(String nome : getMap().keySet()) {
-//				System.out.println(getMap().get(nome).get(i));			
-//			}
-//		}
 	}
 
 	public HashMap<String, ArrayList<Boolean>> getMap() {
@@ -38,14 +32,16 @@ public class MethodRuleAnalysis {
 	public ArrayList<String[]> getResults() {
 		ArrayList<String[]> result = new ArrayList<>();
 		ArrayList<String[]> headerList = new ArrayList<>();
-		String[] auxHeader = new String[map.keySet().size()];
+		String[] auxCodeSmells = new String[map.keySet().size()];
 		int counterHeader = 0;
 		for (String s : map.keySet()) {
-			auxHeader[counterHeader] = s;
+			auxCodeSmells[counterHeader] = s;
 			counterHeader++;
 		}
+		String[] auxHeader = Stream
+				.concat(Arrays.stream(new String[] { "MethodID", "class", "method" }), Arrays.stream(auxCodeSmells))
+				.toArray(String[]::new);
 		headerList.add(auxHeader);
-//		System.out.println(Arrays.toString(headerList.get(0)));
 		result.add(headerList.get(0));
 		for (int i = 0; i < getMethods().size(); i++) {
 			String[] aux = new String[2 + map.size()];
@@ -56,13 +52,11 @@ public class MethodRuleAnalysis {
 				aux[counter] = getMap().get(nome).get(i).toString();
 				counter++;
 			}
-			System.out.println(Arrays.toString(aux));
 			result.add(aux);
 		}
 
 		for (int i = 0; i < result.size(); i++) {
 			for (int j = 0; j < result.get(i).length; j++) {
-//				System.out.println(result.get(i)[j]);
 			}
 		}
 		return result;
@@ -88,7 +82,6 @@ public class MethodRuleAnalysis {
 					if (j == aux_classes.length - 1) {
 						classesAndCodeSmellsFound.add(getMethods().get(i).getClassName());
 						result.get(0).add(aux_classes);
-//						System.out.println(Arrays.toString(aux_classes));
 					}
 				}
 			}
@@ -99,7 +92,6 @@ public class MethodRuleAnalysis {
 				aux_methods[j] = map.get(getMethodSmells().get(j - 2)).get(i).toString();
 				if (j == aux_methods.length - 1) {
 					result.get(1).add(aux_methods);
-//					System.out.println(Arrays.toString(aux_methods));
 				}
 			}
 		}

@@ -38,8 +38,8 @@ public class CompareFiles {
 	public CompareFiles(String csFileDefault, String csFileCreated) {
 		this.csFileDefault = csFileDefault;
 		this.csFileCreated = csFileCreated;
-		this.excelDealerDefault = new ExcelDealer(csFileDefault, true, new int[] {});
-		this.excelDealerCreated = new ExcelDealer(csFileCreated, true, new int[] {});
+		this.excelDealerDefault = new ExcelDealer(csFileDefault);
+		this.excelDealerCreated = new ExcelDealer(csFileCreated);
 		this.booleanColumnsFilled = true;
 	}
 
@@ -54,8 +54,8 @@ public class CompareFiles {
 		this.csFileDefault = csFileDefault;
 		this.metricsFile = metricsFile;
 		this.rulesFile = rulesFile;
-		this.excelDealerDefault = new ExcelDealer(csFileDefault, true, new int[] {});
-		this.excelDealerCreated = new ExcelDealer(metricsFile, true, new int[] {7,10});
+		this.excelDealerDefault = new ExcelDealer(csFileDefault);
+		this.excelDealerCreated = new ExcelDealer(metricsFile);
 		this.booleanColumnsFilled = false;
 	}
 
@@ -107,11 +107,11 @@ public class CompareFiles {
 		HashMap<String,Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String,Indicator> saveIndsPerClass = new HashMap<>();
 		
-		for(Object[] objDefaultExcel : excelDealerDefault.getAllRows(0)) {
+		for(Object[] objDefaultExcel : excelDealerDefault.getAllRows()) {
 
 			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
 
-				for (Object[] objCreatedExcel : excelDealerCreated.getAllRows(0)) {
+				for (Object[] objCreatedExcel : excelDealerCreated.getAllRows()) {
 
 					MethodData dataCreatedExcel = new MethodData(objCreatedExcel);
 
@@ -149,7 +149,7 @@ public class CompareFiles {
 		HashMap<String,Indicator> saveIndsPerClass = new HashMap<>();
 		MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(new File(rulesFile)));
 		
-		for(Object[] objDefaultExcel : excelDealerDefault.getAllRows(0)) {
+		for(Object[] objDefaultExcel : excelDealerDefault.getAllRows()) {
 
 			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
 			

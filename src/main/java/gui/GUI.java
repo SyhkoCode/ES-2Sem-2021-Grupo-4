@@ -1,6 +1,6 @@
 package gui;
 
-import java.awt.EventQueue; 
+import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,6 +18,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Component;
@@ -247,14 +248,15 @@ public class GUI extends JFrame {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					String path = jfc.getSelectedFile().getAbsolutePath();
 					String excelName = jfc.getSelectedFile().getName() + "_metrics";
-					dealer = new ExcelDealer(path, false, new int[]{7,10});
+					dealer = new ExcelDealer(pathToSave + "\\" + excelName + ".xlsx");
 					fileName_TF.setText(path + "");
 					if (pathToSave.isEmpty())
 						pathToSave = path;
+					List<String[]> javaProjectList = ReadJavaProject.readJavaProject(path);
+					javaProjectList.add(0, new String[] { "MethodID", "package", "class", "method", "NOM_class",
+							"LOC_class", "WMC_class", "LOC_method", "CYCLO_method" });
+					ExcelDealer.createExcelFile(pathToSave + "\\" + excelName, javaProjectList, "Metrics");
 
-					dealer.createExcelFile(excelName, pathToSave, ReadJavaProject.readJavaProject(path));
-
-					dealer = new ExcelDealer(pathToSave + "\\" + excelName + ".xlsx", true, new int[]{7,10});
 					readExcel();
 				}
 			}
@@ -677,8 +679,9 @@ public class GUI extends JFrame {
 				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricasGeradas.getText()),
 						Rule.allRules(new File(regras.getText())));
 				if (keepResults.isSelected()) {
-					new ExcelDealer("", false, new int[] {7,10}).createCodeSmellsExcelFile(localizacaoResultados.getText(),
-							mra.getResults());
+					mra.getResults().add(0, new String[] { "MethodID", "package", "class", "method", "NOM_class",
+							"LOC_class", "WMC_class", "LOC_method", "CYCLO_method" });
+					ExcelDealer.createExcelFile(localizacaoResultados.getText(), mra.getResults(), "Rules");
 					panelResultados.setEnabled(true);
 				}
 				readCodeSmells(mra.getCodeSmellResults());
@@ -754,7 +757,7 @@ public class GUI extends JFrame {
 
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		for (Object[] row : dealer.getAllRows(2)) {
+		for (Object[] row : dealer.getAllRows()) {
 			tableModel.addRow(row);
 		}
 		Label_Classes.setText(String.valueOf((dealer.getClasses().size())));
@@ -792,12 +795,10 @@ public class GUI extends JFrame {
 		table2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		for (int i = 1; i < list.get(0).size(); i++) {
-//			System.out.println(Arrays.deepToString(row));
 			tableModel1.addRow(list.get(0).get(i));
 		}
 
 		for (int i = 1; i < list.get(1).size(); i++) {
-//			System.out.println(Arrays.deepToString(row));
 			tableModel2.addRow(list.get(1).get(i));
 		}
 
@@ -882,7 +883,6 @@ public class GUI extends JFrame {
 		lblSe.setFont(new Font("Tahoma", Font.PLAIN, 30));
 		lblSe.setBounds(12, 35, 43, 30);
 		panel.add(lblSe);
-
 
 		JComboBox<String> comboBox = getComoboBox(
 				isLongMethod ? new DefaultComboBoxModel<String>(new String[] { "Linhas de código", "Número de ciclos" })
@@ -1035,8 +1035,8 @@ public class GUI extends JFrame {
 	public String getGodClassFormat() {
 		return getFormatString(conditionsGodClass);
 	}
-	
-	public ArrayList<String> getRulesString(){
+
+	public ArrayList<String> getRulesString() {
 		ArrayList<String> write = new ArrayList<>();
 		write.add("is_Long_Method");
 		write.add(getLongMethodFormat());
