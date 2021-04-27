@@ -769,23 +769,18 @@ public class GUI extends JFrame {
 		tableModel1.setColumnCount(0);
 		tableModel2.setRowCount(0);
 		tableModel2.setColumnCount(0);
-
 		for (int i = 0; i < list.get(0).get(0).length; i++) {
-			if (list.get(0).get(0)[i].equals("is_God_Class")) {
-				Object[] headerClass = { "class", "is_God_Class" };
-				tableModel1.setColumnIdentifiers(headerClass);
-				for (int j = 0; j != headerClass.length; j++) {
-					table1.getColumnModel().getColumn(j).setResizable(false);
-				}
-			} else {
-				Object[] headerMethod = { "MethodID", "method", "is_Long_Method" };
-				tableModel2.setColumnIdentifiers(headerMethod);
-				for (int j = 0; j != headerMethod.length; j++) {
-					table2.getColumnModel().getColumn(j).setResizable(false);
-				}
-
+			tableModel1.setColumnIdentifiers(list.get(0).get(0));
+			for (int j = 0; j != list.get(0).get(0).length; j++) {
+				table1.getColumnModel().getColumn(j).setResizable(false);
 			}
-      
+		}
+		for (int i = 0; i < list.get(1).get(0).length; i++) {
+			tableModel2.setColumnIdentifiers(list.get(1).get(0));
+			for (int j = 0; j != list.get(1).get(0).length; j++) {
+				table2.getColumnModel().getColumn(j).setResizable(false);
+			}
+
 		}
 
 //		Object[] headerClass = {"class","is_God_Class"};
@@ -796,14 +791,14 @@ public class GUI extends JFrame {
 		table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		for (Object[] row : list.get(1)) {
-			System.out.println(Arrays.deepToString(row));
-			tableModel1.addRow(row);
+		for (int i = 1; i < list.get(0).size(); i++) {
+//			System.out.println(Arrays.deepToString(row));
+			tableModel1.addRow(list.get(0).get(i));
 		}
 
-		for (Object[] row : list.get(2)) {
-			System.out.println(Arrays.deepToString(row));
-			tableModel2.addRow(row);
+		for (int i = 1; i < list.get(1).size(); i++) {
+//			System.out.println(Arrays.deepToString(row));
+			tableModel2.addRow(list.get(1).get(i));
 		}
 
 	}
