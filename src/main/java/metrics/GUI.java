@@ -218,6 +218,8 @@ public class GUI extends JFrame {
 	private JTextField mFP;
 	private JTextField mFN;
 	private JTextField mVN;
+	private ChartPanel chartFrame, chartFrame2;
+	private DefaultPieDataset pieDataSet, pieDataSet2;
 
 	/**
 	 * Launch the application.
@@ -836,7 +838,7 @@ public class GUI extends JFrame {
 		avaliacaoRegras.add(textFieldTeoricos);
 		textFieldTeoricos.setColumns(10);
 		
-		JButton buttonDefault = new JButton("CSDefault");
+		JButton buttonDefault = new JButton("Teoricos");
 		buttonDefault.setEnabled(false);
 		buttonDefault.addMouseListener(new MouseAdapter() {
 			@Override
@@ -857,7 +859,7 @@ public class GUI extends JFrame {
 		JLabel lblMtodos = new JLabel("Métodos");
 		lblMtodos.setBounds(563, 210, 51, 23);
 		avaliacaoRegras.add(lblMtodos);
-		buttonDefault.setBounds(709, 43, 89, 23);
+		buttonDefault.setBounds(709, 43, 109, 23);
 		avaliacaoRegras.add(buttonDefault);
 		
 		textFieldCreated = new JTextField();
@@ -866,7 +868,7 @@ public class GUI extends JFrame {
 		textFieldCreated.setBounds(91, 75, 594, 20);
 		avaliacaoRegras.add(textFieldCreated);
 		
-		JButton buttonCreated = new JButton("CSCreated");
+		JButton buttonCreated = new JButton("Sem Bool");
 		buttonCreated.setEnabled(false);
 		buttonCreated.addMouseListener(new MouseAdapter() {
 			@Override
@@ -879,11 +881,11 @@ public class GUI extends JFrame {
 
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					csCreated = jfc.getSelectedFile().getAbsolutePath();
-					textFieldCreated.setText(csDefault);
+					textFieldCreated.setText(csCreated);
 				}
 			}
 		});
-		buttonCreated.setBounds(709, 74, 89, 23);
+		buttonCreated.setBounds(709, 74, 109, 23);
 		avaliacaoRegras.add(buttonCreated);
 		
 		textFieldMetricas = new JTextField();
@@ -894,7 +896,7 @@ public class GUI extends JFrame {
 		
 		JButton metricsButton = new JButton("Metrics");
 		metricsButton.setEnabled(false);
-		metricsButton.setBounds(709, 106, 89, 23);
+		metricsButton.setBounds(709, 106, 109, 23);
 		metricsButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -921,7 +923,7 @@ public class GUI extends JFrame {
 		
 		JButton rulesButton = new JButton("Rules");
 		rulesButton.setEnabled(false);
-		rulesButton.setBounds(709, 138, 89, 23);
+		rulesButton.setBounds(709, 138, 109, 23);
 		rulesButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -951,7 +953,9 @@ public class GUI extends JFrame {
 				buttonDefault.setEnabled(true);
 				buttonCreated.setEnabled(true);
 				metricsButton.setEnabled(false);
+				textFieldMetricas.setText("");
 				rulesButton.setEnabled(false);
+				textFieldRules.setText("");
 				buttonAvaliar.setEnabled(true);
 			}
 		});
@@ -965,6 +969,7 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				buttonDefault.setEnabled(true);
 				buttonCreated.setEnabled(false);
+				textFieldCreated.setText("");
 				metricsButton.setEnabled(true);
 				rulesButton.setEnabled(true);
 				buttonAvaliar.setEnabled(true);
@@ -997,6 +1002,8 @@ public class GUI extends JFrame {
 			}
 		});
 		avaliacaoRegras.add(buttonAvaliar);
+		
+
 
 		
 	}
@@ -1349,6 +1356,11 @@ public class GUI extends JFrame {
 	}
 	
 	private void updateEvaluationInfo() {
+		if (chartFrame != null && chartFrame2 != null) {
+			avaliacaoRegras.remove(chartFrame);
+			avaliacaoRegras.remove(chartFrame2);
+		}
+		
 		int cVP = 0;
 		int cVN = 0;
 		int cFP = 0;
@@ -1364,11 +1376,9 @@ public class GUI extends JFrame {
 			switch (indy) {
 			case VP:
 				cVP = cVP+1;
-				System.out.println("Encontrei " + cVP + " VP");
 				break;
 			case VN:
 				cVN = cVN+1;
-				System.out.println("Encontrei " + cVN + " VN");
 				break;
 			case FP:
 				cFP = cFP+1;
@@ -1387,19 +1397,15 @@ public class GUI extends JFrame {
 			switch (indy) {
 			case VP:
 				mVPs = mVPs+1;
-				System.out.println("Encontrei " + mVPs + " mVP");
 				break;
 			case VN:
 				mVNs = mVNs+1;
-				System.out.println("Encontrei " + mVNs + " mVN");
 				break;
 			case FP:
 				mFPs = mFPs+1;
-				System.out.println("Encontrei " + mFPs + " mFP");
 				break;
 			case FN:
 				mFNs = mFNs+1;
-				System.out.println("Encontrei " + mFNs + " mFN");
 				break;
 			}
 		}
@@ -1414,8 +1420,8 @@ public class GUI extends JFrame {
 		mFP.setText(mFPs + " Falsos Positivos");
 		mFN.setText(mFNs + " Falsos Negativos");
 		
-		
-		DefaultPieDataset pieDataSet = new DefaultPieDataset();
+
+		pieDataSet = new DefaultPieDataset();
 		JFreeChart chart = ChartFactory.createPieChart("", pieDataSet, true, true, true);
 		PiePlot plot = (PiePlot)chart.getPlot();
 		
@@ -1448,18 +1454,19 @@ public class GUI extends JFrame {
 		if (mFNs>0) {
 			pieDataSet.setValue("FN", mFNs);
 		}
+		
 		plot.setSectionPaint("VP", new Color (0,255,51));
 		plot.setSectionPaint("VN", new Color (0,153,0));
 		plot.setSectionPaint("FP", new Color (255,51,51));
 		plot.setSectionPaint("FN", new Color (204,0,0));
 		
-		ChartPanel chartFrame = new ChartPanel(chart);
+		chartFrame = new ChartPanel(chart);
 		chartFrame.setBounds(26, 310, 354, 234);
 		chartFrame.setVisible(true);
 		
 		avaliacaoRegras.add(chartFrame);
 		
-		DefaultPieDataset pieDataSet2 = new DefaultPieDataset();
+		pieDataSet2 = new DefaultPieDataset();
 		pieDataSet2.setValue("VP", mVPs);
 		pieDataSet2.setValue("VN", mVNs);
 		pieDataSet2.setValue("FP", mFPs);
@@ -1471,7 +1478,8 @@ public class GUI extends JFrame {
 		plot2.setSectionPaint("VN", new Color (0,153,0));
 		plot2.setSectionPaint("FP", new Color (255,51,51));
 		plot2.setSectionPaint("FN", new Color (204,0,0));
-		ChartPanel chartFrame2 = new ChartPanel(chart2);
+		
+		chartFrame2 = new ChartPanel(chart2);
 		chartFrame2.setBounds(563, 310, 354, 234);
 		chartFrame2.setVisible(true);
 		
