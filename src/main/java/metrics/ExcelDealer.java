@@ -117,8 +117,7 @@ public class ExcelDealer {
 		List<Object[]> list = new ArrayList<>();
 
 		for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
-			Object[] rowList = new Object[row_size]; // -2 para ignorar as colunas dos booleans que o
-																		// stor não quer
+			Object[] rowList = new Object[row_size]; 
 			XSSFRow row = sheet.getRow(j);
 			if (row != null) {
 				int counter = 0;
@@ -167,8 +166,9 @@ public class ExcelDealer {
 		List<String> list = getAllCellsOfColumn(5);
 		double total = 0;
 		
-		for (int i = 1; i < list.size(); i++)
+		for (int i = 0; i < list.size(); i++) {
 			total += Double.parseDouble(list.get(i));
+		}
 
 		return (int) total;
 	}
