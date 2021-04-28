@@ -1,6 +1,5 @@
 package metrics;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,7 +30,6 @@ public class MethodRuleAnalysis {
 
 	public ArrayList<String[]> getResults() {
 		ArrayList<String[]> result = new ArrayList<>();
-		ArrayList<String[]> headerList = new ArrayList<>();
 		String[] auxCodeSmells = new String[map.keySet().size()];
 		int counterHeader = 0;
 		for (String s : map.keySet()) {
@@ -39,10 +37,10 @@ public class MethodRuleAnalysis {
 			counterHeader++;
 		}
 		String[] auxHeader = Stream
-				.concat(Arrays.stream(new String[] { "MethodID","package", "class", "method" }), Arrays.stream(auxCodeSmells))
+				.concat(Arrays.stream(new String[] { "MethodID", "package" ,"class", "method" }), Arrays.stream(auxCodeSmells))
 				.toArray(String[]::new);
-		headerList.add(auxHeader);
-		result.add(headerList.get(0));
+		result.add(auxHeader);
+
 		for (int i = 0; i < getMethods().size(); i++) {
 			String[] aux = new String[3 + map.size()];
 			aux[0] = getMethods().get(i).getPackageName();
@@ -55,11 +53,7 @@ public class MethodRuleAnalysis {
 			}
 			result.add(aux);
 		}
-
-		for (int i = 0; i < result.size(); i++) {
-			for (int j = 0; j < result.get(i).length; j++) {
-			}
-		}
+		
 		return result;
 
 	}
@@ -67,10 +61,11 @@ public class MethodRuleAnalysis {
 	public ArrayList<ArrayList<String[]>> getCodeSmellResults() {
 		ArrayList<String> classesAndCodeSmellsFound = new ArrayList<>();
 		ArrayList<ArrayList<String[]>> result = new ArrayList<>();
-		result.add(new ArrayList<>());
+		result.add(new ArrayList<>()); // Não consigo simplificar isto
 		result.add(new ArrayList<>());
 		result.get(0).add(classHeader());
 		result.get(1).add(methodHeader());
+		
 		for (int i = 0; i < getMethods().size(); i++) {
 			String[] aux_classes = new String[getClassSmells().size() + 1];
 			String[] aux_methods = new String[getMethodSmells().size() + 2];
@@ -102,7 +97,7 @@ public class MethodRuleAnalysis {
 	private ArrayList<String> getClassSmells() {
 		ArrayList<String> aux = new ArrayList<String>();
 		for (String s : map.keySet()) {
-			if (s.contains("Class"))
+			if (s.toLowerCase().contains("class"))
 				aux.add(s);
 		}
 		return aux;
@@ -111,7 +106,7 @@ public class MethodRuleAnalysis {
 	private ArrayList<String> getMethodSmells() {
 		ArrayList<String> aux = new ArrayList<String>();
 		for (String s : map.keySet()) {
-			if (s.contains("Method"))
+			if (s.toLowerCase().contains("method"))
 				aux.add(s);
 		}
 		return aux;
