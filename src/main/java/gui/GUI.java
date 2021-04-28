@@ -1058,7 +1058,7 @@ public class GUI extends JFrame {
 			}
 
 			// TODO caso o projeto tenha classes com o mesmo nome dá pedrinho aka coco
-			Label_Classes.setText(String.valueOf(ExcelDealer.getAllCellsOfColumn(path, 0, 1, false).size() - 1));
+			Label_Classes.setText(String.valueOf(ExcelDealer.getAllCellsOfColumn(path, 0, 2, false).size() - 1));
 			Label_Packages.setText(String.valueOf(ExcelDealer.getAllCellsOfColumn(path, 0, 1, false).size() - 1));
 			Label_LOC.setText(String.valueOf(ExcelDealer.sumAllColumn(path, 0, 7)));
 			Label_Methods.setText(String.valueOf(ExcelDealer.getAllCellsOfColumn(path, 0, 3, true).size() - 1));

@@ -39,7 +39,7 @@ public class MethodRuleAnalysis {
 			counterHeader++;
 		}
 		String[] auxHeader = Stream
-				.concat(Arrays.stream(new String[] { "MethodID", "class", "method" }), Arrays.stream(auxCodeSmells))
+				.concat(Arrays.stream(new String[] { "MethodID","package", "class", "method" }), Arrays.stream(auxCodeSmells))
 				.toArray(String[]::new);
 		headerList.add(auxHeader);
 		result.add(headerList.get(0));
