@@ -44,10 +44,11 @@ public class MethodRuleAnalysis {
 		headerList.add(auxHeader);
 		result.add(headerList.get(0));
 		for (int i = 0; i < getMethods().size(); i++) {
-			String[] aux = new String[2 + map.size()];
-			aux[0] = getMethods().get(i).getClassName();
-			aux[1] = getMethods().get(i).getMethodName();
-			int counter = 2;
+			String[] aux = new String[3 + map.size()];
+			aux[0] = getMethods().get(i).getPackageName();
+			aux[1] = getMethods().get(i).getClassName();
+			aux[2] = getMethods().get(i).getMethodName();
+			int counter = 3;
 			for (String nome : getMap().keySet()) {
 				aux[counter] = getMap().get(nome).get(i).toString();
 				counter++;

@@ -17,6 +17,7 @@ public class MethodData {
 		this.methodName =  array[3].toString();*/
 //		String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
 		for(int i=4,j=0;i<array.length;i++,j++) {
+			System.out.println(array[i].toString());
 			map.put(metrics[j], Integer.parseInt(array[i].toString()));
 		}
   }

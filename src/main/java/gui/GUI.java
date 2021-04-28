@@ -1089,11 +1089,6 @@ public class GUI extends JFrame {
 
 		}
 
-//		Object[] headerClass = {"class","is_God_Class"};
-//		Object[] headerMethod = {"MethodID","method","is_Long_Method"};
-//		tableModel1.setColumnIdentifiers(headerClass);
-//		tableModel2.setColumnIdentifiers(headerMethod);
-
 		table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 

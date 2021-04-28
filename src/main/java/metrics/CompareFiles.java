@@ -107,8 +107,8 @@ public class CompareFiles {
 		if (!valid.contains(defaultText) || !valid.contains(defaultText)) {
 			throw new IllegalStateException("Ficheiro mal formatado");
 		}
-		return (defaultText.equals("TRUE") ? (createdText.equals("TRUE") ? Indicator.VP : Indicator.FN)
-				: (createdText.equals("TRUE") ? Indicator.FP : Indicator.VN));
+		return (defaultText.equalsIgnoreCase("TRUE") ? (createdText.equalsIgnoreCase("TRUE") ? Indicator.VP : Indicator.FN)
+				: (createdText.equalsIgnoreCase("TRUE") ? Indicator.FP : Indicator.VN));
 	}
 
 	/**

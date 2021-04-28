@@ -29,7 +29,7 @@ public class ExcelDealer {
 		font.setBold(true);
 		style.setFont(font);
 
-		for (int i = 0; i != rows.size() - 1; i++)
+		for (int i = 0; i != rows.size(); i++)
 			createRow(sheet.createRow(i), rows.get(i), i, i != 0 ? null : style);
 
 		for (int i = 0; i != rows.get(0).length; i++)
@@ -117,7 +117,7 @@ public class ExcelDealer {
 			Object[] rowList = new Object[row_size];
 			XSSFRow row = sheet.getRow(j);
 			if (row != null) {
-				for (int i = 0; i < row_size; i++) 
+				for (int i = 0; i < row_size; i++)
 					rowList[i] = row.getCell(i);
 				
 				rows.add(rowList);
