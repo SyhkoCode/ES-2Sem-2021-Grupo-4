@@ -44,9 +44,9 @@ public class MethodData {
 	//
 	
 	
-	public static ArrayList<MethodData> excelToMetricsMap(String filename){
+	public static ArrayList<MethodData> excelToMetricsMap(String path) throws Exception{
 		ArrayList<MethodData> methods = new ArrayList<>();
-		for( Object[] o : new ExcelDealer(filename).getAllRows() )
+		for( Object[] o : ExcelDealer.getAllRows(path, 0) )
 			methods.add(new MethodData(o, new String[]{"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"}));
 		
 		return methods;
