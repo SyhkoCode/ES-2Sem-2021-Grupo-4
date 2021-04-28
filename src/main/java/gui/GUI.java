@@ -1362,6 +1362,7 @@ public class GUI extends JFrame {
 	}
 
 	private void addConditionsBox(String conditionsRule) {
+		System.out.println(conditionsRule);
 		String[] conditionsStr = conditionsRule.split(" ");
 		addNewConditionBox(countConditions(conditionsStr), false);
 		int i = 2;
@@ -1392,7 +1393,7 @@ public class GUI extends JFrame {
 				conditionBoxs++;
 		}
 
-		return conditionBoxs != 0 ? conditionBoxs + 1 : 0;
+		return conditionBoxs + 1;
 	}
 
 	private void updateEvaluationInfo() {
