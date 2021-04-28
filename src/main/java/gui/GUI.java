@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.ColorUIResource;
 
@@ -18,8 +19,10 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Component;
 
@@ -30,10 +33,19 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.data.general.DefaultPieDataset;
+
+import metrics.CompareFiles;
 import metrics.ExcelDealer;
 import metrics.FileDealer;
+import metrics.Indicator;
 import metrics.MethodData;
 import metrics.MethodRuleAnalysis;
+import metrics.Quality;
 import metrics.ReadJavaProject;
 import metrics.Rule;
 
@@ -44,6 +56,7 @@ import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.Cursor;
 import java.awt.BorderLayout;
@@ -195,6 +208,25 @@ public class GUI extends JFrame {
 	private JButton bTeoricos;
 	private JButton runRules;
 	private JButton btnSaveFile;
+	private JPanel matrizConfusao_1;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private JTextField textFieldTeoricos;
+	private JTextField textFieldCreated;
+	private JTextField textFieldMetricas;
+	private JTextField textFieldRules;
+	private JPanel avaliacaoRegras;
+	private JTextField nVP, nVN, nFP, nFN;
+	private String csDefault, csCreated, metricsFile, rulesFile;
+	private HashMap <String, Indicator> classesMap, methodsMap;
+	private JTextField mVP;
+	private JTextField mFP;
+	private JTextField mFN;
+	private JTextField mVN;
+	private ChartPanel chartFrame, chartFrame2;
+	private DefaultPieDataset pieDataSet, pieDataSet2;
 
 	/**
 	 * Launch the application.
@@ -741,6 +773,245 @@ public class GUI extends JFrame {
 
 		table2.getTableHeader().setReorderingAllowed(false);
 		sMetodos.setViewportView(table2);
+		
+		avaliacaoRegras = new JPanel();
+		tabbedPane.addTab("Avaliação Regras", null, avaliacaoRegras, null);
+		avaliacaoRegras.setLayout(null);
+
+		//Avaliação Regras
+		JPanel matrizConfusao = new JPanel();
+		matrizConfusao.setBounds(26, 233, 354, 66);
+		avaliacaoRegras.add(matrizConfusao);
+		matrizConfusao.setLayout(new GridLayout(2,2));
+
+		nVP = new JTextField ("- Verdadeiros Positivos");
+		nVP.setHorizontalAlignment(JTextField.CENTER);
+		nVP.setEditable(false);
+		nVP.setBackground(new Color (0,255,51));
+		matrizConfusao.add(nVP);
+
+		nFP = new JTextField ("- Falsos Positivos");
+		nFP.setEditable(false);
+		nFP.setHorizontalAlignment(JTextField.CENTER);
+		nFP.setBackground(new Color (255,51,51));
+		matrizConfusao.add(nFP);
+
+		nFN = new JTextField ("- Falsos Negativos");
+		nFN.setEditable(false);
+		nFN.setHorizontalAlignment(JTextField.CENTER);
+		nFN.setBackground(new Color (204,0,0));
+		matrizConfusao.add(nFN);
+
+		nVN = new JTextField ("- Verdadeiros Negativos");
+		nVN.setEditable(false);
+		nVN.setHorizontalAlignment(JTextField.CENTER);
+		nVN.setBackground(new Color (0,153,0));
+		matrizConfusao.add(nVN);
+
+		JPanel matrizConfusao_2 = new JPanel();
+		matrizConfusao_2.setBounds(564, 233, 354, 66);
+		avaliacaoRegras.add(matrizConfusao_2);
+		matrizConfusao_2.setLayout(new GridLayout(2, 2));
+
+		mVP = new JTextField("- Verdadeiros Positivos");
+		mVP.setHorizontalAlignment(SwingConstants.CENTER);
+		mVP.setEditable(false);
+		mVP.setBackground(new Color(0, 255, 51));
+		matrizConfusao_2.add(mVP);
+
+		mFP = new JTextField("- Falsos Positivos");
+		mFP.setHorizontalAlignment(SwingConstants.CENTER);
+		mFP.setEditable(false);
+		mFP.setBackground(new Color(255, 51, 51));
+		matrizConfusao_2.add(mFP);
+
+		mFN = new JTextField("- Falsos Negativos");
+		mFN.setHorizontalAlignment(SwingConstants.CENTER);
+		mFN.setEditable(false);
+		mFN.setBackground(new Color(204, 0, 0));
+		matrizConfusao_2.add(mFN);
+
+		mVN = new JTextField("- Verdadeiros Negativos");
+		mVN.setHorizontalAlignment(SwingConstants.CENTER);
+		mVN.setEditable(false);
+		mVN.setBackground(new Color(0, 153, 0));
+		matrizConfusao_2.add(mVN);
+
+		JLabel lblNewLabel = new JLabel("Classes");
+		lblNewLabel.setBounds(25, 210, 42, 23);
+		avaliacaoRegras.add(lblNewLabel);
+
+		textFieldTeoricos = new JTextField();
+		textFieldTeoricos.setEditable(false);
+		textFieldTeoricos.setBounds(91, 44, 594, 20);
+		avaliacaoRegras.add(textFieldTeoricos);
+		textFieldTeoricos.setColumns(10);
+
+		JButton buttonDefault = new JButton("Teoricos");
+		buttonDefault.setEnabled(false);
+		buttonDefault.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					csDefault = jfc.getSelectedFile().getAbsolutePath();
+					textFieldTeoricos.setText(csDefault);
+				}
+			}
+		});
+
+		JLabel lblMtodos = new JLabel("Métodos");
+		lblMtodos.setBounds(563, 210, 51, 23);
+		avaliacaoRegras.add(lblMtodos);
+		buttonDefault.setBounds(709, 43, 109, 23);
+		avaliacaoRegras.add(buttonDefault);
+
+		textFieldCreated = new JTextField();
+		textFieldCreated.setEditable(false);
+		textFieldCreated.setColumns(10);
+		textFieldCreated.setBounds(91, 75, 594, 20);
+		avaliacaoRegras.add(textFieldCreated);
+
+		JButton buttonCreated = new JButton("Sem Bool");
+		buttonCreated.setEnabled(false);
+		buttonCreated.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					csCreated = jfc.getSelectedFile().getAbsolutePath();
+					textFieldCreated.setText(csCreated);
+				}
+			}
+		});
+		buttonCreated.setBounds(709, 74, 109, 23);
+		avaliacaoRegras.add(buttonCreated);
+
+		textFieldMetricas = new JTextField();
+		textFieldMetricas.setEditable(false);
+		textFieldMetricas.setColumns(10);
+		textFieldMetricas.setBounds(91, 107, 594, 20);
+		avaliacaoRegras.add(textFieldMetricas);
+
+		JButton metricsButton = new JButton("Metrics");
+		metricsButton.setEnabled(false);
+		metricsButton.setBounds(709, 106, 109, 23);
+		metricsButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					metricsFile = jfc.getSelectedFile().getAbsolutePath();
+					textFieldMetricas.setText(metricsFile);
+
+				}
+			}
+		});
+		avaliacaoRegras.add(metricsButton);
+
+		textFieldRules = new JTextField();
+		textFieldRules.setEditable(false);
+		textFieldRules.setColumns(10);
+		textFieldRules.setBounds(91, 139, 594, 20);
+		avaliacaoRegras.add(textFieldRules);
+
+		JButton rulesButton = new JButton("Rules");
+		rulesButton.setEnabled(false);
+		rulesButton.setBounds(709, 138, 109, 23);
+		rulesButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt files", "txt");
+				jfc.setFileFilter(filter);
+				int returnValue = jfc.showOpenDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+					rulesFile = jfc.getSelectedFile().getAbsolutePath();
+					textFieldRules.setText(rulesFile);
+				}
+			}
+		});
+		avaliacaoRegras.add(rulesButton);
+
+		JButton buttonAvaliar = new JButton("Avaliar");
+
+		ButtonGroup buttonGroup = new ButtonGroup();
+
+		JRadioButton compare2 = new JRadioButton("Comparar 2");
+		compare2.setBounds(186, 14, 109, 23);
+		compare2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				buttonDefault.setEnabled(true);
+				buttonCreated.setEnabled(true);
+				metricsButton.setEnabled(false);
+				textFieldMetricas.setText("");
+				rulesButton.setEnabled(false);
+				textFieldRules.setText("");
+				buttonAvaliar.setEnabled(true);
+			}
+		});
+		avaliacaoRegras.add(compare2);
+		buttonGroup.add(compare2);
+
+		JRadioButton compare3 = new JRadioButton("Comparar 3");
+		compare3.setBounds(576, 14, 109, 23);
+		compare3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				buttonDefault.setEnabled(true);
+				buttonCreated.setEnabled(false);
+				textFieldCreated.setText("");
+				metricsButton.setEnabled(true);
+				rulesButton.setEnabled(true);
+				buttonAvaliar.setEnabled(true);
+			}
+		});
+		avaliacaoRegras.add(compare3);
+		buttonGroup.add(compare3);
+
+
+		buttonAvaliar.setEnabled(false);
+		buttonAvaliar.setBounds(417, 170, 89, 23);
+		buttonAvaliar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (compare2.isSelected()) {
+					CompareFiles comparef = new CompareFiles (csDefault, csCreated);
+					Quality quality = comparef.testQuality(new String[] {"is_God_Class", "is_Long_Method"});
+					classesMap = quality.getIndicatorsPerClass();
+					methodsMap = quality.getIndicatorsPerMethod();
+					updateEvaluationInfo();
+
+				}
+				if (compare3.isSelected()) {
+					CompareFiles comparef = new CompareFiles (csDefault, metricsFile, rulesFile);
+					Quality quality = comparef.testQuality(new String[] {"is_God_Class", "is_Long_Method"});
+					classesMap = quality.getIndicatorsPerClass();
+					methodsMap = quality.getIndicatorsPerMethod();
+					updateEvaluationInfo();
+				}
+			}
+		});
+		avaliacaoRegras.add(buttonAvaliar);
+
 
 	}
 
@@ -1085,5 +1356,137 @@ public class GUI extends JFrame {
 				info.setSeparatorValue(conditionsStr[i++]);
 			count++;
 		}
+	}
+	
+	private void updateEvaluationInfo() {
+		if (chartFrame != null && chartFrame2 != null) {
+			avaliacaoRegras.remove(chartFrame);
+			avaliacaoRegras.remove(chartFrame2);
+		}
+
+		int cVP = 0;
+		int cVN = 0;
+		int cFP = 0;
+		int cFN = 0;
+		int mVPs = 0;
+		int mVNs = 0;
+		int mFPs = 0;
+		int mFNs = 0;
+
+		for (String key : classesMap.keySet()) {
+			Indicator indy = classesMap.get(key);
+			System.out.println("Na GUI " + indy);
+			switch (indy) {
+			case VP:
+				cVP = cVP+1;
+				break;
+			case VN:
+				cVN = cVN+1;
+				break;
+			case FP:
+				cFP = cFP+1;
+				System.out.println("Encontrei " + cFP + " FP");
+				break;
+			case FN:
+				cFN = cFN+1;
+				System.out.println("Encontrei " + cFN + " FN");
+				break;
+			}
+		}
+
+		for (String key : methodsMap.keySet()) {
+			Indicator indy = methodsMap.get(key);
+			System.out.println("Na GUI " + indy);
+			switch (indy) {
+			case VP:
+				mVPs = mVPs+1;
+				break;
+			case VN:
+				mVNs = mVNs+1;
+				break;
+			case FP:
+				mFPs = mFPs+1;
+				break;
+			case FN:
+				mFNs = mFNs+1;
+				break;
+			}
+		}
+
+		nVP.setText(cVP + " Verdadeiros Positivos");
+		nVN.setText(cVN + " Verdadeiros Negativos");
+		nFP.setText(cFP + " Falsos Positivos");
+		nFN.setText(cFN + " Falsos Negativos");
+
+		mVP.setText(mVPs + " Verdadeiros Positivos");
+		mVN.setText(mVNs + " Verdadeiros Negativos");
+		mFP.setText(mFPs + " Falsos Positivos");
+		mFN.setText(mFNs + " Falsos Negativos");
+
+
+		pieDataSet = new DefaultPieDataset();
+		JFreeChart chart = ChartFactory.createPieChart("", pieDataSet, true, true, true);
+		PiePlot plot = (PiePlot)chart.getPlot();
+
+		if (cVP>0) {
+			pieDataSet.setValue("VP", cVP);
+		}
+
+		if (cVN>0) {
+			pieDataSet.setValue("VN", cVN);
+		}
+
+		if (cFP>0) {
+			pieDataSet.setValue("FP", cFP);
+		}
+		if (cFN>0) {
+			pieDataSet.setValue("FN", cFN);
+		}
+
+		if (mVPs>0) {
+			pieDataSet.setValue("VP", mVPs);
+		}
+
+		if (mVNs>0) {
+			pieDataSet.setValue("VN", mVNs);
+		}
+
+		if (mFPs>0) {
+			pieDataSet.setValue("FP", mFPs);
+		}
+		if (mFNs>0) {
+			pieDataSet.setValue("FN", mFNs);
+		}
+
+		plot.setSectionPaint("VP", new Color (0,255,51));
+		plot.setSectionPaint("VN", new Color (0,153,0));
+		plot.setSectionPaint("FP", new Color (255,51,51));
+		plot.setSectionPaint("FN", new Color (204,0,0));
+
+		chartFrame = new ChartPanel(chart);
+		chartFrame.setBounds(26, 310, 354, 234);
+		chartFrame.setVisible(true);
+
+		avaliacaoRegras.add(chartFrame);
+
+		pieDataSet2 = new DefaultPieDataset();
+		pieDataSet2.setValue("VP", mVPs);
+		pieDataSet2.setValue("VN", mVNs);
+		pieDataSet2.setValue("FP", mFPs);
+		pieDataSet2.setValue("FN", mFNs);
+
+		JFreeChart chart2 = ChartFactory.createPieChart("", pieDataSet2, true, true, true);
+		PiePlot plot2 = (PiePlot)chart2.getPlot();
+		plot2.setSectionPaint("VP", new Color (0,255,51));
+		plot2.setSectionPaint("VN", new Color (0,153,0));
+		plot2.setSectionPaint("FP", new Color (255,51,51));
+		plot2.setSectionPaint("FN", new Color (204,0,0));
+
+		chartFrame2 = new ChartPanel(chart2);
+		chartFrame2.setBounds(563, 310, 354, 234);
+		chartFrame2.setVisible(true);
+
+		avaliacaoRegras.add(chartFrame2);
+
 	}
 }
