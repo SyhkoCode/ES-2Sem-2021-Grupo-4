@@ -96,9 +96,9 @@ public class GUI extends JFrame {
 		}
 
 		public String getSentence() {
-			if (((String) sentence.getSelectedItem()).equals("Linhas de código"))
+			if (((String) sentence.getSelectedItem()).equals("Linhas de cÃ³digo"))
 				return "LOC_" + (isClassCondition ? "class" : "method");
-			else if (((String) sentence.getSelectedItem()).equals("Número de ciclos"))
+			else if (((String) sentence.getSelectedItem()).equals("NÃºmero de ciclos"))
 				return (isClassCondition ? "WMC_class" : "CYCLO_method");
 			else
 				return "NOM_class";
@@ -147,11 +147,11 @@ public class GUI extends JFrame {
 
 		public String getSentenceValue(String sentenceStr) {
 			if (sentenceStr.equals("LOC_method") || sentenceStr.equals("LOC_class"))
-				return "Linhas de código";
+				return "Linhas de cÃ³digo";
 			else if (sentenceStr.equals("WMC_class") || sentenceStr.equals("CYCLO_method"))
-				return "Número de ciclos";
+				return "NÃºmero de ciclos";
 			else
-				return "Número de métodos";
+				return "NÃºmero de mÃ©todos";
 		}
 
 		public void setSeparatorValue(String sepratorStr) {
@@ -489,25 +489,25 @@ public class GUI extends JFrame {
 		Projeto_Label.setFont(new Font("Tahoma", Font.PLAIN, 31));
 		Projeto_Label.setHorizontalAlignment(SwingConstants.CENTER);
 
-		NClasses_Label = new JLabel("Nº de Classes");
+		NClasses_Label = new JLabel("NÂº de Classes");
 		NClasses_Label.setBounds(359, 203, 126, 30);
 		resumePanel.add(NClasses_Label);
 		NClasses_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Label.setFont(new Font("Tahoma", Font.BOLD, 15));
 
-		NClasses_Packages = new JLabel("Nº de Packages");
+		NClasses_Packages = new JLabel("NÂº de Packages");
 		NClasses_Packages.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Packages.setBounds(359, 163, 126, 30);
 		resumePanel.add(NClasses_Packages);
 		NClasses_Packages.setFont(new Font("Tahoma", Font.BOLD, 15));
 
-		NClasses_Methods = new JLabel("Nº de Métodos");
+		NClasses_Methods = new JLabel("NÂº de MÃ©todos");
 		NClasses_Methods.setBounds(359, 243, 126, 30);
 		resumePanel.add(NClasses_Methods);
 		NClasses_Methods.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Methods.setFont(new Font("Tahoma", Font.BOLD, 15));
 
-		NClasses_LOC = new JLabel("Nº de Linhas");
+		NClasses_LOC = new JLabel("NÂº de Linhas");
 		NClasses_LOC.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_LOC.setBounds(359, 283, 126, 30);
 		resumePanel.add(NClasses_LOC);
@@ -784,7 +784,7 @@ public class GUI extends JFrame {
 		sMetodos.setViewportView(table2);
 
 		avaliacaoRegras = new JPanel();
-		tabbedPane.addTab("Avaliação Regras", null, avaliacaoRegras, null);
+		tabbedPane.addTab("AvaliaÃ§Ã£o Regras", null, avaliacaoRegras, null);
 		avaliacaoRegras.setLayout(null);
 
 		// AvaliaÃ§Ã£o Regras
@@ -874,7 +874,7 @@ public class GUI extends JFrame {
 			}
 		});
 
-		JLabel lblMtodos = new JLabel("Métodos");
+		JLabel lblMtodos = new JLabel("MÃ©todos");
 		lblMtodos.setBounds(563, 210, 51, 23);
 		avaliacaoRegras.add(lblMtodos);
 		buttonDefault.setBounds(709, 43, 109, 23);
@@ -1163,9 +1163,9 @@ public class GUI extends JFrame {
 		panel.add(lblSe);
 
 		JComboBox<String> comboBox = getComoboBox(
-				isLongMethod ? new DefaultComboBoxModel<String>(new String[] { "Linhas de código", "Número de ciclos" })
+				isLongMethod ? new DefaultComboBoxModel<String>(new String[] { "Linhas de cÃ³digo", "NÃºmero de ciclos" })
 						: new DefaultComboBoxModel<String>(
-								new String[] { "Número de métodos", "Linhas de código", "Número de ciclos" }),
+								new String[] { "NÃºmero de mÃ©todos", "Linhas de cÃ³digo", "NÃºmero de ciclos" }),
 				240, 35, 200, 30);
 		panel.add(comboBox);
 

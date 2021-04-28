@@ -56,7 +56,7 @@ public class Metrics {
 		LinkedHashSet<String> nomMethod = new LinkedHashSet<String>();
 
 		try {
-			Scanner scanner = new Scanner(filepath);
+			Scanner scanner = new Scanner(filepath,"Cp1252");
 			String text = null;
 			if (scanner.useDelimiter("\\A").hasNext()) {
 				text = scanner.useDelimiter("\\A").next();
@@ -85,7 +85,7 @@ public class Metrics {
 	static public LinkedHashMap<String, String> getLinesOfMethods(File file, LinkedHashSet<String> methods)
 			throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
-		Scanner scanner = new Scanner(file);
+		Scanner scanner = new Scanner(file,"Cp1252");
 		ArrayList<String> descartar = new ArrayList<>();
 		for (String m : methods) {
 			String method = new String("");
@@ -126,7 +126,7 @@ public class Metrics {
 			if (!foundMethod) {
 				descartar.add(m);
 				scanner.close();
-				scanner = new Scanner(file);
+				scanner = new Scanner(file,"Cp1252");
 			}
 
 
