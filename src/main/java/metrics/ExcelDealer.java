@@ -130,7 +130,6 @@ public class ExcelDealer {
 				list.add(rowList);
 			}
 		}
-
 		return list;
 	}
 

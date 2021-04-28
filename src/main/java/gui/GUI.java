@@ -96,9 +96,9 @@ public class GUI extends JFrame {
 		}
 
 		public String getSentence() {
-			if (((String) sentence.getSelectedItem()).equals("Linhas de cÃ³digo"))
+			if (((String) sentence.getSelectedItem()).equals("Linhas de código"))
 				return "LOC_" + (isClassCondition ? "class" : "method");
-			else if (((String) sentence.getSelectedItem()).equals("NÃºmero de ciclos"))
+			else if (((String) sentence.getSelectedItem()).equals("Número de ciclos"))
 				return (isClassCondition ? "WMC_class" : "CYCLO_method");
 			else
 				return "NOM_class";
@@ -140,9 +140,18 @@ public class GUI extends JFrame {
 		}
 
 		public void setNewValues(String sentenceStr, String conditionStr, int numberInt) {
-			sentence.setSelectedItem(sentenceStr);
+			sentence.setSelectedItem(getSentenceValue(sentenceStr));
 			condition.setSelectedItem(conditionStr);
 			number.setValue(numberInt);
+		}
+
+		public String getSentenceValue(String sentenceStr) {
+			if (sentenceStr.equals("LOC_method") || sentenceStr.equals("LOC_class"))
+				return "Linhas de código";
+			else if (sentenceStr.equals("WMC_class") || sentenceStr.equals("CYCLO_method"))
+				return "Número de ciclos";
+			else
+				return "Número de métodos";
 		}
 
 		public void setSeparatorValue(String sepratorStr) {
@@ -220,7 +229,7 @@ public class GUI extends JFrame {
 	private JPanel avaliacaoRegras;
 	private JTextField nVP, nVN, nFP, nFN;
 	private String csDefault, csCreated, metricsFile, rulesFile;
-	private HashMap <String, Indicator> classesMap, methodsMap;
+	private HashMap<String, Indicator> classesMap, methodsMap;
 	private JTextField mVP;
 	private JTextField mFP;
 	private JTextField mFN;
@@ -480,25 +489,25 @@ public class GUI extends JFrame {
 		Projeto_Label.setFont(new Font("Tahoma", Font.PLAIN, 31));
 		Projeto_Label.setHorizontalAlignment(SwingConstants.CENTER);
 
-		NClasses_Label = new JLabel("NÂº de Classes");
+		NClasses_Label = new JLabel("Nº de Classes");
 		NClasses_Label.setBounds(359, 203, 126, 30);
 		resumePanel.add(NClasses_Label);
 		NClasses_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Label.setFont(new Font("Tahoma", Font.BOLD, 15));
 
-		NClasses_Packages = new JLabel("NÂº de Packages");
+		NClasses_Packages = new JLabel("Nº de Packages");
 		NClasses_Packages.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Packages.setBounds(359, 163, 126, 30);
 		resumePanel.add(NClasses_Packages);
 		NClasses_Packages.setFont(new Font("Tahoma", Font.BOLD, 15));
 
-		NClasses_Methods = new JLabel("NÂº de MÃ©todos");
+		NClasses_Methods = new JLabel("Nº de Métodos");
 		NClasses_Methods.setBounds(359, 243, 126, 30);
 		resumePanel.add(NClasses_Methods);
 		NClasses_Methods.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Methods.setFont(new Font("Tahoma", Font.BOLD, 15));
 
-		NClasses_LOC = new JLabel("NÂº de Linhas");
+		NClasses_LOC = new JLabel("Nº de Linhas");
 		NClasses_LOC.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_LOC.setBounds(359, 283, 126, 30);
 		resumePanel.add(NClasses_LOC);
@@ -773,39 +782,39 @@ public class GUI extends JFrame {
 
 		table2.getTableHeader().setReorderingAllowed(false);
 		sMetodos.setViewportView(table2);
-		
+
 		avaliacaoRegras = new JPanel();
-		tabbedPane.addTab("AvaliaÃ§Ã£o Regras", null, avaliacaoRegras, null);
+		tabbedPane.addTab("Avaliação Regras", null, avaliacaoRegras, null);
 		avaliacaoRegras.setLayout(null);
 
-		//AvaliaÃ§Ã£o Regras
+		// AvaliaÃ§Ã£o Regras
 		JPanel matrizConfusao = new JPanel();
 		matrizConfusao.setBounds(26, 233, 354, 66);
 		avaliacaoRegras.add(matrizConfusao);
-		matrizConfusao.setLayout(new GridLayout(2,2));
+		matrizConfusao.setLayout(new GridLayout(2, 2));
 
-		nVP = new JTextField ("- Verdadeiros Positivos");
+		nVP = new JTextField("- Verdadeiros Positivos");
 		nVP.setHorizontalAlignment(JTextField.CENTER);
 		nVP.setEditable(false);
-		nVP.setBackground(new Color (0,255,51));
+		nVP.setBackground(new Color(0, 255, 51));
 		matrizConfusao.add(nVP);
 
-		nFP = new JTextField ("- Falsos Positivos");
+		nFP = new JTextField("- Falsos Positivos");
 		nFP.setEditable(false);
 		nFP.setHorizontalAlignment(JTextField.CENTER);
-		nFP.setBackground(new Color (255,51,51));
+		nFP.setBackground(new Color(255, 51, 51));
 		matrizConfusao.add(nFP);
 
-		nFN = new JTextField ("- Falsos Negativos");
+		nFN = new JTextField("- Falsos Negativos");
 		nFN.setEditable(false);
 		nFN.setHorizontalAlignment(JTextField.CENTER);
-		nFN.setBackground(new Color (204,0,0));
+		nFN.setBackground(new Color(204, 0, 0));
 		matrizConfusao.add(nFN);
 
-		nVN = new JTextField ("- Verdadeiros Negativos");
+		nVN = new JTextField("- Verdadeiros Negativos");
 		nVN.setEditable(false);
 		nVN.setHorizontalAlignment(JTextField.CENTER);
-		nVN.setBackground(new Color (0,153,0));
+		nVN.setBackground(new Color(0, 153, 0));
 		matrizConfusao.add(nVN);
 
 		JPanel matrizConfusao_2 = new JPanel();
@@ -865,7 +874,7 @@ public class GUI extends JFrame {
 			}
 		});
 
-		JLabel lblMtodos = new JLabel("MÃ©todos");
+		JLabel lblMtodos = new JLabel("Métodos");
 		lblMtodos.setBounds(563, 210, 51, 23);
 		avaliacaoRegras.add(lblMtodos);
 		buttonDefault.setBounds(709, 43, 109, 23);
@@ -987,23 +996,22 @@ public class GUI extends JFrame {
 		avaliacaoRegras.add(compare3);
 		buttonGroup.add(compare3);
 
-
 		buttonAvaliar.setEnabled(false);
 		buttonAvaliar.setBounds(417, 170, 89, 23);
 		buttonAvaliar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if (compare2.isSelected()) {
-					CompareFiles comparef = new CompareFiles (csDefault, csCreated);
-					Quality quality = comparef.testQuality(new String[] {"is_God_Class", "is_Long_Method"});
+					CompareFiles comparef = new CompareFiles(csDefault, csCreated);
+					Quality quality = comparef.testQuality(new String[] { "is_God_Class", "is_Long_Method" });
 					classesMap = quality.getIndicatorsPerClass();
 					methodsMap = quality.getIndicatorsPerMethod();
 					updateEvaluationInfo();
 
 				}
 				if (compare3.isSelected()) {
-					CompareFiles comparef = new CompareFiles (csDefault, metricsFile, rulesFile);
-					Quality quality = comparef.testQuality(new String[] {"is_God_Class", "is_Long_Method"});
+					CompareFiles comparef = new CompareFiles(csDefault, metricsFile, rulesFile);
+					Quality quality = comparef.testQuality(new String[] { "is_God_Class", "is_Long_Method" });
 					classesMap = quality.getIndicatorsPerClass();
 					methodsMap = quality.getIndicatorsPerMethod();
 					updateEvaluationInfo();
@@ -1011,7 +1019,6 @@ public class GUI extends JFrame {
 			}
 		});
 		avaliacaoRegras.add(buttonAvaliar);
-
 
 	}
 
@@ -1156,9 +1163,9 @@ public class GUI extends JFrame {
 		panel.add(lblSe);
 
 		JComboBox<String> comboBox = getComoboBox(
-				isLongMethod ? new DefaultComboBoxModel<String>(new String[] { "Linhas de cÃ³digo", "NÃºmero de ciclos" })
+				isLongMethod ? new DefaultComboBoxModel<String>(new String[] { "Linhas de código", "Número de ciclos" })
 						: new DefaultComboBoxModel<String>(
-								new String[] { "NÃºmero de mÃ©todos", "Linhas de cÃ³digo", "NÃºmero de ciclos" }),
+								new String[] { "Número de métodos", "Linhas de código", "Número de ciclos" }),
 				240, 35, 200, 30);
 		panel.add(comboBox);
 
@@ -1336,7 +1343,7 @@ public class GUI extends JFrame {
 
 	private void addConditionsBox(String conditionsRule) {
 		String[] conditionsStr = conditionsRule.split(" ");
-		addNewConditionBox((int) Math.ceil((conditionsStr.length - 3) / 4.0), false);
+		addNewConditionBox(countConditions(conditionsStr), false);
 		int i = 2;
 		int count = 0;
 		while (i < conditionsStr.length - 1) {
@@ -1357,7 +1364,17 @@ public class GUI extends JFrame {
 			count++;
 		}
 	}
-	
+
+	private int countConditions(String[] conditions) {
+		int conditionBoxs = 0;
+		for (int i = 0; i != conditions.length; i++) {
+			if (conditions[i].equals("E") || conditions[i].equals("OU"))
+				conditionBoxs++;
+		}
+
+		return conditionBoxs != 0 ? conditionBoxs + 1 : 0;
+	}
+
 	private void updateEvaluationInfo() {
 		if (chartFrame != null && chartFrame2 != null) {
 			avaliacaoRegras.remove(chartFrame);
@@ -1378,17 +1395,17 @@ public class GUI extends JFrame {
 			System.out.println("Na GUI " + indy);
 			switch (indy) {
 			case VP:
-				cVP = cVP+1;
+				cVP = cVP + 1;
 				break;
 			case VN:
-				cVN = cVN+1;
+				cVN = cVN + 1;
 				break;
 			case FP:
-				cFP = cFP+1;
+				cFP = cFP + 1;
 				System.out.println("Encontrei " + cFP + " FP");
 				break;
 			case FN:
-				cFN = cFN+1;
+				cFN = cFN + 1;
 				System.out.println("Encontrei " + cFN + " FN");
 				break;
 			}
@@ -1399,16 +1416,16 @@ public class GUI extends JFrame {
 			System.out.println("Na GUI " + indy);
 			switch (indy) {
 			case VP:
-				mVPs = mVPs+1;
+				mVPs = mVPs + 1;
 				break;
 			case VN:
-				mVNs = mVNs+1;
+				mVNs = mVNs + 1;
 				break;
 			case FP:
-				mFPs = mFPs+1;
+				mFPs = mFPs + 1;
 				break;
 			case FN:
-				mFNs = mFNs+1;
+				mFNs = mFNs + 1;
 				break;
 			}
 		}
@@ -1423,45 +1440,44 @@ public class GUI extends JFrame {
 		mFP.setText(mFPs + " Falsos Positivos");
 		mFN.setText(mFNs + " Falsos Negativos");
 
-
 		pieDataSet = new DefaultPieDataset();
 		JFreeChart chart = ChartFactory.createPieChart("", pieDataSet, true, true, true);
-		PiePlot plot = (PiePlot)chart.getPlot();
+		PiePlot plot = (PiePlot) chart.getPlot();
 
-		if (cVP>0) {
+		if (cVP > 0) {
 			pieDataSet.setValue("VP", cVP);
 		}
 
-		if (cVN>0) {
+		if (cVN > 0) {
 			pieDataSet.setValue("VN", cVN);
 		}
 
-		if (cFP>0) {
+		if (cFP > 0) {
 			pieDataSet.setValue("FP", cFP);
 		}
-		if (cFN>0) {
+		if (cFN > 0) {
 			pieDataSet.setValue("FN", cFN);
 		}
 
-		if (mVPs>0) {
+		if (mVPs > 0) {
 			pieDataSet.setValue("VP", mVPs);
 		}
 
-		if (mVNs>0) {
+		if (mVNs > 0) {
 			pieDataSet.setValue("VN", mVNs);
 		}
 
-		if (mFPs>0) {
+		if (mFPs > 0) {
 			pieDataSet.setValue("FP", mFPs);
 		}
-		if (mFNs>0) {
+		if (mFNs > 0) {
 			pieDataSet.setValue("FN", mFNs);
 		}
 
-		plot.setSectionPaint("VP", new Color (0,255,51));
-		plot.setSectionPaint("VN", new Color (0,153,0));
-		plot.setSectionPaint("FP", new Color (255,51,51));
-		plot.setSectionPaint("FN", new Color (204,0,0));
+		plot.setSectionPaint("VP", new Color(0, 255, 51));
+		plot.setSectionPaint("VN", new Color(0, 153, 0));
+		plot.setSectionPaint("FP", new Color(255, 51, 51));
+		plot.setSectionPaint("FN", new Color(204, 0, 0));
 
 		chartFrame = new ChartPanel(chart);
 		chartFrame.setBounds(26, 310, 354, 234);
@@ -1476,11 +1492,11 @@ public class GUI extends JFrame {
 		pieDataSet2.setValue("FN", mFNs);
 
 		JFreeChart chart2 = ChartFactory.createPieChart("", pieDataSet2, true, true, true);
-		PiePlot plot2 = (PiePlot)chart2.getPlot();
-		plot2.setSectionPaint("VP", new Color (0,255,51));
-		plot2.setSectionPaint("VN", new Color (0,153,0));
-		plot2.setSectionPaint("FP", new Color (255,51,51));
-		plot2.setSectionPaint("FN", new Color (204,0,0));
+		PiePlot plot2 = (PiePlot) chart2.getPlot();
+		plot2.setSectionPaint("VP", new Color(0, 255, 51));
+		plot2.setSectionPaint("VN", new Color(0, 153, 0));
+		plot2.setSectionPaint("FP", new Color(255, 51, 51));
+		plot2.setSectionPaint("FN", new Color(204, 0, 0));
 
 		chartFrame2 = new ChartPanel(chart2);
 		chartFrame2.setBounds(563, 310, 354, 234);
