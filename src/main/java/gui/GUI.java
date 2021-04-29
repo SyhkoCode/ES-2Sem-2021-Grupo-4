@@ -172,7 +172,6 @@ public class GUI extends JFrame {
 		}
 	}
 
-	private ExcelDealer dealer;
 	private String pathToSave = "";
 
 	private ArrayList<ConditionsInfo> conditionsLongMethod = new ArrayList<ConditionsInfo>();
@@ -180,49 +179,20 @@ public class GUI extends JFrame {
 
 	private boolean isLongMethod = false;
 
-	private GroupLayout conditions_IsLongMethod_GL;
-	private GroupLayout conditions_IsGodClass_GL;
+	private GroupLayout conditions_IsLongMethod_GL, conditions_IsGodClass_GL;
 	private JPanel contentPane;
 	private JTextField fileName_TF;
-	private JTable table;
-	private JTable table1;
-	private JTable table2;
-	private DefaultTableModel tableModel;
-	private DefaultTableModel tableModel1;
-	private DefaultTableModel tableModel2;
-	private JLabel Label_Classes;
-	private JLabel Label_Packages;
-	private JLabel Label_LOC;
-	private JLabel Label_Methods;
-	private JLabel Projeto_Label;
-	private JLabel NClasses_Label;
-	private JLabel NClasses_LOC;
-	private JLabel NClasses_Methods;
-	private JLabel NClasses_Packages;
-	private JPanel resumePanel;
-	private JPanel panel_1;
+	private JTable table, table1, table2;
+	private DefaultTableModel tableModel, tableModel1, tableModel2;
+	private JLabel Label_Classes, Label_Packages, Label_LOC, Label_Methods;
 	private JPanel conditions_isLongMethod_Panel;
 	private JPanel addCondition_isLongMethod_Panel;
 	private JTextArea conditionFormat_TA;
-	private JPanel conditions_isGodClass_Panel;
-	private JPanel addCondition_isGodClass_Panel;
-	private JTextField metricasGeradas;
-	private JTextField regras;
-	private JButton bRules;
+	private JPanel conditions_isGodClass_Panel, addCondition_isGodClass_Panel;
+
 	private JTextField localizacaoResultados;
-	private JButton bLocation;
-	private JCheckBox testRuleEffiency;
-	private JButton buttonLocEfficency;
 	private JTextField localTeoricos;
-	private JButton bTeoricos;
-	private JButton runRules;
-	private JButton btnSaveFile;
-	private JPanel matrizConfusao_1;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textFieldTeoricos;
+
 	private JTextField textFieldCreated;
 	private JTextField textFieldMetricas;
 	private JTextField textFieldRules;
@@ -323,7 +293,7 @@ public class GUI extends JFrame {
 		tabbedPane.setBounds(12, 13, 958, 583);
 		contentPane.add(tabbedPane);
 
-		panel_1 = new JPanel();
+		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Regras", null, panel_1, null);
 		panel_1.setLayout(null);
 
@@ -394,7 +364,7 @@ public class GUI extends JFrame {
 		});
 		addCondition_isGodClass_Panel.add(btnNewButton_2, BorderLayout.CENTER);
 
-		btnSaveFile = new JButton("");
+		JButton btnSaveFile = new JButton("");
 		btnSaveFile.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -468,6 +438,8 @@ public class GUI extends JFrame {
 
 		tableModel = new DefaultTableModel();
 		table = new JTable() {
+			private static final long serialVersionUID = 4865677530706787901L;
+
 			@Override
 			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
 				Component component = super.prepareRenderer(renderer, row, column);
@@ -484,35 +456,35 @@ public class GUI extends JFrame {
 		table.getTableHeader().setReorderingAllowed(false);
 		scrollPane.setViewportView(table);
 
-		resumePanel = new JPanel();
+		JPanel resumePanel = new JPanel();
 		tabbedPane.addTab("Resumo", null, resumePanel, null);
 		resumePanel.setLayout(null);
 
-		Projeto_Label = new JLabel("Resumo do Projeto");
+		JLabel Projeto_Label = new JLabel("Resumo do Projeto");
 		Projeto_Label.setBounds(0, 33, 953, 47);
 		resumePanel.add(Projeto_Label);
 		Projeto_Label.setFont(new Font("Tahoma", Font.PLAIN, 31));
 		Projeto_Label.setHorizontalAlignment(SwingConstants.CENTER);
 
-		NClasses_Label = new JLabel("Nº de Classes");
+		JLabel NClasses_Label = new JLabel("Nº de Classes");
 		NClasses_Label.setBounds(359, 203, 126, 30);
 		resumePanel.add(NClasses_Label);
 		NClasses_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Label.setFont(new Font("Tahoma", Font.BOLD, 15));
 
-		NClasses_Packages = new JLabel("Nº de Packages");
+		JLabel NClasses_Packages = new JLabel("Nº de Packages");
 		NClasses_Packages.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Packages.setBounds(359, 163, 126, 30);
 		resumePanel.add(NClasses_Packages);
 		NClasses_Packages.setFont(new Font("Tahoma", Font.BOLD, 15));
 
-		NClasses_Methods = new JLabel("Nº de Métodos");
+		JLabel NClasses_Methods = new JLabel("Nº de Métodos");
 		NClasses_Methods.setBounds(359, 243, 126, 30);
 		resumePanel.add(NClasses_Methods);
 		NClasses_Methods.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_Methods.setFont(new Font("Tahoma", Font.BOLD, 15));
 
-		NClasses_LOC = new JLabel("Nº de Linhas");
+		JLabel NClasses_LOC = new JLabel("Nº de Linhas");
 		NClasses_LOC.setHorizontalAlignment(SwingConstants.LEFT);
 		NClasses_LOC.setBounds(359, 283, 126, 30);
 		resumePanel.add(NClasses_LOC);
@@ -565,7 +537,7 @@ public class GUI extends JFrame {
 		tabbedPane.addTab("Correr Regras", null, detecaoPanel, null);
 		detecaoPanel.setLayout(null);
 
-		metricasGeradas = new JTextField();
+		JTextField metricasGeradas = new JTextField();
 		metricasGeradas.setEditable(false);
 		metricasGeradas.setBounds(125, 11, 491, 26);
 		detecaoPanel.add(metricasGeradas);
@@ -589,7 +561,7 @@ public class GUI extends JFrame {
 			}
 		});
 
-		regras = new JTextField();
+		JTextField regras = new JTextField();
 		regras.setEditable(false);
 		regras.setColumns(10);
 		regras.setBounds(125, 48, 491, 26);
@@ -604,7 +576,7 @@ public class GUI extends JFrame {
 		bMetrics.setBounds(626, 11, 174, 26);
 		detecaoPanel.add(bMetrics);
 
-		bRules = new JButton("Choose rules");
+		JButton bRules = new JButton("Choose rules");
 		bRules.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -624,23 +596,7 @@ public class GUI extends JFrame {
 		bRules.setBounds(626, 48, 174, 26);
 		detecaoPanel.add(bRules);
 
-		JCheckBox keepResults = new JCheckBox("Keep Results");
-		keepResults.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if (keepResults.isSelected()) {
-					localizacaoResultados.setEnabled(true);
-					bLocation.setEnabled(true);
-				} else {
-					localizacaoResultados.setEnabled(false);
-					bLocation.setEnabled(false);
-				}
-			}
-		});
-		keepResults.setBounds(6, 80, 113, 37);
-		detecaoPanel.add(keepResults);
-
-		bLocation = new JButton("Choose location");
+		JButton bLocation = new JButton("Choose location");
 		bLocation.setEnabled(false);
 		bLocation.addMouseListener(new MouseAdapter() {
 			@Override
@@ -666,37 +622,28 @@ public class GUI extends JFrame {
 		bLocation.setBounds(626, 85, 174, 26);
 		detecaoPanel.add(bLocation);
 
-		testRuleEffiency = new JCheckBox("Test Rule Effiency");
-		testRuleEffiency.addMouseListener(new MouseAdapter() {
+		JCheckBox keepResults = new JCheckBox("Keep Results");
+		keepResults.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (testRuleEffiency.isSelected()) {
-					buttonLocEfficency.setEnabled(true);
-					bTeoricos.setEnabled(true);
-					localTeoricos.setEnabled(true);
+				if (keepResults.isSelected()) {
+					localizacaoResultados.setEnabled(true);
+					bLocation.setEnabled(true);
 				} else {
-					buttonLocEfficency.setEnabled(false);
-					bTeoricos.setEnabled(false);
-					localTeoricos.setEnabled(false);
+					localizacaoResultados.setEnabled(false);
+					bLocation.setEnabled(false);
 				}
 			}
 		});
-		testRuleEffiency.setBounds(263, 120, 139, 37);
-		detecaoPanel.add(testRuleEffiency);
-
-		buttonLocEfficency = new JButton("Choose location efficiency");
+		keepResults.setBounds(6, 80, 113, 37);
+		detecaoPanel.add(keepResults);
+		
+		JButton buttonLocEfficency = new JButton("Choose location efficiency");
 		buttonLocEfficency.setEnabled(false);
 		buttonLocEfficency.setBounds(408, 125, 208, 26);
 		detecaoPanel.add(buttonLocEfficency);
-
-		localTeoricos = new JTextField();
-		localTeoricos.setEnabled(false);
-		localTeoricos.setEditable(false);
-		localTeoricos.setColumns(10);
-		localTeoricos.setBounds(125, 164, 491, 26);
-		detecaoPanel.add(localTeoricos);
-
-		bTeoricos = new JButton("Choose teoricos");
+		
+		JButton bTeoricos = new JButton("Choose teoricos");
 		bTeoricos.setEnabled(false);
 		bTeoricos.addMouseListener(new MouseAdapter() {
 			@Override
@@ -716,9 +663,35 @@ public class GUI extends JFrame {
 
 		bTeoricos.setBounds(626, 164, 174, 26);
 		detecaoPanel.add(bTeoricos);
+
+		JCheckBox testRuleEffiency = new JCheckBox("Test Rule Effiency");
+		testRuleEffiency.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (testRuleEffiency.isSelected()) {
+					buttonLocEfficency.setEnabled(true);
+					bTeoricos.setEnabled(true);
+					localTeoricos.setEnabled(true);
+				} else {
+					buttonLocEfficency.setEnabled(false);
+					bTeoricos.setEnabled(false);
+					localTeoricos.setEnabled(false);
+				}
+			}
+		});
+		testRuleEffiency.setBounds(263, 120, 139, 37);
+		detecaoPanel.add(testRuleEffiency);
+
+		localTeoricos = new JTextField();
+		localTeoricos.setEnabled(false);
+		localTeoricos.setEditable(false);
+		localTeoricos.setColumns(10);
+		localTeoricos.setBounds(125, 164, 491, 26);
+		detecaoPanel.add(localTeoricos);
+
 		JTabbedPane panelResultados = new JTabbedPane(JTabbedPane.TOP);
 
-		runRules = new JButton("Run");
+		JButton runRules = new JButton("Run");
 		runRules.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -756,6 +729,8 @@ public class GUI extends JFrame {
 
 		tableModel1 = new DefaultTableModel();
 		table1 = new JTable() {
+			private static final long serialVersionUID = 6900757194149352960L;
+
 			@Override
 			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
 				Component component = super.prepareRenderer(renderer, row, column);
@@ -778,6 +753,8 @@ public class GUI extends JFrame {
 
 		tableModel2 = new DefaultTableModel();
 		table2 = new JTable() {
+			private static final long serialVersionUID = 3382685092130092007L;
+
 			@Override
 			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
 				Component component = super.prepareRenderer(renderer, row, column);
@@ -862,7 +839,7 @@ public class GUI extends JFrame {
 		lblNewLabel.setBounds(25, 210, 42, 23);
 		avaliacaoRegras.add(lblNewLabel);
 
-		textFieldTeoricos = new JTextField();
+		JTextField textFieldTeoricos = new JTextField();
 		textFieldTeoricos.setEditable(false);
 		textFieldTeoricos.setBounds(91, 44, 594, 20);
 		avaliacaoRegras.add(textFieldTeoricos);
@@ -1039,7 +1016,7 @@ public class GUI extends JFrame {
 
 	}
 
-	private void readExcel(String path ) {
+	private void readExcel(String path) {
 		try {
 			fileName_TF.setText(path);
 			tableModel.setRowCount(0);

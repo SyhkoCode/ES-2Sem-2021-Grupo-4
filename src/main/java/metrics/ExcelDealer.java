@@ -13,8 +13,20 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+/**
+ * Allow to create and read Excel files
+ * 
+ * @author Pedro Pereira, Tiago Mendes, Pedro Pinheiro
+ *
+ */
 public class ExcelDealer {
 
+	/**
+	 * @param path, Path of Excel file
+	 * @param rows
+	 * @param sheetName
+	 * @throws Exception
+	 */
 	public static void createExcelFile(String path, List<String[]> rows, String sheetName) throws Exception {
 		File file = new File(path);
 		file.delete();
