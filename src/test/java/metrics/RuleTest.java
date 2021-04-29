@@ -64,7 +64,7 @@ class RuleTest {
 		
 		Rule test = new Rule ("is_God_Class", "SE ( NOM_class > 5 )");
 		assertEquals("is_God_Class", test.getNome());
-		assertEquals("SE ( NOM_class > 5 )", test.getText());
+		assertEquals("SE ( NOM_class > 5 )", test.getExpression());
 		
 	}
 
@@ -127,7 +127,7 @@ class RuleTest {
 		
 		for(int i = 0; i < teorical.size(); i++) {
 			assertEquals(teorical.get(i).getNome(), test.get(i).getNome());
-			assertEquals(teorical.get(i).getText(), test.get(i).getText());
+			assertEquals(teorical.get(i).getExpression(), test.get(i).getExpression());
 		}		
 		
 		File givesNull = new File(getClass().getResource("/wrongRules.txt/").getFile());
@@ -152,13 +152,13 @@ class RuleTest {
 	@Test
 	final void testGetText() {
 		Rule test = new Rule ("is_God_Class", "SE ( NOM_class > 5 )");
-		assertEquals("SE ( NOM_class > 5 )", test.getText());
+		assertEquals("SE ( NOM_class > 5 )", test.getExpression());
 		
 		test = new Rule ("is_Long_Method", "SE ( ( NOM_class > 5 OU LOC_class > 20 ) E ( LOC_class > 10 E WMC_class > 50 ) )");
-		assertEquals("SE ( ( NOM_class > 5 OU LOC_class > 20 ) E ( LOC_class > 10 E WMC_class > 50 ) )", test.getText());
+		assertEquals("SE ( ( NOM_class > 5 OU LOC_class > 20 ) E ( LOC_class > 10 E WMC_class > 50 ) )", test.getExpression());
 		
 		test = new Rule ("is_Long_Method", "SE ( ( LOC_class > 10 E WMC_class > 50 ) )");
-		assertEquals("SE ( ( LOC_class > 10 E WMC_class > 50 ) )", test.getText());
+		assertEquals("SE ( ( LOC_class > 10 E WMC_class > 50 ) )", test.getExpression());
 	}
 
 }

@@ -289,16 +289,21 @@ public class GUI extends JFrame {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					String path = jfc.getSelectedFile().getAbsolutePath();
 					String excelName = jfc.getSelectedFile().getName() + "_metrics";
-					dealer = new ExcelDealer(pathToSave + "\\" + excelName + ".xlsx");
+
 					fileName_TF.setText(path + "");
 					if (pathToSave.isEmpty())
 						pathToSave = path;
 					List<String[]> javaProjectList = ReadJavaProject.readJavaProject(path);
 					javaProjectList.add(0, new String[] { "MethodID", "package", "class", "method", "NOM_class",
 							"LOC_class", "WMC_class", "LOC_method", "CYCLO_method" });
-					ExcelDealer.createExcelFile(pathToSave + "\\" + excelName, javaProjectList, "Metrics");
+					try {
+						ExcelDealer.createExcelFile(pathToSave + "\\" + excelName, javaProjectList, "Metrics");
+					} catch (Exception e) {
+						// TODO Lançar erro
+						e.printStackTrace();
+					}
 
-					readExcel();
+					readExcel(pathToSave + "\\" + excelName + ".xlsx");
 				}
 			}
 		});
@@ -717,17 +722,24 @@ public class GUI extends JFrame {
 		runRules.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricasGeradas.getText()),
-						Rule.allRules(new File(regras.getText())));
-				if (keepResults.isSelected()) {
-					mra.getResults().add(0, new String[] { "MethodID", "package", "class", "method", "NOM_class",
-							"LOC_class", "WMC_class", "LOC_method", "CYCLO_method" });
-					ExcelDealer.createExcelFile(localizacaoResultados.getText(), mra.getResults(), "Rules");
+				try {
+					MethodRuleAnalysis mra = new MethodRuleAnalysis(
+							MethodData.excelToMetricsMap(metricasGeradas.getText()),
+							Rule.allRules(new File(regras.getText())));
+
+					if (keepResults.isSelected()) {
+						mra.getResults().add(0, new String[] { "MethodID", "package", "class", "method", "NOM_class",
+								"LOC_class", "WMC_class", "LOC_method", "CYCLO_method" });
+						ExcelDealer.createExcelFile(localizacaoResultados.getText(), mra.getResults(), "Rules");
+						panelResultados.setEnabled(true);
+					}
+					readCodeSmells(mra.getCodeSmellResults());
 					panelResultados.setEnabled(true);
+
+				} catch (Exception e1) {
+					// TODO Gerar erros
+					e1.printStackTrace();
 				}
-				readCodeSmells(mra.getCodeSmellResults());
-				panelResultados.setEnabled(true);
-				// falta aqui então ele criar as tabelas
 
 			}
 
@@ -1001,20 +1013,25 @@ public class GUI extends JFrame {
 		buttonAvaliar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (compare2.isSelected()) {
-					CompareFiles comparef = new CompareFiles(csDefault, csCreated);
-					Quality quality = comparef.testQuality(new String[] { "is_God_Class", "is_Long_Method" });
-					classesMap = quality.getIndicatorsPerClass();
-					methodsMap = quality.getIndicatorsPerMethod();
-					updateEvaluationInfo();
+				try {
+					if (compare2.isSelected()) {
+						CompareFiles comparef = new CompareFiles(csDefault, csCreated);
+						Quality quality = comparef.testQuality(new String[] { "is_God_Class", "is_Long_Method" });
+						classesMap = quality.getIndicatorsPerClass();
+						methodsMap = quality.getIndicatorsPerMethod();
+						updateEvaluationInfo();
 
-				}
-				if (compare3.isSelected()) {
-					CompareFiles comparef = new CompareFiles(csDefault, metricsFile, rulesFile);
-					Quality quality = comparef.testQuality(new String[] { "is_God_Class", "is_Long_Method" });
-					classesMap = quality.getIndicatorsPerClass();
-					methodsMap = quality.getIndicatorsPerMethod();
-					updateEvaluationInfo();
+					}
+					if (compare3.isSelected()) {
+						CompareFiles comparef = new CompareFiles(csDefault, metricsFile, rulesFile);
+						Quality quality = comparef.testQuality(new String[] { "is_God_Class", "is_Long_Method" });
+						classesMap = quality.getIndicatorsPerClass();
+						methodsMap = quality.getIndicatorsPerMethod();
+						updateEvaluationInfo();
+					}
+				} catch (Exception e) {
+					// TODO Gerar erro e simplificar
+					e.printStackTrace();
 				}
 			}
 		});
@@ -1022,26 +1039,34 @@ public class GUI extends JFrame {
 
 	}
 
-	private void readExcel() {
-		fileName_TF.setText(dealer.getExcel_file());
-		tableModel.setRowCount(0);
-		tableModel.setColumnCount(0);
+	private void readExcel(String path ) {
+		try {
+			fileName_TF.setText(path);
+			tableModel.setRowCount(0);
+			tableModel.setColumnCount(0);
 
-		Object[] header = dealer.getExcelHeader();
-		tableModel.setColumnIdentifiers(header);
+			Object[] header = ExcelDealer.getRow(path, 0, 0);
+			tableModel.setColumnIdentifiers(header);
 
-		for (int i = 0; i != header.length; i++)
-			table.getColumnModel().getColumn(i).setResizable(false);
+			for (int i = 0; i != header.length; i++)
+				table.getColumnModel().getColumn(i).setResizable(false);
 
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		for (Object[] row : dealer.getAllRows()) {
-			tableModel.addRow(row);
+			for (Object[] row : ExcelDealer.getAllRows(path, 0)) {
+				tableModel.addRow(row);
+			}
+
+			// TODO caso o projeto tenha classes com o mesmo nome dá pedrinho aka coco
+			Label_Classes.setText(String.valueOf(ExcelDealer.getAllCellsOfColumn(path, 0, 2, false).size() - 1));
+			Label_Packages.setText(String.valueOf(ExcelDealer.getAllCellsOfColumn(path, 0, 1, false).size() - 1));
+			Label_LOC.setText(String.valueOf(ExcelDealer.sumAllColumn(path, 0, 7)));
+			Label_Methods.setText(String.valueOf(ExcelDealer.getAllCellsOfColumn(path, 0, 3, true).size() - 1));
+		} catch (Exception e) {
+			// TODO Gerar erro
+			e.printStackTrace();
 		}
-		Label_Classes.setText(String.valueOf((dealer.getClasses().size())));
-		Label_Packages.setText(String.valueOf(dealer.getAllCellsOfColumn(1).size()));
-		Label_LOC.setText(String.valueOf(dealer.sumLinesOfCode()));
-		Label_Methods.setText(String.valueOf(dealer.getAllCellsOfColumn(3).size()));
+
 	}
 
 	private void readCodeSmells(ArrayList<ArrayList<String[]>> list) {
@@ -1063,11 +1088,6 @@ public class GUI extends JFrame {
 			}
 
 		}
-
-//		Object[] headerClass = {"class","is_God_Class"};
-//		Object[] headerMethod = {"MethodID","method","is_Long_Method"};
-//		tableModel1.setColumnIdentifiers(headerClass);
-//		tableModel2.setColumnIdentifiers(headerMethod);
 
 		table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -1342,6 +1362,7 @@ public class GUI extends JFrame {
 	}
 
 	private void addConditionsBox(String conditionsRule) {
+		System.out.println(conditionsRule);
 		String[] conditionsStr = conditionsRule.split(" ");
 		addNewConditionBox(countConditions(conditionsStr), false);
 		int i = 2;
@@ -1372,7 +1393,7 @@ public class GUI extends JFrame {
 				conditionBoxs++;
 		}
 
-		return conditionBoxs != 0 ? conditionBoxs + 1 : 0;
+		return conditionBoxs + 1;
 	}
 
 	private void updateEvaluationInfo() {
