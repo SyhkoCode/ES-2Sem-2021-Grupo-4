@@ -57,16 +57,18 @@ class MetricsTest {
 
 	@Test
 	final void testCountMethods() {
-		assertThrows(NullPointerException.class, ()->{Metrics.countMethods(null);});
-		Exception exception = assertThrows(IllegalArgumentException.class, ()->{Metrics.countMethods(new File("/naoexiste"));});
+		assertThrows(NullPointerException.class, ()->{Metrics.methods(null);});
+		Exception exception = assertThrows(IllegalArgumentException.class, ()->{Metrics.methods(new File("/naoexiste"));});
 		String expectedMessage = "Ficheiro especificado nao existe.";
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 		
-		assertEquals(0, Metrics.countMethods(emptyTestFile).size());
-		assertEquals(4, Metrics.countMethods(GrammerExceptionTestFile).size()); // NOM_class[GrammerException]=4
-		assertEquals(6, Metrics.countMethods(ParsingExceptionTestFile).size()); // NOM_class[ParsingException]=6
-		assertEquals(32, Metrics.countMethods(SourceCodeParserTestFile).size()); // NOM_class[SourceCodeParser]=29 + 3 inner classes = 32
+		System.out.println(Metrics.methods(GrammerExceptionTestFile));
+		
+		assertEquals(0, Metrics.methods(emptyTestFile).size());
+		assertEquals(4, Metrics.methods(GrammerExceptionTestFile).size()); // NOM_class[GrammerException]=4
+		assertEquals(6, Metrics.methods(ParsingExceptionTestFile).size()); // NOM_class[ParsingException]=6
+		assertEquals(32, Metrics.methods(SourceCodeParserTestFile).size()); // NOM_class[SourceCodeParser]=29 + 3 inner classes = 32
 	}
 
 	@Test
@@ -85,13 +87,13 @@ class MetricsTest {
 				"		super(line, column, msg);\n" + 
 				"	}");
 		
-		assertEquals(map, Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));
+		assertEquals(map, Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.methods(GrammerExceptionTestFile)));
 		
 		map.clear();
-		assertEquals(map, Metrics.getLinesOfMethods(emptyTestFile, Metrics.countMethods(emptyTestFile)));
+		assertEquals(map, Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile)));
 		
-		assertEquals(6, (Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile))).size());
-		assertEquals(32, (Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile))).size());	
+		assertEquals(6, (Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile))).size());
+		assertEquals(32, (Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile))).size());	
 		
 //		map.clear();
 //		map.put("public ParsingException(int offset, int line, int column, String msg) ", "	public ParsingException(int offset, int line, int column, String msg) {\n" + 
@@ -197,22 +199,22 @@ class MetricsTest {
 		assertEquals(15, Metrics.wmc(numbersToSum));
 		
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
-		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.countMethods(emptyTestFile)));		
+		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile)));		
 		ArrayList<Integer> none = Metrics.allCyclos(map);
 		assertEquals(0, Metrics.wmc(none));
 		
 		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));		
+		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.methods(GrammerExceptionTestFile)));		
 		ArrayList<Integer> GrammerExceptionCyclos = Metrics.allCyclos(map);
 		assertEquals(4, Metrics.wmc(GrammerExceptionCyclos)); // WMC_class[GrammerException]=4
 		
 		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile)));		
+		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile)));		
 		ArrayList<Integer> ParsingExceptionCyclos = Metrics.allCyclos(map);
 		assertEquals(13, Metrics.wmc(ParsingExceptionCyclos)); // WMC_class[ParsingException]=13
 		
 		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile)));		
+		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile)));		
 		ArrayList<Integer> SourceCodeParserCyclos = Metrics.allCyclos(map);
 		assertEquals(331, Metrics.wmc(SourceCodeParserCyclos)); // WMC_class[SourceCodeParser]=328 + 3 inner classes = 331		
 	}
@@ -220,24 +222,24 @@ class MetricsTest {
 	@Test
 	final void testCountLinesOfMethods() throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
-		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));
+		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.methods(GrammerExceptionTestFile)));
 		assertEquals(3, Metrics.countLinesOfMethods(map).get(0)); // LOC_method[GrammerException(int,String)]=3
 		assertEquals(3, Metrics.countLinesOfMethods(map).get(1)); // LOC_method[GrammerException(int,int,int,String)]=3
 		assertEquals(3, Metrics.countLinesOfMethods(map).get(2)); // LOC_method[GrammerException(String,Exception)]=3
 		assertEquals(3, Metrics.countLinesOfMethods(map).get(3)); // LOC_method[GrammerException(int,int,String)]=3
 		
 		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile)));
+		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile)));
 		assertEquals(6, Metrics.countLinesOfMethods(map).get(0)); // LOC_method[ParsingException(int,int,int,String)]=6
 		assertEquals(21, Metrics.countLinesOfMethods(map).get(5)); // LOC_method[getMessage()]=21
 		
 		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile)));
+		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile)));
 		assertEquals(40, Metrics.countLinesOfMethods(map).get(5)); // LOC_method[parseClassSignature()]=40
 		assertEquals(76, Metrics.countLinesOfMethods(map).get(7)); // LOC_method[parseField()]=76
 		
 		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.countMethods(emptyTestFile)));
+		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile)));
 		ArrayList<Integer> empty = new ArrayList<Integer>();
 		assertEquals(empty, Metrics.countLinesOfMethods(map));
 	}
@@ -245,21 +247,21 @@ class MetricsTest {
 	@Test
 	final void testAllCyclos() throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
-		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.countMethods(GrammerExceptionTestFile)));
+		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.methods(GrammerExceptionTestFile)));
 		assertEquals(1, Metrics.allCyclos(map).get(0)); // CYCLO_method[GrammerException(int,String)]=1
 		
 		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile)));
+		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile)));
 		assertEquals(1, Metrics.allCyclos(map).get(0)); // CYCLO_method[ParsingException(int,int,int,String)]=1
 		assertEquals(8, Metrics.allCyclos(map).get(5)); // CYCLO_method[getMessage()]=8
 		
 		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.countMethods(SourceCodeParserTestFile)));
+		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile)));
 		assertEquals(10, Metrics.allCyclos(map).get(5)); // CYCLO_method[parseClassSignature()]=10
 		assertEquals(19, Metrics.allCyclos(map).get(7)); // CYCLO_method[parseField()]=19
 		
 		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.countMethods(emptyTestFile)));
+		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile)));
 		ArrayList<Integer> empty = new ArrayList<Integer>();
 		assertEquals(empty, Metrics.allCyclos(map));
 	}

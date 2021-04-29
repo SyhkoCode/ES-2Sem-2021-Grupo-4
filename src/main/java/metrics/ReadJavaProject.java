@@ -22,12 +22,9 @@ public class ReadJavaProject {
 				} else {
 					if (packageFile.getName().endsWith(".java")) {
 						try {
-							LinkedHashSet<String> methods = Metrics.countMethods(packageFile);
+							LinkedHashSet<String> methods = Metrics.methods(packageFile);
 							LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile,methods);
-							ArrayList<Integer> countLinesOfMethods = Metrics.countLinesOfMethods(linesOfMethods);
-							ArrayList<Integer> cycloOfAllMethods = Metrics.allCyclos(linesOfMethods);
-							
-							int wmc = Metrics.wmc(cycloOfAllMethods);
+
 							int i = 0;
 							if (current.getAbsolutePath().contains("\\src")) {
 
@@ -56,11 +53,11 @@ public class ReadJavaProject {
 									} else {	// method name
 										lines[2] = finalstr.replaceFirst("^\\s*\\S+\\s+\\S+\\s*", "");
 									}
-									lines[3] = "" + methods.size(); // NOM_class
-									lines[4] = Metrics.getLOC_class(packageFile) + ""; // LOC_class
-									lines[5] = "" + wmc; // WMC_class
-									lines[7] = "" + countLinesOfMethods.get(i); // LOC_method
-									lines[8] = "" + cycloOfAllMethods.get(i); // CYCLO_method
+									lines[3] = "" + Metrics.getNOM_class(packageFile); 
+									lines[4] = "" + Metrics.getLOC_class(packageFile); 
+									lines[5] = "" + Metrics.getWMC_class(linesOfMethods); 
+									lines[7] = "" + Metrics.getLOC_method(linesOfMethods, i); 
+									lines[8] = "" + Metrics.getCYCLO_method(linesOfMethods, i);
 									result.add(lines);
 									i++;
 								}
