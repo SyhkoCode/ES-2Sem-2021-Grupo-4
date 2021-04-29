@@ -13,6 +13,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Contains all methods required for Metrics extraction. 
+ * @author Sofia Chaves 
+ * @author Pedro Pinheiro
+ * @author Susana Polido
+ * @author Diogo Graça
+ */
 public class Metrics {
 
 
@@ -200,7 +207,7 @@ public class Metrics {
 	/**
 	 * Allows to extract the CYCLO_method metric.
 	 * @param linesOfMethods linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
-	 * @param methodIndex This is the receiving Counter in ReadJavaProject which represents the present method.
+	 * @param methodIndex This is the receiving counter which represents the index for the wanted method.
 	 * @return The Sum of the Cyclomatic Complexity for the corresponding method.
 	 */
 	public static int getCYCLO_method(LinkedHashMap<String, String> linesOfMethods, int methodIndex) {
@@ -223,7 +230,7 @@ public class Metrics {
 	/**
 	 * Allows to extract the LOC_method metric.
 	 * @param linesOfMethods linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
-	 * @param methodIndex This is the receiving Counter in ReadJavaProject which represents the present method.
+	 * @param methodIndex This is the receiving counter which represents the index for the wanted method.
 	 * @return The Number of Lines of Code in the corresponding method.
 	 * @throws FileNotFoundException
 	 */
