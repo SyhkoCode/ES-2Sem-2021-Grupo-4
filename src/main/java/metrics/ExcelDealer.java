@@ -17,7 +17,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Allow to create and read Excel files
  * 
  * @author Pedro Pereira, Tiago Mendes, Pedro Pinheiro
- * @version 1.0
  *
  */
 public class ExcelDealer {
@@ -106,7 +105,7 @@ public class ExcelDealer {
 	 * @param path, path of the Excel file to be read
 	 * @param sheet_Index, index of the Excel sheet to be read
 	 * @param col_Index, index of the Excel column desired
-	 * @return returns total of the sum of all integers in a given column
+	 * @return total of the sum of all integers in a given column
 	 * @throws Exception, we throw exceptions to be dealt with on the GUI
 	 */
 	public static int sumAllColumn(String path, int sheet_Index, int col_Index) throws Exception {

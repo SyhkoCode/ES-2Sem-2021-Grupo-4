@@ -178,23 +178,23 @@ public class CompareFiles {
 	private Quality compareWith3Files() throws Exception {
 		HashMap<String, Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String, Indicator> saveIndsPerClass = new HashMap<>();
-		MethodRuleAnalysis mra = new MethodRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),
+		MetricsRuleAnalysis mra = new MetricsRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),
 				Rule.allRules(new File(rulesFile)));
 
 		for (Object[] objDefaultExcel : ExcelDealer.getAllRows(csFileDefault, 0)) {
 
 			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
 
-			for (int i = 0; i < mra.getMethods().size(); i++) {
-				String god_class = String.valueOf(mra.getMap().get("is_God_Class").get(i)).toUpperCase();
-				String long_method = String.valueOf(mra.getMap().get("is_Long_Method").get(i)).toUpperCase();
+			for (int i = 0; i < mra.getMethodsData().size(); i++) {
+				String god_class = String.valueOf(mra.getCodeSmellDetectedMap().get("is_God_Class").get(i)).toUpperCase();
+				String long_method = String.valueOf(mra.getCodeSmellDetectedMap().get("is_Long_Method").get(i)).toUpperCase();
 
 				String cellTextDefault_godclass = String.valueOf(objDefaultExcel[7]);
 				String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[10]);
 
-				String created_package = mra.getMethods().get(i).getPackageName();
-				String created_class = mra.getMethods().get(i).getClassName();
-				String created_method = mra.getMethods().get(i).getMethodName();
+				String created_package = mra.getMethodsData().get(i).getPackageName();
+				String created_class = mra.getMethodsData().get(i).getClassName();
+				String created_method = mra.getMethodsData().get(i).getMethodName();
 
 				if (dataDefaultExcel.getPackageName().equals(created_package)
 						&& dataDefaultExcel.getClassName().contains(created_class)

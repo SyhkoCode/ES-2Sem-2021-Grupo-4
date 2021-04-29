@@ -21,7 +21,7 @@ import javax.script.ScriptException;
  * 
  */
 public class Rule {
-	private String nome;
+	private String name;
 	private String expression;
 	
 	/**
@@ -33,12 +33,12 @@ public class Rule {
 	 * @throws NullPointerException if the arguments are null
 	 * @throws IllegalArgumentException if the arguments are empty
 	 */
-	public Rule(String nome,String expression){
-		if(nome == null || expression == null)
+	public Rule(String name,String expression){
+		if(name == null || expression == null)
 			throw new NullPointerException("Os argumentos nao podem ser nulos.");
-		if(nome.isEmpty() || expression.isEmpty())
+		if(name.isEmpty() || expression.isEmpty())
 			throw new IllegalArgumentException("Os argumentos nao podem ser vazios.");
-		this.nome = nome;
+		this.name = name;
 		this.expression = expression;
 	}
 	
@@ -115,8 +115,8 @@ public class Rule {
 	 * Gets the name of the code smell the rule detects
 	 * @return the rule's name
 	 */
-	public String getNome() {
-		return nome;
+	public String getName() {
+		return name;
 	}
 	
 	/**

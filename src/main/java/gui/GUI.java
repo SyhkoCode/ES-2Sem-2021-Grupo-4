@@ -44,7 +44,7 @@ import metrics.ExcelDealer;
 import metrics.FileDealer;
 import metrics.Indicator;
 import metrics.MethodData;
-import metrics.MethodRuleAnalysis;
+import metrics.MetricsRuleAnalysis;
 import metrics.Quality;
 import metrics.ReadJavaProject;
 import metrics.Rule;
@@ -696,7 +696,7 @@ public class GUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				try {
-					MethodRuleAnalysis mra = new MethodRuleAnalysis(
+					MetricsRuleAnalysis mra = new MetricsRuleAnalysis(
 							MethodData.excelToMetricsMap(metricasGeradas.getText()),
 							Rule.allRules(new File(regras.getText())));
 
@@ -1339,7 +1339,6 @@ public class GUI extends JFrame {
 	}
 
 	private void addConditionsBox(String conditionsRule) {
-		System.out.println(conditionsRule);
 		String[] conditionsStr = conditionsRule.split(" ");
 		addNewConditionBox(countConditions(conditionsStr), false);
 		int i = 2;
