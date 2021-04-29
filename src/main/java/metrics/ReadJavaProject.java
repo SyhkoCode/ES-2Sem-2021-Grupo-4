@@ -9,6 +9,57 @@ import java.util.List;
 import java.util.Stack;
 
 public class ReadJavaProject {
+	
+	public static String formatString(String method) {
+		String strFormatted = "";
+		String strTemp = method.replaceAll(".*\\(|\\n|\\r|\\)", "");
+		String[] arrayTemp = strTemp.split(",");
+		for (String substrTemp : arrayTemp) {
+			strFormatted += substrTemp.trim().split("\\s+")[0] + ",";
+		}
+		return strFormatted;
+	}
+	
+	
+	public static void getMetricsForExcel(File packageFile, String[] lines, LinkedHashSet<String> methods, int wmc,
+			int i, ArrayList<Integer> countLinesOfMethods, ArrayList<Integer> cycloOfAllMethods) throws IOException{
+		lines[3] = "" + methods.size(); // NOM_class
+		lines[4] = Metrics.getLines(packageFile) + ""; // LOC_class
+		lines[5] = "" + wmc; // WMC_class
+		lines[6] = "" + countLinesOfMethods.get(i); // LOC_method
+		lines[7] = "" + cycloOfAllMethods.get(i); // CYCLO_method
+	}
+	
+	
+	public static void getInformationForExcel(File current, File packageFile, LinkedHashSet<String> methods, int wmc,
+			int i, ArrayList<Integer> countLinesOfMethods, ArrayList<Integer> cycloOfAllMethods, List<String[]> result)
+			throws IOException {
+		for (String method : methods) {
+			String argumentsFormatted = formatString(method);
+			String[] lines = new String[8];
+			if (current.getAbsolutePath().contains("\\src\\")) {
+				lines[0] = current.getAbsolutePath().replaceFirst(".*\\\\src\\\\", "").replace("\\", ".");
+			} else { // package name
+				lines[0] = "package default";
+			}
+			lines[1] = packageFile.getName().substring(0, packageFile.getName().lastIndexOf('.')); // class name
+			String methodFormatted = method.replaceAll("\\s*\\((.|\\n|\\r)*\\)\\s*", "") + "("
+					+ argumentsFormatted.substring(0, argumentsFormatted.length() - 1) + ")";
+			
+			int regexWordsCaught = method.replaceAll("\\([^(]*$", "").split("\\s+").length;
+			if (regexWordsCaught == 2) {
+				lines[2] = methodFormatted.replaceFirst("^\\s*\\S+\\s*", "");
+			} else if ((regexWordsCaught == 4)) {
+				lines[2] = methodFormatted.replaceFirst("^\\s*\\S+\\s+\\S+\\s+\\S+\\s*", "");
+			} else { // method name
+				lines[2] = methodFormatted.replaceFirst("^\\s*\\S+\\s+\\S+\\s*", "");
+			}
+			getMetricsForExcel(packageFile,lines,methods,wmc,i,countLinesOfMethods,cycloOfAllMethods);
+			result.add(lines);
+			i++;
+		}
+	}
+
 	public static List<String[]> readJavaProject(String pathProject) {
 		List<String[]> result = new ArrayList<>();
 		Stack<File> folders = new Stack<>();
@@ -22,65 +73,22 @@ public class ReadJavaProject {
 					if (packageFile.getName().endsWith(".java")) {
 						try {
 							LinkedHashSet<String> methods = Metrics.countMethods(packageFile);
-							LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile,
-									methods);
+							LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile,methods);
 							ArrayList<Integer> countLinesOfMethods = Metrics.countLinesOfMethods(linesOfMethods);
 							ArrayList<Integer> cycloOfAllMethods = Metrics.allCyclos(linesOfMethods);
 
 							int wmc = Metrics.wmc(cycloOfAllMethods);
 							int i = 0;
 							if (current.getAbsolutePath().contains("\\src")) {
-
-								for (String method : methods) {
-									String strFormatted = "";
-									String str2 = method.replaceAll(".*\\(|\\n|\\r|\\)", "");
-									String[] strs = str2.split(",");
-									for (String substr : strs) {
-										strFormatted += substr.trim().split("\\s+")[0] + ",";
-									}
-									String[] lines = new String[8];
-									if (current.getAbsolutePath().contains("\\src\\")) {
-										lines[0] = current.getAbsolutePath().replaceFirst(".*\\\\src\\\\", "")
-												.replace("\\", ".");
-									} else { // package name
-										lines[0] = "package default";
-									}
-
-									lines[1] = packageFile.getName().substring(0,
-											packageFile.getName().lastIndexOf('.')); // class name
-
-									String finalstr = method.replaceAll("\\s*\\((.|\\n|\\r)*\\)\\s*", "") + "("
-											+ strFormatted.substring(0, strFormatted.length() - 1) + ")";
-									String[] words = method.replaceAll("\\([^(]*$", "").split("\\s+");
-
-									if (words.length == 2) {
-										lines[2] = finalstr.replaceFirst("^\\s*\\S+\\s*", "");
-									} else if ((words.length == 4)) {
-										lines[2] = finalstr.replaceFirst("^\\s*\\S+\\s+\\S+\\s+\\S+\\s*", "");
-									} else { // method name
-										lines[2] = finalstr.replaceFirst("^\\s*\\S+\\s+\\S+\\s*", "");
-									}
-									lines[3] = "" + methods.size(); // NOM_class
-									lines[4] = Metrics.getLines(packageFile) + ""; // LOC_class
-									lines[5] = "" + wmc; // WMC_class
-									lines[6] = "" + countLinesOfMethods.get(i); // LOC_method
-									lines[7] = "" + cycloOfAllMethods.get(i); // CYCLO_method
-									result.add(lines);
-									i++;
-								}
+								getInformationForExcel(current,packageFile,methods,wmc,i,countLinesOfMethods,cycloOfAllMethods,result);
 							}
 						} catch (IOException e) {
 							System.out.println("File not found!");
 						}
 					}
-
 				}
-
 			}
-
 		} while (!folders.isEmpty());
-
 		return result;
 	}
-
 }
