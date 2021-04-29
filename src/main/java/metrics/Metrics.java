@@ -49,7 +49,8 @@ public class Metrics {
 
 	/**
 	 * Auxiliary method to get all the names of methods a class has in given Java file.
-	 * @param file
+	 * Useful for the extraction of NOM_class metric and the getLinesOfMethods method (which will be used for the extraction of WMC_class, CYCLO_method and LOC_method). 
+	 * @param file This is the given Java file. 
 	 * @return The LinkedHashSet<String> methods which contains the names of methods a class has in given Java file.
 	 */
 	public static LinkedHashSet<String> methods(File file) {
@@ -88,16 +89,22 @@ public class Metrics {
 	
 	
 	/**
-	 * Represents NOM_class metric.
-	 * @param file
+	 * Allows to extract NOM_class metric.
+	 * @param file This is the given Java file from which this metric is extracted. 
 	 * @return The Number of Methods a class has in given Java file.
 	 */
 	public static int getNOM_class(File file) {
 		return methods(file).size();
 	}
 
+
 	/**
-	 * Useful method for extracting LOC_method, CYCLO_method and WMC_class metrics.
+	 * Auxiliary method that stores the methods names and corresponding lines of code.
+	 * Useful method for the extraction of LOC_method, CYCLO_method and WMC_class metrics.
+	 * @param file This is the given Java file.
+	 * @param methods This is the given LinkedHashSet<String> methods which should contain the methods names in the class from the given file.
+	 * @return The LinkedHashMap<String, String> getLinesOfMethods which contains the methods names and corresponding lines of code.
+	 * @throws FileNotFoundException
 	 */
 	public static LinkedHashMap<String, String> getLinesOfMethods(File file, LinkedHashSet<String> methods)
 			throws FileNotFoundException {
@@ -111,7 +118,6 @@ public class Metrics {
 			if (m.contains(System.lineSeparator())) {
 				toCheck = m.substring(0, m.indexOf(System.lineSeparator()));
 			}
-
 			while (scanner.hasNext() && !foundMethod) {
 				String checkIfStart = scanner.nextLine();
 
@@ -146,7 +152,6 @@ public class Metrics {
 				scanner = new Scanner(file);
 			}
 
-
 		}
 		scanner.close();
 		
@@ -157,14 +162,16 @@ public class Metrics {
 	}
 
 	
-	/**
-	 * Useful method for extracting CYCLO_method metric.
+	 /**
+	 * Auxiliary method that calculates the sum of the Cyclomatic Complexity for the required method.
+	 * Useful for the extraction of CYCLO_method metric.
+	 * @param method This is the given String that represents the method name.
+	 * @return The Sum of the Cyclomatic Complexity for the method.
 	 */
-	 private static int nOfCyclo(String method) {
+	private static int nOfCyclo(String method) {
 		if(method == null || method.length() == 0) {
 			throw new IllegalArgumentException("Empty or null String");
 		}
-		
 		int n = 1;
 		Pattern pattern = Pattern.compile(
 				"(\\&\\&|\\|\\|)|((^| +|\\}|\\;|\t)((if|for|while|catch)( +|\\()))|(\\?.*\\:)|((\t|^|\\;|\\{\\})(case +|continue;))",
@@ -174,95 +181,58 @@ public class Metrics {
 		while (matcher.find()) {
 			n++;
 		}
-
 		return n;
-
 	}
 	
 	/**
-	 * @param linesOfMethods
-	 * @param i
-	 * @return
+	 * Auxiliary method that allows to store the sum of the Cyclomatic Complexity for the each method present in a class.
+	 * Useful to extract the CYCLO_method and WMC_class metrics.
+	 * @param linesOfMethods linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @return The Sum of the Cyclomatic Complexity for the corresponding method.
 	 */
-	public static int getCYCLO_method(LinkedHashMap<String, String> linesOfMethods, int i) {
-
+	private static ArrayList<Integer> getCycloOfAllMethods(LinkedHashMap<String, String> linesOfMethods) {
 		ArrayList<Integer> cycloOfAllMethods = new ArrayList<Integer>();
-
 		for (String key : linesOfMethods.keySet())
 			cycloOfAllMethods.add(nOfCyclo(linesOfMethods.get(key)));
-
-		return cycloOfAllMethods.get(i);
-
-	}
-
-	/**
-	 * Aux wmc
-	 */
-	private static ArrayList<Integer> allCyclos(LinkedHashMap<String, String> linesOfMethods) {
-
-		ArrayList<Integer> cycloOfAllMethods = new ArrayList<Integer>();
-
-		for (String key : linesOfMethods.keySet())
-			cycloOfAllMethods.add(nOfCyclo(linesOfMethods.get(key)));
-
 		return cycloOfAllMethods;
-
+	}
+	
+	/**
+	 * Allows to extract the CYCLO_method metric.
+	 * @param linesOfMethods linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @param methodIndex This is the receiving Counter in ReadJavaProject which represents the present method.
+	 * @return The Sum of the Cyclomatic Complexity for the corresponding method.
+	 */
+	public static int getCYCLO_method(LinkedHashMap<String, String> linesOfMethods, int methodIndex) {
+		return getCycloOfAllMethods(linesOfMethods).get(methodIndex);
 	}
 	
 
 	/**
-	 * 
-	 * @param linesOfMethods
-	 * @return
+	 * Represents the WMC_class metric.
+	 * @param linesOfMethods linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @return The Total of the Cyclomatic Complexity in a class, by getting the total sum of cyclomatic complexity of each method in the class.
 	 */
 	public static int getWMC_class(LinkedHashMap<String, String> linesOfMethods) {
-		ArrayList<Integer> cyclos = allCyclos(linesOfMethods);
 		int i = 0;
-		for (int f : cyclos)
+		for (int f : getCycloOfAllMethods(linesOfMethods))
 			i += f;
 		return i;
 	}
 	
 	/**
-	 * @param map
-	 * @param i
-	 * @return
+	 * Allows to extract the LOC_method metric.
+	 * @param linesOfMethods linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @param methodIndex This is the receiving Counter in ReadJavaProject which represents the present method.
+	 * @return The Number of Lines of Code in the corresponding method.
 	 * @throws FileNotFoundException
 	 */
-	public static int getLOC_method(LinkedHashMap<String, String> map, int i)
-			throws FileNotFoundException {
+	public static int getLOC_method(LinkedHashMap<String, String> linesOfMethods, int methodIndex) throws FileNotFoundException {
 		ArrayList<Integer> getLines = new ArrayList<Integer>();
-		for (String key : map.keySet()) {
-			getLines.add(map.get(key).split("\r?\n").length);
+		for (String key : linesOfMethods.keySet()) {
+			getLines.add(linesOfMethods.get(key).split("\r?\n").length);
 		}
-		return getLines.get(i);
+		return getLines.get(methodIndex);
 	}
-	
-
-
-
-//	/**
-//	 * WMC_class
-//	 */
-//	static public int wmc(ArrayList<Integer> cyclos) {
-//		int i = 0;
-//		for (int f : cyclos)
-//			i += f;
-//		return i;
-//	}
-	
-
-
-//	/**
-//	 * aux LOC_method
-//	 */
-//	static public ArrayList<Integer> countLinesOfMethods(LinkedHashMap<String, String> map)
-//			throws FileNotFoundException {
-//		ArrayList<Integer> getLines = new ArrayList<Integer>();
-//		for (String key : map.keySet()) {
-//			getLines.add(map.get(key).split("\r?\n").length);
-//		}
-//		return getLines;
-//	}
 
 }

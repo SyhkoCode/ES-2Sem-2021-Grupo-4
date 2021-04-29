@@ -25,7 +25,7 @@ public class ReadJavaProject {
 							LinkedHashSet<String> methods = Metrics.methods(packageFile);
 							LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile,methods);
 
-							int i = 0;
+							int methodIndex = 0;
 							if (current.getAbsolutePath().contains("\\src")) {
 
 								for (String method : methods) {
@@ -56,10 +56,10 @@ public class ReadJavaProject {
 									lines[3] = "" + Metrics.getNOM_class(packageFile); 
 									lines[4] = "" + Metrics.getLOC_class(packageFile); 
 									lines[5] = "" + Metrics.getWMC_class(linesOfMethods); 
-									lines[7] = "" + Metrics.getLOC_method(linesOfMethods, i); 
-									lines[8] = "" + Metrics.getCYCLO_method(linesOfMethods, i);
+									lines[7] = "" + Metrics.getLOC_method(linesOfMethods, methodIndex); 
+									lines[8] = "" + Metrics.getCYCLO_method(linesOfMethods, methodIndex);
 									result.add(lines);
-									i++;
+									methodIndex++;
 								}
 							}
 						} catch (IOException e) {
