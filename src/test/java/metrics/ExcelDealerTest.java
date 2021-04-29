@@ -55,19 +55,6 @@ class ExcelDealerTest {
 			assertTrue(output.exists());
 		
 	}
-
-	@Test
-	final void testGetClassMethods() throws IOException {
-		File input = new File(getClass().getResource("/jasml_0.10_metrics.xlsx").getFile());
-		String inputPath = input.getAbsolutePath();
-		int col_index = 6;
-		String classname = "LOC_method";
-		try {
-			assertNotNull(ExcelDealer.getClassMethods(inputPath,0,col_index, classname));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 	@Test
 	final void testGetAllCellsOfColumn() throws IOException {

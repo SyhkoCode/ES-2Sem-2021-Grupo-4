@@ -17,15 +17,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Allow to create and read Excel files
  * 
  * @author Pedro Pereira, Tiago Mendes, Pedro Pinheiro
+ * @version 1.0
  *
  */
 public class ExcelDealer {
 
-	/**
-	 * @param path, Path of Excel file
-	 * @param rows
-	 * @param sheetName
-	 * @throws Exception
+	/** Create an Excel file with the given name, content and Excel sheet name.
+	 * 
+	 * @param path, path of the Excel file to be created
+	 * @param rows, string arrays with the information to insert on the Excel file
+	 * @param sheetName, name of the Excel sheet
+	 * @throws Exception, we throw exceptions to be dealt with on the GUI
 	 */
 	public static void createExcelFile(String path, List<String[]> rows, String sheetName) throws Exception {
 		File file = new File(path);
@@ -50,6 +52,13 @@ public class ExcelDealer {
 		wb.close();
 	}
 
+	/** Write a row on the Excel file creation with the given information and CellStyle
+	 * 
+	 * @param row, excel row to be filled the given information
+	 * @param info, information to be written on the given row
+	 * @param id, 
+	 * @param style, style given to the given Excel row
+	 */
 	private static void createRow(XSSFRow row, String[] info, int id, CellStyle style) {
 		if (id != 0)
 			row.createCell(0).setCellValue(id);
@@ -63,26 +72,16 @@ public class ExcelDealer {
 
 ////////////////////                   READING METHODS                   ////////////////////      
 
-	public static List<String> getClassMethods(String path, int sheet_Index, int col_Index, String className)
-			throws Exception {
-		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
-		XSSFSheet sheet = wb.getSheetAt(sheet_Index);
-
-		List<String> values = new ArrayList<>();
-
-		for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
-			XSSFRow row = sheet.getRow(i);
-			if (row != null && row.getCell(2).toString().equals(className))
-				if (row.getCell(col_Index) != null && !values.contains(row.getCell(col_Index).toString()))
-					values.add(row.getCell(col_Index).toString());
-
-		}
-
-		wb.close();
-		return values;
-	}
-
-	public static List<String> getAllCellsOfColumn(String path, int sheet_Index, int col_Index, boolean repetion)
+	/** Returns a list of every cell on a given Excel file column
+	 * 
+	 * @param path, path of the Excel file to be read
+	 * @param sheet_Index, index of the Excel sheet to be read
+	 * @param col_Index, index of the Excel column desired
+	 * @param repetition, true if repeated values are desired, false if not
+	 * @return List<String> with all the given column cells
+	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 */
+	public static List<String> getAllCellsOfColumn(String path, int sheet_Index, int col_Index, boolean repetition)
 			throws Exception {
 		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
 		XSSFSheet sheet = wb.getSheetAt(sheet_Index);
@@ -92,7 +91,7 @@ public class ExcelDealer {
 		for (int r = 0; r < sheet.getPhysicalNumberOfRows(); r++) {
 			XSSFRow row = sheet.getRow(r);
 			if (row != null && row.getCell(col_Index) != null)
-				if (repetion)
+				if (repetition)
 					values.add(row.getCell(col_Index).toString());
 				else if (!values.contains(row.getCell(col_Index).toString()))
 					values.add(row.getCell(col_Index).toString());
@@ -102,6 +101,14 @@ public class ExcelDealer {
 		return values;
 	}
 
+	/** Returns the total of the sum of all integers in a given column of the given Excel file and sheet
+	 * 
+	 * @param path, path of the Excel file to be read
+	 * @param sheet_Index, index of the Excel sheet to be read
+	 * @param col_Index, index of the Excel column desired
+	 * @return returns total of the sum of all integers in a given column
+	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 */
 	public static int sumAllColumn(String path, int sheet_Index, int col_Index) throws Exception {
 		List<String> collumn = getAllCellsOfColumn(path, sheet_Index, col_Index, true);
 		int total = 0;
@@ -115,6 +122,13 @@ public class ExcelDealer {
 		return total;
 	}
 
+	/** Returns all the rows in the given Excel file and sheet
+	 * 
+	 * @param path, path of the Excel file to be read
+	 * @param sheet_Index, index of the Excel sheet to be read
+	 * @return returns List<Object[]> with all the rows of the given Excel file and sheet
+	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 */
 	public static List<Object[]> getAllRows(String path, int sheet_Index) throws Exception {
 		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
 		XSSFSheet sheet = wb.getSheetAt(sheet_Index);
@@ -136,6 +150,14 @@ public class ExcelDealer {
 		return rows;
 	}
 
+	/** Returns a specific row of the given Excel file, sheet and row
+	 * 
+	 * @param path, path of the Excel file to be read
+	 * @param sheet_Index, index of the Excel sheet to be read
+	 * @param row_Index, index of the Excel row to be read
+	 * @return returns Object[] correspondent to be desired row
+	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 */
 	public static Object[] getRow(String path, int sheet_Index, int row_Index) throws Exception {
 		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
 		XSSFSheet sheet = wb.getSheetAt(sheet_Index);
