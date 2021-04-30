@@ -200,7 +200,7 @@ public class Metrics {
 	 * @param linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
 	 * @return The Sum of the Cyclomatic Complexity for the corresponding method.
 	 */
-	private static ArrayList<Integer> getCycloOfAllMethods(LinkedHashMap<String, String> linesOfMethods) {
+	public static ArrayList<Integer> getCycloOfAllMethods(LinkedHashMap<String, String> linesOfMethods) {
 		ArrayList<Integer> cycloOfAllMethods = new ArrayList<Integer>();
 		for (String key : linesOfMethods.keySet())
 			cycloOfAllMethods.add(nOfCyclo(linesOfMethods.get(key)));
@@ -214,11 +214,11 @@ public class Metrics {
 	 * @return The Sum of the Cyclomatic Complexity for the corresponding method.
 	 * @throws IllegalArgumentException If given LinkedHashMap<String, String> linesOfMethods is empty.
 	 */
-	public static int getCYCLO_method(LinkedHashMap<String, String> linesOfMethods, int methodIndex) {
-		if(linesOfMethods.isEmpty()) {
-			throw new IllegalArgumentException("Nao pode ser um mapa vazio.");
-		}
-		return getCycloOfAllMethods(linesOfMethods).get(methodIndex);
+	public static int getCYCLO_method(ArrayList<Integer> cycloOfAllMethods, int methodIndex) {
+//		if(linesOfMethods.isEmpty()) {
+//			throw new IllegalArgumentException("Nao pode ser um mapa vazio.");
+//		}
+		return cycloOfAllMethods.get(methodIndex);
 	}
 	
 
@@ -227,9 +227,9 @@ public class Metrics {
 	 * @param linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
 	 * @return The Total of the Cyclomatic Complexity in a class, by getting the total sum of cyclomatic complexity of each method in the class.
 	 */
-	public static int getWMC_class(LinkedHashMap<String, String> linesOfMethods) {
+	public static int getWMC_class(ArrayList<Integer> cycloOfAllMethods) {
 		int i = 0;
-		for (int f : getCycloOfAllMethods(linesOfMethods))
+		for (int f : cycloOfAllMethods)
 			i += f;
 		return i;
 	}

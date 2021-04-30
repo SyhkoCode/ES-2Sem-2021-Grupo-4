@@ -24,6 +24,7 @@ public class ReadJavaProject {
 						try {
 							LinkedHashSet<String> methods = Metrics.methods(packageFile);
 							LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile,methods);
+							ArrayList<Integer> cycloOfAllMethods = Metrics.getCycloOfAllMethods(linesOfMethods);
 
 							int methodIndex = 0;
 							if (current.getAbsolutePath().contains("\\src")) {
@@ -55,9 +56,9 @@ public class ReadJavaProject {
 									}
 									lines[3] = "" + Metrics.getNOM_class(packageFile); 
 									lines[4] = "" + Metrics.getLOC_class(packageFile); 
-									lines[5] = "" + Metrics.getWMC_class(linesOfMethods); 
+									lines[5] = "" + Metrics.getWMC_class(cycloOfAllMethods); 
 									lines[7] = "" + Metrics.getLOC_method(linesOfMethods, methodIndex); 
-									lines[8] = "" + Metrics.getCYCLO_method(linesOfMethods, methodIndex);
+									lines[8] = "" + Metrics.getCYCLO_method(cycloOfAllMethods, methodIndex);
 									result.add(lines);
 									methodIndex++;
 								}
