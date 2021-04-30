@@ -63,7 +63,7 @@ class RuleTest {
 		assertTrue(actualMessage.contains(expectedMessage));
 		
 		Rule test = new Rule ("is_God_Class", "SE ( NOM_class > 5 )");
-		assertEquals("is_God_Class", test.getNome());
+		assertEquals("is_God_Class", test.getName());
 		assertEquals("SE ( NOM_class > 5 )", test.getExpression());
 		
 	}
@@ -126,7 +126,7 @@ class RuleTest {
 		assertEquals(teorical.size(), test.size());
 		
 		for(int i = 0; i < teorical.size(); i++) {
-			assertEquals(teorical.get(i).getNome(), test.get(i).getNome());
+			assertEquals(teorical.get(i).getName(), test.get(i).getName());
 			assertEquals(teorical.get(i).getExpression(), test.get(i).getExpression());
 		}		
 		
@@ -140,13 +140,13 @@ class RuleTest {
 	@Test
 	final void testGetNome() {
 		Rule test = new Rule ("is_God_Class", "SE ( NOM_class > 5 )");
-		assertEquals("is_God_Class", test.getNome());
+		assertEquals("is_God_Class", test.getName());
 		
 		test = new Rule ("is_Long_Method", "SE ( NOM_class > 5 )");
-		assertEquals("is_Long_Method", test.getNome());
+		assertEquals("is_Long_Method", test.getName());
 		
 		test = new Rule ("is_Long_Class", "SE ( NOM_class > 5 )");
-		assertEquals("is_Long_Class", test.getNome());
+		assertEquals("is_Long_Class", test.getName());
 	}
 	
 	@Test
