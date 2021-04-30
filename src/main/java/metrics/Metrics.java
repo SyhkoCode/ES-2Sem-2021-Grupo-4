@@ -37,20 +37,20 @@ public class Metrics {
 		Integer max = null;
 		
 		List<String> lines = Files.lines(file.toPath()).collect(Collectors.toList());
-		String primaryClassName = file.getName().replaceFirst("\\.java", "");
-		
+		String classRegExp = "(((|public|final|abstract|private|static|protected)(\\s+))?(class)(\\s+)(\\w+)(<.*>)?(\\s+extends\\s+\\w+)?(<.*>)?(\\s+implements\\s+)?(.*)?(<.*>)?(\\s*))\\{$";
+        Pattern classDeclarationPattern = Pattern.compile(classRegExp);
+        
 		for (int i = 0; i < lines.size(); i++) {
 			String line = lines.get(i);
-			if (line.indexOf("class "+primaryClassName) != -1 && min == null) 
+			Matcher classDeclarationMatcher = classDeclarationPattern.matcher(line);
+			if (classDeclarationMatcher.matches() && min == null) 
 				min = i;
 			if (line.indexOf("}") != -1)
 				max = i;
-		}
-		
+		}	
 		if (min == null || max == null) {
 			return 0;
-		}
-		
+		}	
 		return 1 + max - min;
 	}
 
@@ -177,7 +177,7 @@ public class Metrics {
 	 */
 	private static int nOfCyclo(String method) {
 		if(method == null || method.length() == 0) {
-			throw new IllegalArgumentException("Empty or null String");
+			throw new IllegalArgumentException("String nao pode ser vazia ou nula.");
 		}
 		int n = 1;
 		Pattern pattern = Pattern.compile(
@@ -211,6 +211,9 @@ public class Metrics {
 	 * @return The Sum of the Cyclomatic Complexity for the corresponding method.
 	 */
 	public static int getCYCLO_method(LinkedHashMap<String, String> linesOfMethods, int methodIndex) {
+		if(linesOfMethods.isEmpty()) {
+			throw new IllegalArgumentException("Nao pode ser um mapa vazio.");
+		}
 		return getCycloOfAllMethods(linesOfMethods).get(methodIndex);
 	}
 	
@@ -235,6 +238,9 @@ public class Metrics {
 	 * @throws FileNotFoundException
 	 */
 	public static int getLOC_method(LinkedHashMap<String, String> linesOfMethods, int methodIndex) throws FileNotFoundException {
+		if(linesOfMethods.isEmpty()) {
+			throw new IllegalArgumentException("Nao pode ser um mapa vazio.");
+		}
 		ArrayList<Integer> getLines = new ArrayList<Integer>();
 		for (String key : linesOfMethods.keySet()) {
 			getLines.add(linesOfMethods.get(key).split("\r?\n").length);
