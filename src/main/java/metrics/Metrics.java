@@ -1,8 +1,11 @@
 package metrics;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -12,6 +15,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * Contains all methods required for Metrics extraction. 
@@ -35,9 +40,16 @@ public class Metrics {
 			throw new NullPointerException("Ficheiro nao pode ser nulo.");
 		}
 		Integer min = null;
-		Integer max = null;
+		Integer max = null;	
+//		List<String> lines = Files.lines(file.toPath()).collect(Collectors.toList()); //o jasml dava bem mas dava java.nio.charset.MalformedInputException em alguns outros projetos q testei pq esta funcao tem um enconding inbuilt.. 
+//		List<String> lines = FileUtils.readLines(file, "UTF-8"); //funcionou com tds os projetos q testei mas n sei ate q ponto funcionara pa projetos sem serem UTF-8
 		
-		List<String> lines = Files.lines(file.toPath()).collect(Collectors.toList());
+		// abaixo tb funciona mas sao mais linhas, mas parece ser o mais seguro
+		List<String> lines = new ArrayList<>();
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		    lines = br.lines().collect(Collectors.toList());    
+		}
+		
 		String classRegExp = "(((|public|final|abstract|private|static|protected)(\\s+))?(class)(\\s+)(\\w+)(<.*>)?(\\s+extends\\s+\\w+)?(<.*>)?(\\s+implements\\s+)?(.*)?(<.*>)?(\\s*))\\{$";
         Pattern classDeclarationPattern = Pattern.compile(classRegExp);
         
