@@ -34,14 +34,11 @@ public class ReadJavaProject {
 	 * @param packageFile is the java file that will by analysed
 	 * @param lines is a String array that contains the information to be inserted in each row of 
 	 * 		  the excel sheet by the ExcelDealer 
-	 * @param methods is a LinkedHashSet that contains the names, arguments and modifiers of the methods of 
-	 * 		  the java file in Strings
-	 * @param wmc corresponds to the Weighted Methods per Class metric value
 	 * @param counter used to get the LOC_method and CYCLO_method metrics
-	 * @param countLinesOfMethods is an ArrayList with the number of lines of each method
+	 * @param linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
 	 * @param cycloOfAllMethods is an arrayList of Integer that given a map of methods and their
 	 * 		  lines of code, returns the cyclo value of each of them 
-	 * @throws IOException
+	 * @throws IOException If an I/O error occurs.
 	 */
 	public static void getMetricsForExcel(File packageFile, String[] lines, int counter, LinkedHashMap<String, String> linesOfMethods, ArrayList<Integer> cycloOfAllMethods) throws IOException{
 		lines[3] = "" + Metrics.getNOM_class(packageFile); 
@@ -54,18 +51,18 @@ public class ReadJavaProject {
 	
 	/**
 	 * @param current represents the project directory
-	 * @param packageFile (same as getMetricsForExcel)
-	 * @param methods (same as getMetricsForExcel)
-	 * @param wmc (same as getMetricsForExcel)
-	 * @param counter (same as getMetricsForExcel)
-	 * @param countLinesOfMethods (same as getMetricsForExcel)
-	 * @param cycloOfAllMethods (same as getMetricsForExcel)
+	 * @param packageFile is the java file that will by analysed
+	 * @param methods is a LinkedHashSet that contains the names, arguments and modifiers of the methods of the java file in Strings
+	 * @param linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @param counter used to get the LOC_method and CYCLO_method metrics
+	 * @param cycloOfAllMethods is an arrayList of Integer that given a map of methods and their
+	 * 		  lines of code, returns the cyclo value of each of them
 	 * @param result contains the information that will later be used to fill in
 	 * 		  each row of the excel sheet (this will be done with the ExcelDealer)
-	 * @throws IOException
+	 * @throws IOException If an I/O error occurs.
 	 */
-	public static void getInformationForExcel(File current, File packageFile, LinkedHashSet<String> methods,  LinkedHashMap<String, String> linesOfMethods,
-			int counter, ArrayList<Integer> cycloOfAllMethods, List<String[]> result)
+	public static void getInformationForExcel(File current, File packageFile, LinkedHashSet<String> methods,  LinkedHashMap<String, String> linesOfMethods, ArrayList<Integer> cycloOfAllMethods,
+			int counter, List<String[]> result)
 			throws IOException {
 
 		for (String method : methods) {
@@ -116,7 +113,7 @@ public class ReadJavaProject {
 							ArrayList<Integer> cycloOfAllMethods = Metrics.getCycloOfAllMethods(linesOfMethods);
 							int counter = 0;
 							if (current.getAbsolutePath().contains("\\src")) {
-								getInformationForExcel(current,packageFile,methods,linesOfMethods,counter,cycloOfAllMethods,result);
+								getInformationForExcel(current,packageFile,methods,linesOfMethods,cycloOfAllMethods,counter,result);
 
 							}
 						} catch (IOException e) {
