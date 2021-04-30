@@ -1438,7 +1438,10 @@ public class GUI extends JFrame {
 		mFN.setText(mFNs + " Falsos Negativos");
 
 		pieDataSet = new DefaultPieDataset();
+		pieDataSet2 = new DefaultPieDataset();
 		JFreeChart chart = ChartFactory.createPieChart("", pieDataSet, true, true, true);
+		JFreeChart chart2 = ChartFactory.createPieChart("", pieDataSet2, true, true, true);
+
 		PiePlot plot = (PiePlot) chart.getPlot();
 
 		if (cVP > 0) {
@@ -1457,18 +1460,18 @@ public class GUI extends JFrame {
 		}
 
 		if (mVPs > 0) {
-			pieDataSet.setValue("VP", mVPs);
+			pieDataSet2.setValue("VP", mVPs);
 		}
 
 		if (mVNs > 0) {
-			pieDataSet.setValue("VN", mVNs);
+			pieDataSet2.setValue("VN", mVNs);
 		}
 
 		if (mFPs > 0) {
-			pieDataSet.setValue("FP", mFPs);
+			pieDataSet2.setValue("FP", mFPs);
 		}
 		if (mFNs > 0) {
-			pieDataSet.setValue("FN", mFNs);
+			pieDataSet2.setValue("FN", mFNs);
 		}
 
 		plot.setSectionPaint("VP", new Color(0, 255, 51));
@@ -1482,13 +1485,11 @@ public class GUI extends JFrame {
 
 		avaliacaoRegras.add(chartFrame);
 
-		pieDataSet2 = new DefaultPieDataset();
 		pieDataSet2.setValue("VP", mVPs);
 		pieDataSet2.setValue("VN", mVNs);
 		pieDataSet2.setValue("FP", mFPs);
 		pieDataSet2.setValue("FN", mFNs);
 
-		JFreeChart chart2 = ChartFactory.createPieChart("", pieDataSet2, true, true, true);
 		PiePlot plot2 = (PiePlot) chart2.getPlot();
 		plot2.setSectionPaint("VP", new Color(0, 255, 51));
 		plot2.setSectionPaint("VN", new Color(0, 153, 0));
