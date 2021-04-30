@@ -14,9 +14,10 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
  * Allows to compare between different files to be able to evaluate the quality
- * of code smell detection
+ * of code smell detection.
  * 
- * @author Sofia Chaves, Pedro Pinheiro
+ * @author Sofia Chaves
+ * @author Pedro Pinheiro
  * @version 2.0
  * @since 2021-04-15
  */
@@ -61,14 +62,13 @@ public class CompareFiles {
 	}
 
 	/**
-	 * Gets the corresponding Column Indexes of given Strings that represent Column
+	 * Gets the corresponding Column Indexes of titles (code smells) that represent Column
 	 * Titles in two Excel files
 	 * 
-	 * @param titles These are the Title Columns required to get their indexes.
 	 * @return LinkedHashMap<String, Integer> in which the String is the Column
 	 *         Title and the Integer is the corresponding Column Index per Excel
 	 *         file
-	 * @throws Exception
+	 * @throws Exception Propagated Exception from ExcelDealer to be dealt with on the GUI.
 	 */
 	private LinkedHashMap<String, Integer> getColIndexesByTitles() throws Exception {
 		LinkedHashMap<String, Integer> indexesMap = new LinkedHashMap<>();
@@ -102,6 +102,7 @@ public class CompareFiles {
 	 * @param createdText Given string.
 	 * @return Indicator This is the right Indicator after comparison of given
 	 *         strings.
+	 *@throws IllegalStateException If given strings do not correspond to valid values.
 	 */
 	private static Indicator parseIndicator(String defaultText, String createdText) {
 		List<String> valid = Arrays.asList("TRUE", "FALSE","true","false");
@@ -116,10 +117,9 @@ public class CompareFiles {
 	 * When CompareFiles receives 2 Excel files, this is the method that allows the
 	 * comparison between them and the code smell detection quality evaluation.
 	 * 
-	 * @param titles These are the Title Columns required to get their indexes.
 	 * @return Quality object that contains both HashMaps with Indicators per Method
-	 *         and per Class
-	 * @throws Exception
+	 *         and per Class.
+	 * @throws Exception Propagated Exception from ExcelDealer to be dealt with on the GUI.
 	 */
 	private Quality compareWith2Files() throws Exception {
 		HashMap<String, Integer> indexesMap = getColIndexesByTitles();
@@ -173,8 +173,8 @@ public class CompareFiles {
 	 * comparison between them and the code smell detection quality evaluation.
 	 * 
 	 * @return Quality object that contains both HashMaps with Indicators per Method
-	 *         and per Class
-	 * @throws Exception 
+	 *         and per Class.
+	 * @throws Exception Propagated Exception from ExcelDealer to be dealt with on the GUI.
 	 */
 	private Quality compareWith3Files() throws Exception {
 		HashMap<String, Indicator> saveIndsPerMethod = new HashMap<>();
@@ -220,10 +220,9 @@ public class CompareFiles {
 	 * Allows to evaluate the quality of code smell detection by choosing the right
 	 * comparison method.
 	 * 
-	 * @param titles These are the Column Titles required to evaluate.
 	 * @return Quality object that contains both HashMaps with Indicators per Method
 	 *         and per Class
-	 * @throws Exception
+	 * @throws Exception Propagated Exception from ExcelDealer to be dealt with on the GUI.
 	 */
 	public Quality testQuality() throws Exception {
 		if (booleanColumnsFilled) {
@@ -237,15 +236,15 @@ public class CompareFiles {
 	 * este main vai desaparecer
 	 * @throws Exception 
 	 */
-	public static void main(String[] args) throws Exception {
-////		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Pictures\\jasml_0.10_metrics.xlsx","C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt" );
-		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
-//		CompareFiles cf2 = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx", "testeregras.txt");		
-		Quality result = cf.testQuality();
-//		result.getIndicatorsPerClass();	
-//		result.getIndicatorsPerMethod();	
-//		System.out.println(result.getIndicatorsPerMethod());
-//		System.out.println(result.getIndicatorsPerClass());
-		System.out.println("No de FPs: "+result.countIndicatorInMethods(Indicator.FP)+" em "+ result.getIndicatorsPerMethod().size());
-	}
+//	public static void main(String[] args) throws Exception {
+//////		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Pictures\\jasml_0.10_metrics.xlsx","C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt" );
+//		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
+////		CompareFiles cf2 = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx", "testeregras.txt");		
+//		Quality result = cf.testQuality();
+////		result.getIndicatorsPerClass();	
+////		result.getIndicatorsPerMethod();	
+////		System.out.println(result.getIndicatorsPerMethod());
+////		System.out.println(result.getIndicatorsPerClass());
+//		System.out.println("No de FPs: "+result.countIndicatorInMethods(Indicator.FP)+" em "+ result.getIndicatorsPerMethod().size());
+//	}
 }
