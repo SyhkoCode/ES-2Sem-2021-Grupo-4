@@ -28,6 +28,7 @@ public class CompareFiles {
 	private String metricsFile;
 	private String rulesFile;
 	private boolean booleanColumnsFilled;
+	private final String[] titles = new String[]{"is_god_class","is_long_method"};
 
 	/**
 	 * Constructor given two files This is for the situation when User chose to save
@@ -69,7 +70,7 @@ public class CompareFiles {
 	 *         file
 	 * @throws Exception
 	 */
-	private LinkedHashMap<String, Integer> getColIndexesByTitles(String[] titles) throws Exception {
+	private LinkedHashMap<String, Integer> getColIndexesByTitles() throws Exception {
 		LinkedHashMap<String, Integer> indexesMap = new LinkedHashMap<>();
 
 		Object[] headerDefault = ExcelDealer.getRow(csFileDefault, 0, 0);
@@ -120,8 +121,8 @@ public class CompareFiles {
 	 *         and per Class
 	 * @throws Exception
 	 */
-	private Quality compareWith2Files(String[] titles) throws Exception {
-		HashMap<String, Integer> indexesMap = getColIndexesByTitles(titles);
+	private Quality compareWith2Files() throws Exception {
+		HashMap<String, Integer> indexesMap = getColIndexesByTitles();
 		HashMap<String, Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String, Indicator> saveIndsPerClass = new HashMap<>();
 
@@ -224,9 +225,9 @@ public class CompareFiles {
 	 *         and per Class
 	 * @throws Exception
 	 */
-	public Quality testQuality(String[] titles) throws Exception {
+	public Quality testQuality() throws Exception {
 		if (booleanColumnsFilled) {
-			return compareWith2Files(titles);
+			return compareWith2Files();
 		} else {
 			return compareWith3Files();
 		}
@@ -234,16 +235,17 @@ public class CompareFiles {
 
 	/**
 	 * este main vai desaparecer
+	 * @throws Exception 
 	 */
-//	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 ////		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Pictures\\jasml_0.10_metrics.xlsx","C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt" );
-////		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
+		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
 //		CompareFiles cf2 = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx", "testeregras.txt");		
-//		Quality result = cf2.testQuality(new String[]{"is_god_class","is_long_method"});
+		Quality result = cf.testQuality();
 //		result.getIndicatorsPerClass();	
 //		result.getIndicatorsPerMethod();	
 //		System.out.println(result.getIndicatorsPerMethod());
 //		System.out.println(result.getIndicatorsPerClass());
-//		System.out.println("No de FPs: "+result.countIndicatorInMethods(Indicator.FP)+" em "+ result.getIndicatorsPerMethod().size());
-//	}
+		System.out.println("No de FPs: "+result.countIndicatorInMethods(Indicator.FP)+" em "+ result.getIndicatorsPerMethod().size());
+	}
 }

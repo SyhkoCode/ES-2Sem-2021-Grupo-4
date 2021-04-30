@@ -993,7 +993,7 @@ public class GUI extends JFrame {
 				try {
 					if (compare2.isSelected()) {
 						CompareFiles comparef = new CompareFiles(csDefault, csCreated);
-						Quality quality = comparef.testQuality(new String[] { "is_God_Class", "is_Long_Method" });
+						Quality quality = comparef.testQuality();
 						classesMap = quality.getIndicatorsPerClass();
 						methodsMap = quality.getIndicatorsPerMethod();
 						updateEvaluationInfo();
@@ -1001,7 +1001,7 @@ public class GUI extends JFrame {
 					}
 					if (compare3.isSelected()) {
 						CompareFiles comparef = new CompareFiles(csDefault, metricsFile, rulesFile);
-						Quality quality = comparef.testQuality(new String[] { "is_God_Class", "is_Long_Method" });
+						Quality quality = comparef.testQuality();
 						classesMap = quality.getIndicatorsPerClass();
 						methodsMap = quality.getIndicatorsPerMethod();
 						updateEvaluationInfo();

@@ -56,7 +56,7 @@ class CompareFilesTest {
 	}
 
 	@Test
-	final void testTestQuality() {
+	final void testTestQuality() throws Exception {
 		assertNotNull(cfSS.testQuality(new String[]{"is_god_class","is_long_method"}));
 		assertNotNull(cfSSS.testQuality(new String[]{"is_god_class","is_long_method"}));
 		
