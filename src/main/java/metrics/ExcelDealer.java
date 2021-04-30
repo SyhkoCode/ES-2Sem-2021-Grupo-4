@@ -23,10 +23,10 @@ public class ExcelDealer {
 
 	/** Create an Excel file with the given name, content and Excel sheet name.
 	 * 
-	 * @param path, path of the Excel file to be created
-	 * @param rows, string arrays with the information to insert on the Excel file
-	 * @param sheetName, name of the Excel sheet
-	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 * @param path path of the Excel file to be created
+	 * @param rows string arrays with the information to insert on the Excel file
+	 * @param sheetName name of the Excel sheet
+	 * @throws Exception we throw exceptions to be dealt with on the GUI
 	 */
 	public static void createExcelFile(String path, List<String[]> rows, String sheetName) throws Exception {
 		File file = new File(path);
@@ -53,10 +53,10 @@ public class ExcelDealer {
 
 	/** Write a row on the Excel file creation with the given information and CellStyle
 	 * 
-	 * @param row, excel row to be filled the given information
-	 * @param info, information to be written on the given row
-	 * @param id, 
-	 * @param style, style given to the given Excel row
+	 * @param row excel row to be filled the given information
+	 * @param info information to be written on the given row
+	 * @param id 
+	 * @param style style given to the given Excel row
 	 */
 	private static void createRow(XSSFRow row, String[] info, int id, CellStyle style) {
 		if (id != 0)
@@ -73,12 +73,12 @@ public class ExcelDealer {
 
 	/** Returns a list of every cell on a given Excel file column
 	 * 
-	 * @param path, path of the Excel file to be read
-	 * @param sheet_Index, index of the Excel sheet to be read
-	 * @param col_Index, index of the Excel column desired
-	 * @param repetition, true if repeated values are desired, false if not
+	 * @param path path of the Excel file to be read
+	 * @param sheet_Index index of the Excel sheet to be read
+	 * @param col_Index index of the Excel column desired
+	 * @param repetition true if repeated values are desired, false if not
 	 * @return List<String> with all the given column cells
-	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 * @throws Exception we throw exceptions to be dealt with on the GUI
 	 */
 	public static List<String> getAllCellsOfColumn(String path, int sheet_Index, int col_Index, boolean repetition)
 			throws Exception {
@@ -102,11 +102,11 @@ public class ExcelDealer {
 
 	/** Returns the total of the sum of all integers in a given column of the given Excel file and sheet
 	 * 
-	 * @param path, path of the Excel file to be read
-	 * @param sheet_Index, index of the Excel sheet to be read
-	 * @param col_Index, index of the Excel column desired
+	 * @param path path of the Excel file to be read
+	 * @param sheet_Index index of the Excel sheet to be read
+	 * @param col_Index index of the Excel column desired
 	 * @return total of the sum of all integers in a given column
-	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 * @throws Exception we throw exceptions to be dealt with on the GUI
 	 */
 	public static int sumAllColumn(String path, int sheet_Index, int col_Index) throws Exception {
 		List<String> collumn = getAllCellsOfColumn(path, sheet_Index, col_Index, true);
@@ -123,10 +123,10 @@ public class ExcelDealer {
 
 	/** Returns all the rows in the given Excel file and sheet
 	 * 
-	 * @param path, path of the Excel file to be read
-	 * @param sheet_Index, index of the Excel sheet to be read
+	 * @param path path of the Excel file to be read
+	 * @param sheet_Index index of the Excel sheet to be read
 	 * @return returns List<Object[]> with all the rows of the given Excel file and sheet
-	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 * @throws Exception we throw exceptions to be dealt with on the GUI
 	 */
 	public static List<Object[]> getAllRows(String path, int sheet_Index) throws Exception {
 		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
@@ -151,11 +151,11 @@ public class ExcelDealer {
 
 	/** Returns a specific row of the given Excel file, sheet and row
 	 * 
-	 * @param path, path of the Excel file to be read
-	 * @param sheet_Index, index of the Excel sheet to be read
-	 * @param row_Index, index of the Excel row to be read
+	 * @param path path of the Excel file to be read
+	 * @param sheet_Index index of the Excel sheet to be read
+	 * @param row_Index index of the Excel row to be read
 	 * @return returns Object[] correspondent to be desired row
-	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 * @throws Exception we throw exceptions to be dealt with on the GUI
 	 */
 	public static Object[] getRow(String path, int sheet_Index, int row_Index) throws Exception {
 		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
