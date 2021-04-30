@@ -124,9 +124,9 @@ public class MetricsRuleAnalysis {
 				for (int j = 1; j < classLine.length; j++) {
 					classLine[j] = codeSmellDetectedMap.get(getClassSmells().get(j - 1)).get(i).toString();
 
-					if (j == methodLine.length - 1) {
+					if (j == classLine.length - 1) {
 						classesAndCodeSmellsFound.add(getMethodsData().get(i).getClassName());
-						result.get(0).add(methodLine);
+						result.get(0).add(classLine);
 					}
 				}
 			}
