@@ -104,8 +104,8 @@ public class CompareFiles {
 	 *         strings.
 	 */
 	private static Indicator parseIndicator(String defaultText, String createdText) {
-		List<String> valid = Arrays.asList("TRUE", "FALSE");
-		if (!valid.contains(defaultText) || !valid.contains(defaultText)) {
+		List<String> valid = Arrays.asList("TRUE", "FALSE","true","false");
+		if (!valid.contains(defaultText) || !valid.contains(createdText)) {
 			throw new IllegalStateException("Ficheiro mal formatado");
 		}
 		return (defaultText.equalsIgnoreCase("TRUE") ? (createdText.equalsIgnoreCase("TRUE") ? Indicator.VP : Indicator.FN)
