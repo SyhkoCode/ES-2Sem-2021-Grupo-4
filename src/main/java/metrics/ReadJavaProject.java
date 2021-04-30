@@ -43,13 +43,12 @@ public class ReadJavaProject {
 	 * 		  lines of code, returns the cyclo value of each of them 
 	 * @throws IOException
 	 */
-	public static void getMetricsForExcel(File packageFile, String[] lines, LinkedHashSet<String> methods, int wmc,
-			int counter, ArrayList<Integer> countLinesOfMethods, ArrayList<Integer> cycloOfAllMethods) throws IOException{
-		lines[3] = "" + methods.size(); // NOM_class
-		lines[4] = Metrics.getLines(packageFile) + ""; // LOC_class
-		lines[5] = "" + wmc; // WMC_class
-		lines[6] = "" + countLinesOfMethods.get(counter); // LOC_method
-		lines[7] = "" + cycloOfAllMethods.get(counter); // CYCLO_method
+	public static void getMetricsForExcel(File packageFile, String[] lines, int counter, LinkedHashMap<String, String> linesOfMethods, ArrayList<Integer> cycloOfAllMethods) throws IOException{
+		lines[3] = "" + Metrics.getNOM_class(packageFile); 
+		lines[4] = "" + Metrics.getLOC_class(packageFile); 
+		lines[5] = "" + Metrics.getWMC_class(cycloOfAllMethods); 
+		lines[6] = "" + Metrics.getLOC_method(linesOfMethods, counter);
+		lines[7] = "" + Metrics.getCYCLO_method(cycloOfAllMethods, counter);
 	}
 	
 	
@@ -65,9 +64,10 @@ public class ReadJavaProject {
 	 * 		  each row of the excel sheet (this will be done with the ExcelDealer)
 	 * @throws IOException
 	 */
-	public static void getInformationForExcel(File current, File packageFile, LinkedHashSet<String> methods, int wmc,
-			int counter, ArrayList<Integer> countLinesOfMethods, ArrayList<Integer> cycloOfAllMethods, List<String[]> result)
+	public static void getInformationForExcel(File current, File packageFile, LinkedHashSet<String> methods,  LinkedHashMap<String, String> linesOfMethods,
+			int counter, ArrayList<Integer> cycloOfAllMethods, List<String[]> result)
 			throws IOException {
+
 		for (String method : methods) {
 			String argumentsFormatted = formatString(method);
 			String[] lines = new String[8];
@@ -88,7 +88,7 @@ public class ReadJavaProject {
 			} else { 
 				lines[2] = methodFormatted.replaceFirst("^\\s*\\S+\\s+\\S+\\s*", "");
 			}
-			getMetricsForExcel(packageFile,lines,methods,wmc,counter,countLinesOfMethods,cycloOfAllMethods);
+			getMetricsForExcel(packageFile,lines,counter,linesOfMethods,cycloOfAllMethods);
 			result.add(lines);
 			counter++;
 		}
@@ -113,55 +113,11 @@ public class ReadJavaProject {
 						try {
 							LinkedHashSet<String> methods = Metrics.methods(packageFile);
 							LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile,methods);
-              
-/*<<<<<<< metrics-optimization
 							ArrayList<Integer> cycloOfAllMethods = Metrics.getCycloOfAllMethods(linesOfMethods);
-
-							int methodIndex = 0;
-							if (current.getAbsolutePath().contains("\\src")) {
-
-								for (String method : methods) {
-									String strFormatted = "";
-									String str2 = method.replaceAll(".*\\(|\\n|\\r|\\)", "");
-									String[] strs = str2.split(",");
-									for (String substr : strs) {
-										strFormatted += substr.trim().split("\\s+")[0] + ",";
-									}
-									String[] lines = new String[11];
-									if (current.getAbsolutePath().contains("\\src\\")) {
-										lines[0] = current.getAbsolutePath().replaceFirst(".*\\\\src\\\\", "").replace("\\", "."); 
-									} else {	//package name
-										lines[0] = "package default";
-									}
-
-									lines[1] = packageFile.getName().substring(0,packageFile.getName().lastIndexOf('.')); // class name
-
-									String finalstr = method.replaceAll("\\s*\\((.|\\n|\\r)*\\)\\s*", "") + "("
-											+ strFormatted.substring(0, strFormatted.length() - 1) + ")";
-									String[] words = method.replaceAll("\\([^(]*$", "").split("\\s+");
-									
-									if (words.length == 2) {
-										lines[2] = finalstr.replaceFirst("^\\s*\\S+\\s*", "");
-									} else {	// method name
-										lines[2] = finalstr.replaceFirst("^\\s*\\S+\\s+\\S+\\s*", "");
-									}
-									lines[3] = "" + Metrics.getNOM_class(packageFile); 
-									lines[4] = "" + Metrics.getLOC_class(packageFile); 
-									lines[5] = "" + Metrics.getWMC_class(cycloOfAllMethods); 
-									lines[7] = "" + Metrics.getLOC_method(linesOfMethods, methodIndex);
-									lines[8] = "" + Metrics.getCYCLO_method(cycloOfAllMethods, methodIndex);
-									result.add(lines);
-									methodIndex++;
-								}
-=======
-							ArrayList<Integer> countLinesOfMethods = Metrics.countLinesOfMethods(linesOfMethods);
-							ArrayList<Integer> cycloOfAllMethods = Metrics.allCyclos(linesOfMethods);
-
-							int wmc = Metrics.wmc(cycloOfAllMethods);
 							int counter = 0;
 							if (current.getAbsolutePath().contains("\\src")) {
-								getInformationForExcel(current,packageFile,methods,wmc,counter,countLinesOfMethods,cycloOfAllMethods,result);
->>>>>>> excelDealerSimplified */
+								getInformationForExcel(current,packageFile,methods,linesOfMethods,counter,cycloOfAllMethods,result);
+
 							}
 						} catch (IOException e) {
 							System.out.println("File not found!");

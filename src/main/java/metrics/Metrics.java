@@ -85,7 +85,7 @@ public class Metrics {
 		LinkedHashSet<String> nomMethod = new LinkedHashSet<String>();
 
 		try {
-			Scanner scanner = new Scanner(filepath,"Cp1252");
+			Scanner scanner = new Scanner(file,"Cp1252");
 			String text = null;
 			if (scanner.useDelimiter("\\A").hasNext()) {
 				text = scanner.useDelimiter("\\A").next();
