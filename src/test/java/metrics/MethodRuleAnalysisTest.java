@@ -16,7 +16,7 @@ class MethodRuleAnalysisTest {
 	MethodData test = new MethodData("metrics", "ExcelDealer", "main");
 	ArrayList<MethodData> methods = MethodData.excelToMetricsMap("src/test/resources/Snake_metrics.xlsx");
 	ArrayList<Rule> rules = Rule.allRules(testeregras);
-	MethodRuleAnalysis mra= new MethodRuleAnalysis(methods, rules);
+	MetricsRuleAnalysis mra= new MetricsRuleAnalysis(methods, rules);
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {	
@@ -37,18 +37,18 @@ class MethodRuleAnalysisTest {
 
 	@Test
 	final void testMethodRuleAnalysis() {
-		assertNotNull(MethodRuleAnalysis.class);
+		assertNotNull(MetricsRuleAnalysis.class);
 		assertNotNull(mra);
 	}
 
 	@Test
 	final void testGetMap() {
-		assertNotNull(mra.getMap());
+		assertNotNull(mra.getCodeSmellDetectedMap());
 	}
 
 	@Test
 	final void testGetMethods() {
-		assertNotNull(mra.getMethods());
+		assertNotNull(mra.getMethodsData());
 	}
 
 	@Test

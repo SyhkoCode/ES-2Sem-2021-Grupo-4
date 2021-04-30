@@ -1,58 +1,36 @@
 package metrics;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MethodData {
+	private final static String[] METRICS = new String[] { "NOM_class", "LOC_class", "WMC_class", "LOC_method",
+			"CYCLO_method" };
 	private HashMap<String, Integer> map = new HashMap<>();
-	private String packageName;
-	private String className;
-	private String methodName;
-
-	public MethodData(Object[] array, String[] metrics) {
-    this(array[1].toString(), array[2].toString(), array[3].toString());
-		/*this.packageName = array[1].toString();
-		this.className = array[2].toString();
-		this.methodName =  array[3].toString();*/
-//		String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
-		for(int i=4,j=0;i<array.length;i++,j++) {
-			map.put(metrics[j], Integer.parseInt(array[i].toString()));
-		}
-  }
+	private String packageName, className, methodName;
 	
-	// Só para facilitar criação de testes
-	
-
 	public MethodData(String packageName, String className, String methodName) {
 		this.packageName = packageName;
 		this.className = className;
-		this.methodName =  methodName;
-  }
-  
+		this.methodName = methodName;
+	}
+
+	public MethodData(Object[] array, String[] metrics) {
+		this(array[1].toString(), array[2].toString(), array[3].toString());
+		for (int i = 4, j = 0; i < array.length; i++, j++) {
+			map.put(metrics[j], Integer.parseInt(array[i].toString()));
+		}
+	}
+
 	public MethodData(Object[] array) {
-    this(array[1].toString(), array[2].toString(), array[3].toString());
-		/*this.packageName = array[1].toString();
-		this.className = array[2].toString();
-		this.methodName =  array[3].toString();*/
+		this(array[1].toString(), array[2].toString(), array[3].toString());
 	}
 
 	public void addMetric(String key, int value) {
 		map.put(key, value);
 	}
-	
-	//
-	
-	
-	public static ArrayList<MethodData> excelToMetricsMap(String filename){
-		ArrayList<MethodData> methods = new ArrayList<>();
-		for( Object[] o : new ExcelDealer(filename, true,new int[]{7,10}).getAllRows(2) )
-			methods.add(new MethodData(o, new String[]{"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"}));
-		
-		return methods;
-	}
 
-	public HashMap<String, Integer> getMetrics(){
+	public HashMap<String, Integer> getMetrics() {
 		return map;
 	}
 
@@ -78,5 +56,12 @@ public class MethodData {
 				+ methodName + "]";
 	}
 
-		
+	public static ArrayList<MethodData> excelToMetricsMap(String path) throws Exception {
+		ArrayList<MethodData> methods = new ArrayList<>();
+		for (Object[] o : ExcelDealer.getAllRows(path, 0))
+			methods.add(new MethodData(o, METRICS));
+
+		return methods;
+	}
+
 }

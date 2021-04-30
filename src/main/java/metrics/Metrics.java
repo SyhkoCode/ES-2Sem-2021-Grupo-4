@@ -23,7 +23,7 @@ import org.apache.commons.io.FileUtils;
  * @author Sofia Chaves 
  * @author Pedro Pinheiro
  * @author Susana Polido
- * @author Diogo Graça
+ * @author Diogo Graca
  */
 public class Metrics {
 
@@ -41,8 +41,8 @@ public class Metrics {
 		}
 		Integer min = null;
 		Integer max = null;	
-//		List<String> lines = Files.lines(file.toPath()).collect(Collectors.toList()); //o jasml dava bem mas dava java.nio.charset.MalformedInputException em alguns outros projetos q testei pq esta funcao tem um enconding inbuilt.. 
-//		List<String> lines = FileUtils.readLines(file, "UTF-8"); //funcionou com tds os projetos q testei mas n sei ate q ponto funcionara pa projetos sem serem UTF-8
+
+    //		List<String> lines = FileUtils.readLines(file, "UTF-8"); //funcionou com tds os projetos q testei mas n sei ate q ponto funcionara pa projetos sem serem UTF-8
 		
 		// abaixo tb funciona mas sao mais linhas, mas parece ser o mais seguro
 		List<String> lines = new ArrayList<>();
@@ -85,7 +85,7 @@ public class Metrics {
 		LinkedHashSet<String> nomMethod = new LinkedHashSet<String>();
 
 		try {
-			Scanner scanner = new Scanner(file);
+			Scanner scanner = new Scanner(filepath,"Cp1252");
 			String text = null;
 			if (scanner.useDelimiter("\\A").hasNext()) {
 				text = scanner.useDelimiter("\\A").next();
@@ -130,7 +130,7 @@ public class Metrics {
 	public static LinkedHashMap<String, String> getLinesOfMethods(File file, LinkedHashSet<String> methods)
 			throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
-		Scanner scanner = new Scanner(file);
+		Scanner scanner = new Scanner(file,"Cp1252");
 		ArrayList<String> descartar = new ArrayList<>();
 		for (String m : methods) {
 			String method = new String("");
@@ -170,7 +170,7 @@ public class Metrics {
 			if (!foundMethod) {
 				descartar.add(m);
 				scanner.close();
-				scanner = new Scanner(file);
+				scanner = new Scanner(file,"Cp1252");
 			}
 
 		}

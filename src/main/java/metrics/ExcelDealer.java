@@ -1,13 +1,10 @@
 package metrics;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -16,224 +13,161 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+/**
+ * Allow to create and read Excel files
+ * 
+ * @author Pedro Pereira, Tiago Mendes, Pedro Pinheiro
+ *
+ */
 public class ExcelDealer {
-	private String excel_file;
-	private OPCPackage packet;
-	private XSSFWorkbook wb;
-	private XSSFSheet sheet;
-	private List<Integer> ignoredIndexes;
 
-	public ExcelDealer(String filename, boolean read, int[] arrayint) {
-		excel_file = filename;
-		ignoredIndexes = new ArrayList<>(); // Era para não escrever nada no lugar das métricas
-		try {
-			if (read) {
-				packet = OPCPackage.open(new File(excel_file));
-				wb = new XSSFWorkbook(packet);
-				sheet = wb.getSheetAt(0);
-				if(arrayint.length > 0){
-					for(int i : arrayint){
-						ignoredIndexes.add(i);
-					}
-				}
-				
-			} else {
-				wb = new XSSFWorkbook();
-			}
-		} catch (InvalidFormatException | IOException e) {
-		}
-
-	}
-
-	public void createExcelFile(String file_name, String pathToSave, List<String[]> rows) {
-		File file = new File(pathToSave + "\\" + file_name);
-		file.delete();
-		XSSFSheet sheet = wb.createSheet(file_name);
-		String[] titles = { "MethodID", "package", "class", "method", "NOM_class", "LOC_class", "WMC_class",
-				"is_God_Class", "LOC_method", "CYCLO_method", "is_Long_Method" };
-
-		CellStyle style = wb.createCellStyle();
-		Font font = wb.createFont();
-		font.setBold(true);
-		style.setFont(font);
-
-		XSSFRow row = sheet.createRow(0);
-		for (int i = 0; i != titles.length; i++) {
-			XSSFCell cell = row.createCell(i);
-			cell.setCellStyle(style);
-			cell.setCellValue(titles[i]);
-		}
-
-		for (int i = 0; i != rows.size(); i++) {
-			row = sheet.createRow(i + 1);
-			XSSFCell cell = row.createCell(0);
-			cell.setCellValue(i + 1);
-			for (int j = 0; j != rows.get(i).length; j++) {
-				cell = row.createCell(j + 1);
-				cell.setCellValue(rows.get(i)[j]);
-			}
-		}
-		for (int i = 0; i != titles.length; i++)
-			sheet.autoSizeColumn(i);
-
-		try (FileOutputStream outputStream = new FileOutputStream(
-				new String(pathToSave + "\\" + file_name + ".xlsx"))) {
-			wb.write(outputStream);
-			outputStream.close();
-		} catch (IOException e) {
-
-		}
-	}
-
-	public void createCodeSmellsExcelFile(String path, ArrayList<String[]> rows) {
+	/** Create an Excel file with the given name, content and Excel sheet name.
+	 * 
+	 * @param path, path of the Excel file to be created
+	 * @param rows, string arrays with the information to insert on the Excel file
+	 * @param sheetName, name of the Excel sheet
+	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 */
+	public static void createExcelFile(String path, List<String[]> rows, String sheetName) throws Exception {
 		File file = new File(path);
 		file.delete();
-		XSSFSheet sheet = wb.createSheet("Rule");
-		String[] titles = new String[3+rows.get(0).length];
-		for(int i=0;i<titles.length;i++) {
-			String[] aux = { "MethodID", "class", "method"};
-			if(i<3)
-				titles[i] = aux[i];
-			else
-				titles[i] = rows.get(0)[i-3];
-		}
-				
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName);
+
 		CellStyle style = wb.createCellStyle();
 		Font font = wb.createFont();
 		font.setBold(true);
 		style.setFont(font);
 
-		XSSFRow row = sheet.createRow(0);
-		for (int i = 0; i != titles.length; i++) {
-			XSSFCell cell = row.createCell(i);
-			cell.setCellStyle(style);
-			cell.setCellValue(titles[i]);
-		}
+		for (int i = 0; i != rows.size(); i++)
+			createRow(sheet.createRow(i), rows.get(i), i, i != 0 ? null : style);
 
-		for (int i = 1; i != rows.size(); i++) {
-			row = sheet.createRow(i);
-			XSSFCell cell = row.createCell(0);
-			cell.setCellValue(i);
-			for (int j = 0; j != rows.get(i).length; j++) {
-				cell = row.createCell(j + 1);
-				System.out.println(rows.get(i)[j]);
-				cell.setCellValue(rows.get(i)[j]);
-			}
-		}
-		for (int i = 0; i != titles.length; i++)
+		for (int i = 0; i != rows.get(0).length; i++)
 			sheet.autoSizeColumn(i);
 
-		try (FileOutputStream outputStream = new FileOutputStream(new String(path))) {
-			wb.write(outputStream);
-			outputStream.close();
-		} catch (IOException e) {
+		FileOutputStream outputStream = new FileOutputStream(path + ".xlsx");
+		wb.write(outputStream);
+		outputStream.close();
+		wb.close();
+	}
 
+	/** Write a row on the Excel file creation with the given information and CellStyle
+	 * 
+	 * @param row, excel row to be filled the given information
+	 * @param info, information to be written on the given row
+	 * @param id, 
+	 * @param style, style given to the given Excel row
+	 */
+	private static void createRow(XSSFRow row, String[] info, int id, CellStyle style) {
+		if (id != 0)
+			row.createCell(0).setCellValue(id);
+		for (int i = 0; i != info.length; i++) {
+			XSSFCell cell = row.createCell(id != 0 ? i + 1 : i);
+			if (style != null)
+				cell.setCellStyle(style);
+			cell.setCellValue(info[i]);
 		}
 	}
 
-////////////////////                   READING METHODS                   ////////////////////                     
+////////////////////                   READING METHODS                   ////////////////////      
 
-	public List<String> getClassMethods(int col_index, String classname) { // Devolve todas as células na coluna do
-																			// índice escolhido relativas à classe dada
-		List<String> list = new ArrayList<>();
+	/** Returns a list of every cell on a given Excel file column
+	 * 
+	 * @param path, path of the Excel file to be read
+	 * @param sheet_Index, index of the Excel sheet to be read
+	 * @param col_Index, index of the Excel column desired
+	 * @param repetition, true if repeated values are desired, false if not
+	 * @return List<String> with all the given column cells
+	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 */
+	public static List<String> getAllCellsOfColumn(String path, int sheet_Index, int col_Index, boolean repetition)
+			throws Exception {
+		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
+		XSSFSheet sheet = wb.getSheetAt(sheet_Index);
+
+		List<String> values = new ArrayList<>();
 
 		for (int r = 0; r < sheet.getPhysicalNumberOfRows(); r++) {
 			XSSFRow row = sheet.getRow(r);
-			if (row != null) {
-				if (row.getCell(2).getStringCellValue().equals(classname))
-					if (row.getCell(col_index) != null && !list.contains(row.getCell(col_index).toString()))
-						list.add(row.getCell(col_index).toString());
-			}
+			if (row != null && row.getCell(col_Index) != null)
+				if (repetition)
+					values.add(row.getCell(col_Index).toString());
+				else if (!values.contains(row.getCell(col_Index).toString()))
+					values.add(row.getCell(col_Index).toString());
 		}
 
-		return list;
+		wb.close();
+		return values;
 	}
 
-	public List<String> getClasses() { // Devolve uma lista com todas as classes do Excel, sem repetições
-		List<String> list = new ArrayList<>();
+	/** Returns the total of the sum of all integers in a given column of the given Excel file and sheet
+	 * 
+	 * @param path, path of the Excel file to be read
+	 * @param sheet_Index, index of the Excel sheet to be read
+	 * @param col_Index, index of the Excel column desired
+	 * @return total of the sum of all integers in a given column
+	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 */
+	public static int sumAllColumn(String path, int sheet_Index, int col_Index) throws Exception {
+		List<String> collumn = getAllCellsOfColumn(path, sheet_Index, col_Index, true);
+		int total = 0;
 
-		for (int r = 0; r < sheet.getPhysicalNumberOfRows(); r++) {
-			XSSFRow row = sheet.getRow(r);
-			if (row != null) {
-				if (!list.contains(row.getCell(2).toString()) && r != 0)
-					list.add(row.getCell(2).toString());
+		for (String value : collumn) {
+			try {
+				total += Integer.parseInt(value);
+			} catch (NumberFormatException e) {
 			}
 		}
-
-		return list;
+		return total;
 	}
 
-	public List<Object[]> getAllRows(int columnsToDiscard) { // Devolve uma lista em que cada array é uma linha inteira do Excel - útil para a GUI
+	/** Returns all the rows in the given Excel file and sheet
+	 * 
+	 * @param path, path of the Excel file to be read
+	 * @param sheet_Index, index of the Excel sheet to be read
+	 * @return returns List<Object[]> with all the rows of the given Excel file and sheet
+	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 */
+	public static List<Object[]> getAllRows(String path, int sheet_Index) throws Exception {
+		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
+		XSSFSheet sheet = wb.getSheetAt(sheet_Index);
+
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
-		List<Object[]> list = new ArrayList<>();
+		List<Object[]> rows = new ArrayList<>();
 
 		for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
-			Object[] rowList = new Object[row_size - columnsToDiscard]; // -2 para ignorar as colunas dos booleans que o stor não quer
+			Object[] rowList = new Object[row_size];
 			XSSFRow row = sheet.getRow(j);
 			if (row != null) {
-				int counter = 0;
-				for (int i = 0; i <= row_size; i++) {
-					if (!ignoredIndexes.contains(i) && counter < rowList.length) {
-						rowList[counter] = row.getCell(i);
-						counter++;
-					}
-				}
-				list.add(rowList);
+				for (int i = 0; i < row_size; i++)
+					rowList[i] = row.getCell(i);
+				
+				rows.add(rowList);
 			}
 		}
-
-		return list;
+		wb.close();
+		return rows;
 	}
 
-	public Object[] getExcelHeader(int columnsToDiscard) {  // Devolve o cabeçalho de cada coluna do Excel - útil para a GUI, i.e, "package","class","NOM_Class", etc
-		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
-		Object[] rowList = new Object[row_size - columnsToDiscard];
-		XSSFRow row = sheet.getRow(0);
-		int counter = 0;
-		for (int i = 0; i < row_size; i++) {
-			if (!ignoredIndexes.contains(i) && counter < rowList.length) {
-				rowList[counter] = row.getCell(i);
-				counter++;
-			}
+	/** Returns a specific row of the given Excel file, sheet and row
+	 * 
+	 * @param path, path of the Excel file to be read
+	 * @param sheet_Index, index of the Excel sheet to be read
+	 * @param row_Index, index of the Excel row to be read
+	 * @return returns Object[] correspondent to be desired row
+	 * @throws Exception, we throw exceptions to be dealt with on the GUI
+	 */
+	public static Object[] getRow(String path, int sheet_Index, int row_Index) throws Exception {
+		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
+		XSSFSheet sheet = wb.getSheetAt(sheet_Index);
 
-		}
+		Object[] rowList = new Object[sheet.getRow(0).getPhysicalNumberOfCells()];
+		XSSFRow row = sheet.getRow(row_Index);
+
+		for (int i = 0; i != rowList.length; i++)
+			rowList[i] = row.getCell(i);
+
+		wb.close();
 		return rowList;
 	}
-
-	public List<String> getAllCellsOfColumn(int column_index) { // Devolve todas as células dado o índice da coluna
-		List<String> list = new ArrayList<>();
-		for (String classname : getClasses()) {
-			List<String> aux = getClassMethods(column_index, classname);
-			for (String str : aux) {
-				if (!list.contains(str) || column_index == 3)
-					list.add(str);
-//				if(column_index == 3)
-//					System.out.println(str);
-			}
-		}
-		return list;
-	}
-
-	public int sumLinesOfCode() { // Função que retorna o total de linhas de código do projeto
-		List<String> list = getAllCellsOfColumn(5);
-		double total = 0;
-
-		for (int i = 0; i < list.size(); i++)
-			total += Double.parseDouble(list.get(i));
-
-		return (int) total;
-	}
-
-	public String getExcel_file() {
-		return excel_file;
-	}
-
-	public void addAllToIgnoredIndexes(List<Integer> indexes) {
-		ignoredIndexes.addAll(indexes);
-	}
-
-	public void addToIgnoredIndexes(int index) {
-		ignoredIndexes.add(index);
-	}
-
 }
