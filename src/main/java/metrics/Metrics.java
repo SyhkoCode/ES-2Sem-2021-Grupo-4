@@ -28,6 +28,7 @@ public class Metrics {
 	 * @param file This is the given Java file from which this metric is extracted. 
 	 * @return The Number of Lines of Code in Java file, between class declaration and last bracket, including blank lines and comments inside.
 	 * @throws IOException If an I/O error occurs.
+	 * @throws NullPointerException If given file is null.
 	 */
 	public static int getLOC_class(File file) throws IOException {
 		if(file == null) {
@@ -59,6 +60,7 @@ public class Metrics {
 	 * Useful for the extraction of NOM_class metric and the getLinesOfMethods method (which will be used for the extraction of WMC_class, CYCLO_method and LOC_method). 
 	 * @param file This is the given Java file. 
 	 * @return The LinkedHashSet<String> methods which contains the names of methods a class has in given Java file.
+	 * @throws IllegalArgumentException If file not found.
 	 */
 	public static LinkedHashSet<String> methods(File file) {
 		String regex = "((public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;]))|(^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;]))";
@@ -111,7 +113,7 @@ public class Metrics {
 	 * @param file This is the given Java file.
 	 * @param methods This is the given LinkedHashSet<String> methods which should contain the methods names in the class from the given file.
 	 * @return The LinkedHashMap<String, String> getLinesOfMethods which contains the methods names and corresponding lines of code.
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException If file not found.
 	 */
 	public static LinkedHashMap<String, String> getLinesOfMethods(File file, LinkedHashSet<String> methods)
 			throws FileNotFoundException {
@@ -174,6 +176,7 @@ public class Metrics {
 	 * Useful for the extraction of CYCLO_method metric.
 	 * @param method This is the given String that represents the method name.
 	 * @return The Sum of the Cyclomatic Complexity for the method.
+	 * @throws IllegalArgumentException If given String is empty or null.
 	 */
 	private static int nOfCyclo(String method) {
 		if(method == null || method.length() == 0) {
@@ -194,7 +197,7 @@ public class Metrics {
 	/**
 	 * Auxiliary method that allows to store the sum of the Cyclomatic Complexity for the each method present in a class.
 	 * Useful to extract the CYCLO_method and WMC_class metrics.
-	 * @param linesOfMethods linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @param linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
 	 * @return The Sum of the Cyclomatic Complexity for the corresponding method.
 	 */
 	private static ArrayList<Integer> getCycloOfAllMethods(LinkedHashMap<String, String> linesOfMethods) {
@@ -206,9 +209,10 @@ public class Metrics {
 	
 	/**
 	 * Allows to extract the CYCLO_method metric.
-	 * @param linesOfMethods linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @param linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
 	 * @param methodIndex This is the receiving counter which represents the index for the wanted method.
 	 * @return The Sum of the Cyclomatic Complexity for the corresponding method.
+	 * @throws IllegalArgumentException If given LinkedHashMap<String, String> linesOfMethods is empty.
 	 */
 	public static int getCYCLO_method(LinkedHashMap<String, String> linesOfMethods, int methodIndex) {
 		if(linesOfMethods.isEmpty()) {
@@ -220,7 +224,7 @@ public class Metrics {
 
 	/**
 	 * Represents the WMC_class metric.
-	 * @param linesOfMethods linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @param linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
 	 * @return The Total of the Cyclomatic Complexity in a class, by getting the total sum of cyclomatic complexity of each method in the class.
 	 */
 	public static int getWMC_class(LinkedHashMap<String, String> linesOfMethods) {
@@ -232,12 +236,12 @@ public class Metrics {
 	
 	/**
 	 * Allows to extract the LOC_method metric.
-	 * @param linesOfMethods linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @param linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
 	 * @param methodIndex This is the receiving counter which represents the index for the wanted method.
 	 * @return The Number of Lines of Code in the corresponding method.
-	 * @throws FileNotFoundException
+	 * @throws IllegalArgumentException If given LinkedHashMap<String, String> linesOfMethods is empty.
 	 */
-	public static int getLOC_method(LinkedHashMap<String, String> linesOfMethods, int methodIndex) throws FileNotFoundException {
+	public static int getLOC_method(LinkedHashMap<String, String> linesOfMethods, int methodIndex) {
 		if(linesOfMethods.isEmpty()) {
 			throw new IllegalArgumentException("Nao pode ser um mapa vazio.");
 		}
