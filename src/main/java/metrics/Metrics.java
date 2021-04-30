@@ -209,29 +209,26 @@ public class Metrics {
 	
 	/**
 	 * Allows to extract the CYCLO_method metric.
-	 * @param linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @param cycloOfAllMethods This is the given ArrayList<Integer> which contains the Sum of the Cyclomatic Complexity of each method by order.
 	 * @param methodIndex This is the receiving counter which represents the index for the wanted method.
-	 * @return The Sum of the Cyclomatic Complexity for the corresponding method.
-	 * @throws IllegalArgumentException If given LinkedHashMap<String, String> linesOfMethods is empty.
+	 * @return The Sum of the Cyclomatic Complexity for the corresponding wanted method.
+	 * @throws IllegalArgumentException If given ArrayList<Integer> cycloOfAllMethods is empty.
 	 */
 	public static int getCYCLO_method(ArrayList<Integer> cycloOfAllMethods, int methodIndex) {
-//		if(linesOfMethods.isEmpty()) {
-//			throw new IllegalArgumentException("Nao pode ser um mapa vazio.");
-//		}
+		if(cycloOfAllMethods.isEmpty()) {
+			throw new IllegalArgumentException("Nao deve receber uma ArrayList vazia.");
+		}
 		return cycloOfAllMethods.get(methodIndex);
 	}
 	
 
 	/**
 	 * Represents the WMC_class metric.
-	 * @param linesOfMethods This is the given LinkedHashMap<String, String> which contains the methods names and corresponding lines of code.
+	 * @param cycloOfAllMethods This is the given ArrayList<Integer> which contains the Sum of the Cyclomatic Complexity of each method by order.
 	 * @return The Total of the Cyclomatic Complexity in a class, by getting the total sum of cyclomatic complexity of each method in the class.
 	 */
 	public static int getWMC_class(ArrayList<Integer> cycloOfAllMethods) {
-		int i = 0;
-		for (int f : cycloOfAllMethods)
-			i += f;
-		return i;
+		return cycloOfAllMethods.stream().mapToInt(Integer::intValue).sum();
 	}
 	
 	/**
@@ -243,7 +240,7 @@ public class Metrics {
 	 */
 	public static int getLOC_method(LinkedHashMap<String, String> linesOfMethods, int methodIndex) {
 		if(linesOfMethods.isEmpty()) {
-			throw new IllegalArgumentException("Nao pode ser um mapa vazio.");
+			throw new IllegalArgumentException("Nao deve receber um LinkedHashMap vazio.");
 		}
 		ArrayList<Integer> getLines = new ArrayList<Integer>();
 		for (String key : linesOfMethods.keySet()) {

@@ -57,7 +57,7 @@ public class ReadJavaProject {
 									lines[3] = "" + Metrics.getNOM_class(packageFile); 
 									lines[4] = "" + Metrics.getLOC_class(packageFile); 
 									lines[5] = "" + Metrics.getWMC_class(cycloOfAllMethods); 
-									lines[7] = "" + Metrics.getLOC_method(linesOfMethods, methodIndex); 
+									lines[7] = "" + Metrics.getLOC_method(linesOfMethods, methodIndex);
 									lines[8] = "" + Metrics.getCYCLO_method(cycloOfAllMethods, methodIndex);
 									result.add(lines);
 									methodIndex++;
