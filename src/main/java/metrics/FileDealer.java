@@ -13,10 +13,8 @@ public class FileDealer {
 	public static void createFile(String path, ArrayList<String> write) {
 		try {
 			FileWriter myWriter = new FileWriter(path);
-			for (int i = 0; i < write.size(); i++) {
-				myWriter.write(write.get(i));
-				myWriter.write(System.getProperty("line.separator"));
-			}
+			for (String str : write)
+				myWriter.write(str + "\n");
 			myWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -29,9 +27,10 @@ public class FileDealer {
 		try {
 			Scanner myReader = new Scanner(new File(path));
 			while (myReader.hasNextLine()) {
-				if(myReader.nextLine().equals("is_Long_Method"))
+				String nextLine = myReader.nextLine();
+				if (nextLine.equals("is_Long_Method"))
 					result[0] = myReader.nextLine();
-				else 
+				else if (nextLine.equals("is_God_Class"))
 					result[1] = myReader.nextLine();
 			}
 			myReader.close();
