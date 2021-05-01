@@ -365,6 +365,7 @@ public class GUI extends JFrame {
 		addCondition_isGodClass_Panel.add(btnNewButton_2, BorderLayout.CENTER);
 
 		JButton btnSaveFile = new JButton("");
+
 		btnSaveFile.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -380,6 +381,7 @@ public class GUI extends JFrame {
 					}
 					if (pathToSave.isEmpty())
 						pathToSave = path;
+
 					FileDealer.createFile(path, getRulesString());
 				}
 			}
@@ -597,6 +599,10 @@ public class GUI extends JFrame {
 		detecaoPanel.add(bRules);
 
 		JButton bLocation = new JButton("Choose location");
+		bLocation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		bLocation.setEnabled(false);
 		bLocation.addMouseListener(new MouseAdapter() {
 			@Override
@@ -609,9 +615,9 @@ public class GUI extends JFrame {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 
 					String path = jfc.getSelectedFile().getAbsolutePath();
-					if (!path.endsWith(".txt")) {
-						path = path.replaceAll("\\.[^.]*$", "") + ".xlsx";
-						localizacaoResultados.setText(path);
+					localizacaoResultados.setText(path);
+					if (path.endsWith(".xlsx")) {
+						path = path.replaceAll("\\.[^.]*$", "");
 					}
 					if (pathToSave.isEmpty())
 						pathToSave = path;
@@ -637,12 +643,12 @@ public class GUI extends JFrame {
 		});
 		keepResults.setBounds(6, 80, 113, 37);
 		detecaoPanel.add(keepResults);
-		
+
 		JButton buttonLocEfficency = new JButton("Choose location efficiency");
 		buttonLocEfficency.setEnabled(false);
 		buttonLocEfficency.setBounds(408, 125, 208, 26);
 		detecaoPanel.add(buttonLocEfficency);
-		
+
 		JButton bTeoricos = new JButton("Choose teoricos");
 		bTeoricos.setEnabled(false);
 		bTeoricos.addMouseListener(new MouseAdapter() {
@@ -836,7 +842,7 @@ public class GUI extends JFrame {
 		matrizConfusao_2.add(mVN);
 
 		JLabel lblNewLabel = new JLabel("Classes");
-		lblNewLabel.setBounds(25, 210, 42, 23);
+		lblNewLabel.setBounds(25, 210, 51, 23);
 		avaliacaoRegras.add(lblNewLabel);
 
 		JTextField textFieldTeoricos = new JTextField();
@@ -916,7 +922,9 @@ public class GUI extends JFrame {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					metricsFile = jfc.getSelectedFile().getAbsolutePath();
 					textFieldMetricas.setText(metricsFile);
-
+					if (metricsFile.endsWith(".xlsx")) {
+						metricsFile = metricsFile.replaceAll("\\.[^.]*$", "");
+					}
 				}
 			}
 		});
@@ -1314,9 +1322,17 @@ public class GUI extends JFrame {
 	public ArrayList<String> getRulesString() {
 		ArrayList<String> write = new ArrayList<>();
 		write.add("is_Long_Method");
-		write.add(getLongMethodFormat());
-		write.add("is_God_Class");
-		write.add(getGodClassFormat());
+		String methodRule = getLongMethodFormat();
+		String classRule = getGodClassFormat();
+
+		if (methodRule.equals("SE ( )")) {
+			write.add("is_God_Class");
+			write.add(getLongMethodFormat());
+		}
+		if (classRule.equals("SE ( )")) {
+			write.add("is_God_Class");
+			write.add(getGodClassFormat());
+		}
 		return write;
 	}
 
@@ -1502,5 +1518,7 @@ public class GUI extends JFrame {
 
 		avaliacaoRegras.add(chartFrame2);
 
+		avaliacaoRegras.repaint();
+		avaliacaoRegras.revalidate();
 	}
 }
