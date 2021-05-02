@@ -25,8 +25,8 @@ public class MetricsRuleAnalysis {
 	 * Rules and another of MethodData
 	 * 
 	 * 
-	 * @param methodsData ArrayList of MethodData objects
-	 * @param rules       ArrayList of Rule objects
+	 * @param methodsData List of MethodData objects
+	 * @param rules       List of Rule objects
 	 * @see MethodData
 	 * @see Rule
 	 */

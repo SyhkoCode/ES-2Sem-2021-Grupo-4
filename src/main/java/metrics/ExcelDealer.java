@@ -13,12 +13,10 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import gui.MyProgressBar;
-
 /**
  * Allow to create and read Excel files
  * 
- * @author Pedro Pereira, Tiago Mendes, Pedro Pinheiro
+ * @author Tiago Mendes, Pedro Pinheiro, Pedro Pereira
  *
  */
 public class ExcelDealer {
@@ -47,7 +45,7 @@ public class ExcelDealer {
 			createRow(sheet.createRow(i), rows.get(i), i, i != 0 ? null : style);
 
 		for (int i = 0; i != rows.get(0).length; i++)
-			sheet.autoSizeColumn(i);		
+			sheet.autoSizeColumn(i);
 
 		FileOutputStream outputStream = new FileOutputStream(path + ".xlsx");
 		wb.write(outputStream);
@@ -142,7 +140,7 @@ public class ExcelDealer {
 	public static List<Object[]> getAllRows(String path, int sheet_Index) throws Exception {
 		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
 		XSSFSheet sheet = wb.getSheetAt(sheet_Index);
-		
+
 		int row_size = sheet.getRow(0).getPhysicalNumberOfCells();
 		List<Object[]> rows = new ArrayList<>();
 
