@@ -1,16 +1,15 @@
 package metrics;
 
-import java.io.File;
+import java.io.File; 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class FileDealer {
 
-	public static void createFile(String path, ArrayList<String> write) {
+	public static void createFile(String path, List<String> write) {
 		try {
 			FileWriter myWriter = new FileWriter(path);
 			for (String str : write)

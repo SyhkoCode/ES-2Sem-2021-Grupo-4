@@ -1,8 +1,9 @@
 package metrics;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
  */
 public class MetricsRuleAnalysis {
 	private HashMap<String, ArrayList<Boolean>> codeSmellDetectedMap = new HashMap<>();
-	private ArrayList<MethodData> methodsData;
+	private List<MethodData> methodsData;
 //	HashMap => <is_God_Class, [true,false,true]>
 
 	/**
@@ -29,7 +30,7 @@ public class MetricsRuleAnalysis {
 	 * @see MethodData
 	 * @see Rule
 	 */
-	public MetricsRuleAnalysis(ArrayList<MethodData> methodsData, ArrayList<Rule> rules) {
+	public MetricsRuleAnalysis(List<MethodData> methodsData, List<Rule> rules) {
 		this.methodsData = methodsData;
 		for (Rule r : rules) {
 			codeSmellDetectedMap.put(r.getName(), new ArrayList<Boolean>());
@@ -53,7 +54,7 @@ public class MetricsRuleAnalysis {
 	 * 
 	 * @return the MetricsRuleAnalysis' ArrayList
 	 */
-	public ArrayList<MethodData> getMethodsData() {
+	public List<MethodData> getMethodsData() {
 		return methodsData;
 	}
 
@@ -107,9 +108,9 @@ public class MetricsRuleAnalysis {
 	 * 
 	 * @return an ArrayList of ArrayLists of lines to create two tables
 	 */
-	public ArrayList<ArrayList<String[]>> getCodeSmellResults() {
-		ArrayList<String> classesAndCodeSmellsFound = new ArrayList<>();
-		ArrayList<ArrayList<String[]>> result = new ArrayList<>();
+	public List<List<String[]>> getCodeSmellResults() {
+		List<String> classesAndCodeSmellsFound = new ArrayList<>();
+		List<List<String[]>> result = new ArrayList<>();
 		result.add(new ArrayList<>());
 		result.add(new ArrayList<>());
 		result.get(0).add(getClassHeader());

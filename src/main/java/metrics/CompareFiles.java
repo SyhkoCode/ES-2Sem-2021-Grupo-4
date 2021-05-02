@@ -180,7 +180,7 @@ public class CompareFiles {
 		HashMap<String, Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String, Indicator> saveIndsPerClass = new HashMap<>();
 		MetricsRuleAnalysis mra = new MetricsRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),
-				Rule.allRules(new File(rulesFile)));
+				Rule.allRules(rulesFile));
 
 		for (Object[] objDefaultExcel : ExcelDealer.getAllRows(csFileDefault, 0)) {
 
@@ -231,20 +231,4 @@ public class CompareFiles {
 			return compareWith3Files();
 		}
 	}
-
-	/**
-	 * este main vai desaparecer
-	 * @throws Exception 
-	 */
-//	public static void main(String[] args) throws Exception {
-//////		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Pictures\\jasml_0.10_metrics.xlsx","C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt" );
-//		CompareFiles cf = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx");
-////		CompareFiles cf2 = new CompareFiles("F:\\Google Drive\\ISCTE\\ANO 3\\ES\\Code_Smells.xlsx", "C:\\Users\\sophi\\Desktop\\jasml_0.10_metrics.xlsx", "testeregras.txt");		
-//		Quality result = cf.testQuality();
-////		result.getIndicatorsPerClass();	
-////		result.getIndicatorsPerMethod();	
-////		System.out.println(result.getIndicatorsPerMethod());
-////		System.out.println(result.getIndicatorsPerClass());
-//		System.out.println("No de FPs: "+result.countIndicatorInMethods(Indicator.FP)+" em "+ result.getIndicatorsPerMethod().size());
-//	}
 }

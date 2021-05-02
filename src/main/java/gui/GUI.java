@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.ColorUIResource;
@@ -16,6 +17,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Closeable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.Color;
 import java.awt.Component;
 
@@ -38,6 +41,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
+import org.omg.CORBA.INITIALIZE;
 
 import metrics.CompareFiles;
 import metrics.ExcelDealer;
@@ -50,15 +54,19 @@ import metrics.ReadJavaProject;
 import metrics.Rule;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.BorderLayout;
 import javax.swing.ImageIcon;
 import javax.swing.GroupLayout;
@@ -162,17 +170,20 @@ public class GUI extends JFrame {
 		public String toString() {
 			String result = "";
 			for (int i = 0; i < openParentheses; i++)
-				result += " ( ";
+				result += "( ";
 			result += getSentence() + " " + getCondition() + " " + getNumber();
 			for (int i = 0; i < closeParentheses; i++)
-				result += " ) ";
+				result += " )";
 			if (separator != null)
 				result += " " + getSeparator();
 			return result;
 		}
 	}
 
-	private String pathToSave = "";
+	private static final String[] EXCEL_HEADER = new String[] { "MethodID", "package", "class", "method", "NOM_class",
+			"LOC_class", "WMC_class", "LOC_method", "CYCLO_method" };
+
+	private static MyProgressBar bar;
 
 	private ArrayList<ConditionsInfo> conditionsLongMethod = new ArrayList<ConditionsInfo>();
 	private ArrayList<ConditionsInfo> conditionsGodClass = new ArrayList<ConditionsInfo>();
@@ -181,21 +192,20 @@ public class GUI extends JFrame {
 
 	private GroupLayout conditions_IsLongMethod_GL, conditions_IsGodClass_GL;
 	private JPanel contentPane;
-	private JTextField fileName_TF;
-	private JTable table, table1, table2;
-	private DefaultTableModel tableModel, tableModel1, tableModel2;
+	private JTextField filePath_TF;
+	private JTable table, tableCodeSmellsClasses, tableCodeSmellsMethods;
+	private DefaultTableModel tableModel, tableClassesModel, tableMethodsModel;
 	private JLabel Label_Classes, Label_Packages, Label_LOC, Label_Methods;
 	private JPanel conditions_isLongMethod_Panel;
 	private JPanel addCondition_isLongMethod_Panel;
 	private JTextArea conditionFormat_TA;
 	private JPanel conditions_isGodClass_Panel, addCondition_isGodClass_Panel;
 
-	private JTextField localizacaoResultados;
-	private JTextField localTeoricos;
+	private JTextField resultMetricsPath_TF;
 
-	private JTextField textFieldCreated;
-	private JTextField textFieldMetricas;
-	private JTextField textFieldRules;
+	private JTextField codeSmellsPathAv_TF;
+	private JTextField metricsPathAv_TF;
+	private JTextField rulePathAv_TF;
 	private JPanel avaliacaoRegras;
 	private JTextField nVP, nVN, nFP, nFN;
 	private String csDefault, csCreated, metricsFile, rulesFile;
@@ -205,7 +215,10 @@ public class GUI extends JFrame {
 	private JTextField mFN;
 	private JTextField mVN;
 	private ChartPanel chartFrame, chartFrame2;
-	private DefaultPieDataset pieDataSet, pieDataSet2;
+	private JTextField pathToSaveExcel_TF;
+	private JTextField metricsPath_TF;
+	private JTextField rulePath_TF;
+	private JTabbedPane resultsPanel;
 
 	/**
 	 * Launch the application.
@@ -246,198 +259,21 @@ public class GUI extends JFrame {
 	}
 
 	private void addFrameContent() {
-		JButton btnChooseFile = new JButton("Choose File");
-		btnChooseFile.setFocusable(false);
-		btnChooseFile.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnChooseFile.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				JFileChooser jfc = new JFileChooser(".");
-				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int returnValue = jfc.showOpenDialog(null);
-
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					String path = jfc.getSelectedFile().getAbsolutePath();
-					String excelName = jfc.getSelectedFile().getName() + "_metrics";
-
-					fileName_TF.setText(path + "");
-					if (pathToSave.isEmpty())
-						pathToSave = path;
-					List<String[]> javaProjectList = ReadJavaProject.readJavaProject(path);
-					javaProjectList.add(0, new String[] { "MethodID", "package", "class", "method", "NOM_class",
-							"LOC_class", "WMC_class", "LOC_method", "CYCLO_method" });
-					try {
-						ExcelDealer.createExcelFile(pathToSave + "\\" + excelName, javaProjectList, "Metrics");
-					} catch (Exception e) {
-						// TODO Lançar erro
-						e.printStackTrace();
-					}
-
-					readExcel(pathToSave + "\\" + excelName + ".xlsx");
-				}
-			}
-		});
-		btnChooseFile.setBounds(604, 609, 150, 30);
-		contentPane.add(btnChooseFile);
-
-		fileName_TF = new JTextField();
-		fileName_TF.setEditable(false);
-		fileName_TF.setForeground(Color.BLACK);
-		fileName_TF.setSelectedTextColor(Color.WHITE);
-		fileName_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		fileName_TF.setBounds(12, 610, 580, 30);
-		contentPane.add(fileName_TF);
-		fileName_TF.setColumns(10);
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(12, 13, 958, 583);
+		tabbedPane.setBounds(12, 13, 958, 632);
 		contentPane.add(tabbedPane);
 
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Regras", null, panel_1, null);
-		panel_1.setLayout(null);
+		JPanel excelPanel = new JPanel();
+		tabbedPane.addTab("Excel / Resumo", null, excelPanel, null);
+		excelPanel.setLayout(null);
 
-		JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane_1.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0) {
-				isLongMethod = isLongMethod ? false : true;
-				try {
-					updateTA();
-				} catch (Exception e) {
-
-				}
-
-			}
-		});
-		tabbedPane_1.setBounds(12, 13, 929, 464);
-		panel_1.add(tabbedPane_1);
-
-		JScrollPane conditions_SP = new JScrollPane();
-		tabbedPane_1.addTab("isLongMethod", null, conditions_SP, null);
-
-		conditions_isLongMethod_Panel = new JPanel();
-		conditions_SP.setViewportView(conditions_isLongMethod_Panel);
-
-		addCondition_isLongMethod_Panel = new JPanel();
-		addCondition_isLongMethod_Panel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		addCondition_isLongMethod_Panel.setLayout(new BorderLayout(0, 0));
-
-		JButton btnNewButton = new JButton("Add new Condition");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnNewButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				addNewConditionBox(1, true);
-				updateTA();
-			}
-		});
-		btnNewButton.setFocusable(false);
-		btnNewButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnNewButton.setIcon(new ImageIcon("images/plus_Image.png"));
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 30));
-		addCondition_isLongMethod_Panel.add(btnNewButton, BorderLayout.CENTER);
-
-		JScrollPane scrollPane_2 = new JScrollPane();
-		tabbedPane_1.addTab("isGodClass", null, scrollPane_2, null);
-
-		conditions_isGodClass_Panel = new JPanel();
-		scrollPane_2.setViewportView(conditions_isGodClass_Panel);
-
-		addCondition_isGodClass_Panel = new JPanel();
-		addCondition_isGodClass_Panel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		addCondition_isGodClass_Panel.setLayout(new BorderLayout(0, 0));
-
-		JButton btnNewButton_2 = new JButton("Add new Condition");
-
-		btnNewButton_2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnNewButton_2.setIcon(new ImageIcon("images/plus_Image.png"));
-		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 30));
-		btnNewButton_2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				addNewConditionBox(1, true);
-				updateTA();
-			}
-		});
-		addCondition_isGodClass_Panel.add(btnNewButton_2, BorderLayout.CENTER);
-
-		JButton btnSaveFile = new JButton("");
-
-		btnSaveFile.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				JFileChooser jfc = new JFileChooser(".");
-				FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt", "text");
-				jfc.setFileFilter(filter);
-				int returnValue = jfc.showSaveDialog(null);
-
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					String path = jfc.getSelectedFile().getAbsolutePath();
-					if (!path.endsWith(".txt")) {
-						path = path.replaceAll("\\.[^.]*$", "") + ".txt";
-					}
-					if (pathToSave.isEmpty())
-						pathToSave = path;
-
-					FileDealer.createFile(path, getRulesString());
-				}
-			}
-		});
-		btnSaveFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnSaveFile.setFocusable(false);
-		btnSaveFile.setBounds(891, 490, 50, 50);
-		btnSaveFile.setIcon(new ImageIcon("images/save_Image.png"));
-		panel_1.add(btnSaveFile);
-
-		JButton btnNewButton_1_1 = new JButton("");
-		btnNewButton_1_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnNewButton_1_1.setFocusable(false);
-		btnNewButton_1_1.setBounds(829, 490, 50, 50);
-		btnNewButton_1_1.setIcon(new ImageIcon("images/upload_Image.png"));
-		btnNewButton_1_1.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				JFileChooser jfc = new JFileChooser(".");
-				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt files", "txt");
-				jfc.setFileFilter(filter);
-				int returnValue = jfc.showOpenDialog(null);
-
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					loadRule(FileDealer.readFile(jfc.getSelectedFile().getAbsolutePath()));
-				}
-			}
-		});
-		panel_1.add(btnNewButton_1_1);
-
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollPane_1.setBounds(12, 490, 500, 50);
-		panel_1.add(scrollPane_1);
-
-		conditionFormat_TA = new JTextArea();
-		conditionFormat_TA.setEditable(false);
-		scrollPane_1.setViewportView(conditionFormat_TA);
-
-		JButton btnNewButton_1_1_1 = new JButton("");
-		btnNewButton_1_1_1.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				clearConditions();
-			}
-		});
-		btnNewButton_1_1_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnNewButton_1_1_1.setFocusable(false);
-		btnNewButton_1_1_1.setBounds(767, 490, 50, 50);
-		btnNewButton_1_1_1.setIcon(new ImageIcon("images/clear_Image.png"));
-		panel_1.add(btnNewButton_1_1_1);
+		JTabbedPane tabbedPane_2 = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane_2.setBounds(12, 13, 929, 450);
+		excelPanel.add(tabbedPane_2);
 
 		JScrollPane scrollPane = new JScrollPane();
-		tabbedPane.addTab("Excel", null, scrollPane, null);
-
+		tabbedPane_2.addTab("Excel", null, scrollPane, null);
 		tableModel = new DefaultTableModel();
 		table = new JTable() {
 			private static final long serialVersionUID = 4865677530706787901L;
@@ -454,12 +290,13 @@ public class GUI extends JFrame {
 		};
 		table.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		table.setModel(tableModel);
+		table.setRowHeight(20);
 
 		table.getTableHeader().setReorderingAllowed(false);
 		scrollPane.setViewportView(table);
 
 		JPanel resumePanel = new JPanel();
-		tabbedPane.addTab("Resumo", null, resumePanel, null);
+		tabbedPane_2.addTab("Resumo", null, resumePanel, null);
 		resumePanel.setLayout(null);
 
 		JLabel Projeto_Label = new JLabel("Resumo do Projeto");
@@ -513,73 +350,196 @@ public class GUI extends JFrame {
 		resumePanel.add(Label_LOC);
 		Label_LOC.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
-		JButton btnChooseExcelLocation = new JButton("Choose Excel Location");
+		filePath_TF = new JTextField();
+		filePath_TF.setBounds(12, 519, 671, 30);
+		excelPanel.add(filePath_TF);
+		filePath_TF.setEditable(false);
+		filePath_TF.setForeground(Color.BLACK);
+		filePath_TF.setSelectedTextColor(Color.WHITE);
+		filePath_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		filePath_TF.setColumns(10);
+
+		JButton btnChooseExcelLocation = new JButton("Escolha onde Guardar");
+		btnChooseExcelLocation.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnChooseExcelLocation.setBounds(695, 475, 246, 30);
+		excelPanel.add(btnChooseExcelLocation);
 		btnChooseExcelLocation.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				JFileChooser jfc = new JFileChooser(".");
 				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int returnValue = jfc.showOpenDialog(null);
 
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					pathToSave = jfc.getSelectedFile().getAbsolutePath();
-				}
+				if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+					pathToSaveExcel_TF.setText(jfc.getSelectedFile().getAbsolutePath());
+
 			}
 		});
 		btnChooseExcelLocation.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnChooseExcelLocation.setFocusable(false);
-		btnChooseExcelLocation.setBounds(766, 609, 204, 30);
-		contentPane.add(btnChooseExcelLocation);
-		initiateConditionLongMethod();
-		isLongMethod = false;
-		initiateConditionGodClass();
-		isLongMethod = true;
 
-		JPanel detecaoPanel = new JPanel();
-		tabbedPane.addTab("Correr Regras", null, detecaoPanel, null);
-		detecaoPanel.setLayout(null);
-
-		JTextField metricasGeradas = new JTextField();
-		metricasGeradas.setEditable(false);
-		metricasGeradas.setBounds(125, 11, 491, 26);
-		detecaoPanel.add(metricasGeradas);
-		metricasGeradas.setColumns(10);
-
-		JButton bMetrics = new JButton("Choose metrics");
-		bMetrics.addMouseListener(new MouseAdapter() {
+		JButton analyzeProject_Btn = new JButton("Analisar Projeto");
+		analyzeProject_Btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		analyzeProject_Btn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				JFileChooser jfc = new JFileChooser(".");
-				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
-				jfc.setFileFilter(filter);
-				int returnValue = jfc.showOpenDialog(null);
+				if (!isBarActive()) {
+					if (!pathToSaveExcel_TF.getText().isEmpty()) {
+						if (!filePath_TF.getText().isEmpty()) {
+							readProject(pathToSaveExcel_TF.getText() + "\\" + filePath_TF.getToolTipText(),
+									filePath_TF.getText());
+						} else
+							errorMessage("Escolha primeiro um Projeto java para ser analisado!");
+					}
 
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					pathToSave = jfc.getSelectedFile().getAbsolutePath();
-					metricasGeradas.setText(pathToSave);
-
+					else
+						errorMessage("Tem de escolher onde quer guardar o ficheiro!");
 				}
 			}
 		});
+		analyzeProject_Btn.setFocusable(false);
+		analyzeProject_Btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		analyzeProject_Btn.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		analyzeProject_Btn.setBounds(212, 563, 529, 30);
+		excelPanel.add(analyzeProject_Btn);
 
-		JTextField regras = new JTextField();
-		regras.setEditable(false);
-		regras.setColumns(10);
-		regras.setBounds(125, 48, 491, 26);
-		detecaoPanel.add(regras);
+		pathToSaveExcel_TF = new JTextField();
+		pathToSaveExcel_TF.setSelectedTextColor(Color.WHITE);
+		pathToSaveExcel_TF.setForeground(Color.BLACK);
+		pathToSaveExcel_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		pathToSaveExcel_TF.setEditable(false);
+		pathToSaveExcel_TF.setColumns(10);
+		pathToSaveExcel_TF.setBounds(12, 475, 671, 30);
+		excelPanel.add(pathToSaveExcel_TF);
 
-		localizacaoResultados = new JTextField();
-		localizacaoResultados.setEnabled(false);
-		localizacaoResultados.setEditable(false);
-		localizacaoResultados.setColumns(10);
-		localizacaoResultados.setBounds(125, 85, 491, 26);
-		detecaoPanel.add(localizacaoResultados);
-		bMetrics.setBounds(626, 11, 174, 26);
-		detecaoPanel.add(bMetrics);
+		JButton btnChooseFile = new JButton("Escolha um Projeto");
+		btnChooseFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnChooseFile.setBounds(695, 519, 246, 30);
+		excelPanel.add(btnChooseFile);
+		btnChooseFile.setFocusable(false);
+		btnChooseFile.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnChooseFile.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-		JButton bRules = new JButton("Choose rules");
-		bRules.addMouseListener(new MouseAdapter() {
+				if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+					filePath_TF.setText(jfc.getSelectedFile().getAbsolutePath());
+					filePath_TF.setToolTipText(jfc.getSelectedFile().getName() + "_metrics");
+				}
+
+			}
+		});
+
+		JPanel rulesPanel = new JPanel();
+		tabbedPane.addTab("Regras", null, rulesPanel, null);
+		rulesPanel.setLayout(null);
+
+		JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane_1.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				isLongMethod = isLongMethod ? false : true;
+				try {
+					updateTA();
+				} catch (Exception e) {
+
+				}
+
+			}
+		});
+		tabbedPane_1.setBounds(12, 13, 929, 513);
+		rulesPanel.add(tabbedPane_1);
+
+		JScrollPane conditions_SP = new JScrollPane();
+		tabbedPane_1.addTab("isLongMethod", null, conditions_SP, null);
+
+		conditions_isLongMethod_Panel = new JPanel();
+		conditions_SP.setViewportView(conditions_isLongMethod_Panel);
+
+		addCondition_isLongMethod_Panel = new JPanel();
+		addCondition_isLongMethod_Panel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		addCondition_isLongMethod_Panel.setLayout(new BorderLayout(0, 0));
+
+		JButton btnNewButton = new JButton("Adicionar Condição");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				addNewConditionBox(1, true);
+				updateTA();
+			}
+		});
+		btnNewButton.setFocusable(false);
+		btnNewButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnNewButton.setIcon(new ImageIcon("images/plus_Image.png"));
+		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		addCondition_isLongMethod_Panel.add(btnNewButton, BorderLayout.CENTER);
+
+		JScrollPane scrollPane_2 = new JScrollPane();
+		tabbedPane_1.addTab("isGodClass", null, scrollPane_2, null);
+
+		conditions_isGodClass_Panel = new JPanel();
+		scrollPane_2.setViewportView(conditions_isGodClass_Panel);
+
+		addCondition_isGodClass_Panel = new JPanel();
+		addCondition_isGodClass_Panel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		addCondition_isGodClass_Panel.setLayout(new BorderLayout(0, 0));
+
+		JButton btnNewButton_2 = new JButton("Adicionar Condição");
+
+		btnNewButton_2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnNewButton_2.setIcon(new ImageIcon("images/plus_Image.png"));
+		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		btnNewButton_2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				addNewConditionBox(1, true);
+				updateTA();
+			}
+		});
+		addCondition_isGodClass_Panel.add(btnNewButton_2, BorderLayout.CENTER);
+
+		JButton btnSaveFile = new JButton("");
+		btnSaveFile.setToolTipText("Guardar Regra");
+
+		btnSaveFile.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc = new JFileChooser(".");
+				jfc.setFileFilter(new FileNameExtensionFilter(".txt", "text"));
+
+				if (jfc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+					String path = jfc.getSelectedFile().getAbsolutePath();
+					if (!path.endsWith(".txt")) {
+						path = path.replaceAll("\\.[^.]*$", "") + ".txt";
+					}
+					List<String> ruleToSave = getRulesString();
+					if (!ruleToSave.isEmpty())
+						FileDealer.createFile(path, ruleToSave);
+					else
+						errorMessage("Não é possível guardar regras vazias!");
+				}
+			}
+		});
+		btnSaveFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnSaveFile.setFocusable(false);
+		btnSaveFile.setBounds(891, 539, 50, 50);
+		btnSaveFile.setIcon(new ImageIcon("images/save_Image.png"));
+		rulesPanel.add(btnSaveFile);
+
+		JButton btnNewButton_1_1 = new JButton("");
+		btnNewButton_1_1.setToolTipText("Carregar Regra");
+		btnNewButton_1_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnNewButton_1_1.setFocusable(false);
+		btnNewButton_1_1.setBounds(829, 539, 50, 50);
+		btnNewButton_1_1.setIcon(new ImageIcon("images/upload_Image.png"));
+		btnNewButton_1_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				JFileChooser jfc = new JFileChooser(".");
@@ -589,152 +549,178 @@ public class GUI extends JFrame {
 				int returnValue = jfc.showOpenDialog(null);
 
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					pathToSave = jfc.getSelectedFile().getAbsolutePath();
-					regras.setText(pathToSave);
+					loadRule(FileDealer.readFile(jfc.getSelectedFile().getAbsolutePath()));
 				}
 			}
 		});
+		rulesPanel.add(btnNewButton_1_1);
 
-		bRules.setBounds(626, 48, 174, 26);
-		detecaoPanel.add(bRules);
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scrollPane_1.setBounds(12, 539, 500, 50);
+		rulesPanel.add(scrollPane_1);
 
-		JButton bLocation = new JButton("Choose location");
-		bLocation.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		conditionFormat_TA = new JTextArea();
+		conditionFormat_TA.setEditable(false);
+		scrollPane_1.setViewportView(conditionFormat_TA);
+
+		JButton btnNewButton_1_1_1 = new JButton("");
+		btnNewButton_1_1_1.setToolTipText("Limpar Condições");
+		btnNewButton_1_1_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (warningMessage("Tem a certeza que deseja limpar estas condições?") == JOptionPane.YES_OPTION)
+					clearConditions();
 			}
 		});
-		bLocation.setEnabled(false);
-		bLocation.addMouseListener(new MouseAdapter() {
+		btnNewButton_1_1_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnNewButton_1_1_1.setFocusable(false);
+		btnNewButton_1_1_1.setBounds(766, 539, 50, 50);
+		btnNewButton_1_1_1.setIcon(new ImageIcon("images/clear_Image.png"));
+		rulesPanel.add(btnNewButton_1_1_1);
+
+		initiateConditionLongMethod();
+		isLongMethod = false;
+		initiateConditionGodClass();
+		isLongMethod = true;
+
+		JPanel detecaoPanel = new JPanel();
+		tabbedPane.addTab("Correr Regras", null, detecaoPanel, null);
+		detecaoPanel.setLayout(null);
+
+		metricsPath_TF = new JTextField();
+		metricsPath_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		metricsPath_TF.setEditable(false);
+		metricsPath_TF.setBounds(125, 11, 610, 30);
+		detecaoPanel.add(metricsPath_TF);
+		metricsPath_TF.setColumns(10);
+
+		JButton bMetrics = new JButton("Escolha as Métricas");
+		bMetrics.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		bMetrics.setFocusable(false);
+		bMetrics.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		bMetrics.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				JFileChooser jfc = new JFileChooser(".");
-				FileNameExtensionFilter filter = new FileNameExtensionFilter(".xlsx", "xlsx");
-				jfc.setFileFilter(filter);
-				int returnValue = jfc.showSaveDialog(null);
 
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				jfc.setFileFilter(new FileNameExtensionFilter("XLS files", "xlsx"));
 
-					String path = jfc.getSelectedFile().getAbsolutePath();
-					localizacaoResultados.setText(path);
-					if (path.endsWith(".xlsx")) {
-						path = path.replaceAll("\\.[^.]*$", "");
-					}
-					if (pathToSave.isEmpty())
-						pathToSave = path;
-
-				}
+				if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+					metricsPath_TF.setText(jfc.getSelectedFile().getAbsolutePath());
 			}
 		});
-		bLocation.setBounds(626, 85, 174, 26);
-		detecaoPanel.add(bLocation);
 
-		JCheckBox keepResults = new JCheckBox("Keep Results");
-		keepResults.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if (keepResults.isSelected()) {
-					localizacaoResultados.setEnabled(true);
-					bLocation.setEnabled(true);
-				} else {
-					localizacaoResultados.setEnabled(false);
-					bLocation.setEnabled(false);
-				}
-			}
-		});
-		keepResults.setBounds(6, 80, 113, 37);
-		detecaoPanel.add(keepResults);
+		rulePath_TF = new JTextField();
+		rulePath_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		rulePath_TF.setEditable(false);
+		rulePath_TF.setColumns(10);
+		rulePath_TF.setBounds(125, 54, 610, 30);
+		detecaoPanel.add(rulePath_TF);
 
-		JButton buttonLocEfficency = new JButton("Choose location efficiency");
-		buttonLocEfficency.setEnabled(false);
-		buttonLocEfficency.setBounds(408, 125, 208, 26);
-		detecaoPanel.add(buttonLocEfficency);
+		resultMetricsPath_TF = new JTextField();
+		resultMetricsPath_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		resultMetricsPath_TF.setEnabled(false);
+		resultMetricsPath_TF.setEditable(false);
+		resultMetricsPath_TF.setColumns(10);
+		resultMetricsPath_TF.setBounds(125, 97, 610, 30);
+		detecaoPanel.add(resultMetricsPath_TF);
+		bMetrics.setBounds(747, 11, 194, 30);
+		detecaoPanel.add(bMetrics);
 
-		JButton bTeoricos = new JButton("Choose teoricos");
-		bTeoricos.setEnabled(false);
-		bTeoricos.addMouseListener(new MouseAdapter() {
+		JButton bRules = new JButton("Escolha as Regras");
+		bRules.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		bRules.setFocusable(false);
+		bRules.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		bRules.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				JFileChooser jfc = new JFileChooser(".");
 				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
-				jfc.setFileFilter(filter);
-				int returnValue = jfc.showOpenDialog(null);
+				jfc.setFileFilter(new FileNameExtensionFilter("txt files", "txt"));
 
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					pathToSave = jfc.getSelectedFile().getAbsolutePath();
-					localTeoricos.setText(pathToSave);
-				}
+				if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+					rulePath_TF.setText(jfc.getSelectedFile().getAbsolutePath());
 			}
 		});
 
-		bTeoricos.setBounds(626, 164, 174, 26);
-		detecaoPanel.add(bTeoricos);
+		bRules.setBounds(747, 54, 194, 30);
+		detecaoPanel.add(bRules);
 
-		JCheckBox testRuleEffiency = new JCheckBox("Test Rule Effiency");
-		testRuleEffiency.addMouseListener(new MouseAdapter() {
+		JButton bLocation = new JButton("Escolha a Localização");
+		bLocation.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		bLocation.setFocusable(false);
+		bLocation.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		bLocation.setEnabled(false);
+		bLocation.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (testRuleEffiency.isSelected()) {
-					buttonLocEfficency.setEnabled(true);
-					bTeoricos.setEnabled(true);
-					localTeoricos.setEnabled(true);
-				} else {
-					buttonLocEfficency.setEnabled(false);
-					bTeoricos.setEnabled(false);
-					localTeoricos.setEnabled(false);
+				if (bLocation.isEnabled()) {
+					JFileChooser jfc = new JFileChooser(".");
+					jfc.setFileFilter(new FileNameExtensionFilter(".xlsx", "xlsx"));
+
+					if (jfc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
+						resultMetricsPath_TF.setText(jfc.getSelectedFile().getAbsolutePath().replaceAll(".xlsx", ""));
 				}
 			}
 		});
-		testRuleEffiency.setBounds(263, 120, 139, 37);
-		detecaoPanel.add(testRuleEffiency);
+		bLocation.setBounds(747, 97, 194, 30);
+		detecaoPanel.add(bLocation);
 
-		localTeoricos = new JTextField();
-		localTeoricos.setEnabled(false);
-		localTeoricos.setEditable(false);
-		localTeoricos.setColumns(10);
-		localTeoricos.setBounds(125, 164, 491, 26);
-		detecaoPanel.add(localTeoricos);
+		JCheckBox keepResults = new JCheckBox("Guardar\r\n");
+		keepResults.setHorizontalAlignment(SwingConstants.CENTER);
+		keepResults.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		keepResults.setFocusable(false);
+		keepResults.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		keepResults.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				resultMetricsPath_TF.setEnabled(keepResults.isSelected());
+				bLocation.setEnabled(keepResults.isSelected());
+			}
+		});
+		keepResults.setBounds(17, 97, 100, 30);
+		detecaoPanel.add(keepResults);
 
-		JTabbedPane panelResultados = new JTabbedPane(JTabbedPane.TOP);
+		resultsPanel = new JTabbedPane(JTabbedPane.TOP);
 
 		JButton runRules = new JButton("Run");
+		runRules.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		runRules.setFocusable(false);
+		runRules.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		runRules.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				try {
-					MetricsRuleAnalysis mra = new MetricsRuleAnalysis(
-							MethodData.excelToMetricsMap(metricasGeradas.getText()),
-							Rule.allRules(new File(regras.getText())));
-
-					if (keepResults.isSelected()) {
-						mra.getResults().add(0, new String[] { "MethodID", "package", "class", "method", "NOM_class",
-								"LOC_class", "WMC_class", "LOC_method", "CYCLO_method" });
-						ExcelDealer.createExcelFile(localizacaoResultados.getText(), mra.getResults(), "Rules");
-						panelResultados.setEnabled(true);
-					}
-					readCodeSmells(mra.getCodeSmellResults());
-					panelResultados.setEnabled(true);
-
-				} catch (Exception e1) {
-					// TODO Gerar erros
-					e1.printStackTrace();
+				if (!isBarActive()) {
+					if (!metricsPath_TF.getText().isEmpty()) {
+						if (!rulePath_TF.getText().isEmpty()) {
+							try {
+								createCodeSmells(keepResults.isSelected(), metricsPath_TF.getText(),
+										rulePath_TF.getText(), resultMetricsPath_TF.getText());
+							} catch (Exception e) {
+								errorMessage("Um dos ficheiros foi mal especificado!");
+								bar.closeProgressBar();
+							}
+						} else
+							errorMessage("Tem que escolher as regras!");
+					} else
+						errorMessage("Tem que escolher as métricas!");
 				}
-
 			}
-
 		});
-		runRules.setBounds(372, 201, 174, 26);
+		runRules.setBounds(327, 166, 300, 30);
 		detecaoPanel.add(runRules);
 
-		panelResultados.setBounds(10, 238, 931, 304);
-		detecaoPanel.add(panelResultados);
-		panelResultados.setEnabled(false);
+		resultsPanel.setBounds(10, 209, 931, 380);
+		detecaoPanel.add(resultsPanel);
+		resultsPanel.setEnabled(false);
 		JScrollPane sClasses = new JScrollPane();
 
-		panelResultados.addTab("Classes", null, sClasses, null);
+		resultsPanel.addTab("Classes", null, sClasses, null);
 
-		tableModel1 = new DefaultTableModel();
-		table1 = new JTable() {
+		tableClassesModel = new DefaultTableModel();
+		tableCodeSmellsClasses = new JTable() {
 			private static final long serialVersionUID = 6900757194149352960L;
 
 			@Override
@@ -748,17 +734,18 @@ public class GUI extends JFrame {
 			}
 		};
 
-		table1.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		table1.setModel(tableModel1);
+		tableCodeSmellsClasses.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		tableCodeSmellsClasses.setModel(tableClassesModel);
+		tableCodeSmellsClasses.setRowHeight(20);
 
-		table1.getTableHeader().setReorderingAllowed(false);
-		sClasses.setViewportView(table1);
+		tableCodeSmellsClasses.getTableHeader().setReorderingAllowed(false);
+		sClasses.setViewportView(tableCodeSmellsClasses);
 		JScrollPane sMetodos = new JScrollPane();
 
-		panelResultados.addTab("Methods", null, sMetodos, null);
+		resultsPanel.addTab("Methods", null, sMetodos, null);
 
-		tableModel2 = new DefaultTableModel();
-		table2 = new JTable() {
+		tableMethodsModel = new DefaultTableModel();
+		tableCodeSmellsMethods = new JTable() {
 			private static final long serialVersionUID = 3382685092130092007L;
 
 			@Override
@@ -772,11 +759,12 @@ public class GUI extends JFrame {
 			}
 		};
 
-		table2.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		table2.setModel(tableModel2);
+		tableCodeSmellsMethods.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		tableCodeSmellsMethods.setModel(tableMethodsModel);
+		tableCodeSmellsMethods.setRowHeight(20);
 
-		table2.getTableHeader().setReorderingAllowed(false);
-		sMetodos.setViewportView(table2);
+		tableCodeSmellsMethods.getTableHeader().setReorderingAllowed(false);
+		sMetodos.setViewportView(tableCodeSmellsMethods);
 
 		avaliacaoRegras = new JPanel();
 		tabbedPane.addTab("Avaliação Regras", null, avaliacaoRegras, null);
@@ -784,193 +772,219 @@ public class GUI extends JFrame {
 
 		// Avaliação Regras
 		JPanel matrizConfusao = new JPanel();
-		matrizConfusao.setBounds(26, 233, 354, 66);
+		matrizConfusao.setBounds(26, 290, 400, 66);
 		avaliacaoRegras.add(matrizConfusao);
 		matrizConfusao.setLayout(new GridLayout(2, 2));
 
 		nVP = new JTextField("- Verdadeiros Positivos");
+		nVP.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		nVP.setHorizontalAlignment(JTextField.CENTER);
 		nVP.setEditable(false);
 		nVP.setBackground(new Color(0, 255, 51));
 		matrizConfusao.add(nVP);
 
 		nFP = new JTextField("- Falsos Positivos");
+		nFP.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		nFP.setEditable(false);
 		nFP.setHorizontalAlignment(JTextField.CENTER);
 		nFP.setBackground(new Color(255, 51, 51));
 		matrizConfusao.add(nFP);
 
 		nFN = new JTextField("- Falsos Negativos");
+		nFN.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		nFN.setEditable(false);
 		nFN.setHorizontalAlignment(JTextField.CENTER);
 		nFN.setBackground(new Color(204, 0, 0));
 		matrizConfusao.add(nFN);
 
 		nVN = new JTextField("- Verdadeiros Negativos");
+		nVN.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		nVN.setEditable(false);
 		nVN.setHorizontalAlignment(JTextField.CENTER);
 		nVN.setBackground(new Color(0, 153, 0));
 		matrizConfusao.add(nVN);
 
 		JPanel matrizConfusao_2 = new JPanel();
-		matrizConfusao_2.setBounds(564, 233, 354, 66);
+		matrizConfusao_2.setBounds(520, 290, 400, 66);
 		avaliacaoRegras.add(matrizConfusao_2);
 		matrizConfusao_2.setLayout(new GridLayout(2, 2));
 
 		mVP = new JTextField("- Verdadeiros Positivos");
+		mVP.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mVP.setHorizontalAlignment(SwingConstants.CENTER);
 		mVP.setEditable(false);
 		mVP.setBackground(new Color(0, 255, 51));
 		matrizConfusao_2.add(mVP);
 
 		mFP = new JTextField("- Falsos Positivos");
+		mFP.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mFP.setHorizontalAlignment(SwingConstants.CENTER);
 		mFP.setEditable(false);
 		mFP.setBackground(new Color(255, 51, 51));
 		matrizConfusao_2.add(mFP);
 
 		mFN = new JTextField("- Falsos Negativos");
+		mFN.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mFN.setHorizontalAlignment(SwingConstants.CENTER);
 		mFN.setEditable(false);
 		mFN.setBackground(new Color(204, 0, 0));
 		matrizConfusao_2.add(mFN);
 
 		mVN = new JTextField("- Verdadeiros Negativos");
+		mVN.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mVN.setHorizontalAlignment(SwingConstants.CENTER);
 		mVN.setEditable(false);
 		mVN.setBackground(new Color(0, 153, 0));
 		matrizConfusao_2.add(mVN);
 
 		JLabel lblNewLabel = new JLabel("Classes");
-		lblNewLabel.setBounds(25, 210, 51, 23);
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblNewLabel.setBounds(26, 260, 400, 30);
 		avaliacaoRegras.add(lblNewLabel);
 
-		JTextField textFieldTeoricos = new JTextField();
-		textFieldTeoricos.setEditable(false);
-		textFieldTeoricos.setBounds(91, 44, 594, 20);
-		avaliacaoRegras.add(textFieldTeoricos);
-		textFieldTeoricos.setColumns(10);
+		JTextField theoreticPathAv_TF = new JTextField();
+		theoreticPathAv_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		theoreticPathAv_TF.setEditable(false);
+		theoreticPathAv_TF.setBounds(26, 59, 700, 30);
+		avaliacaoRegras.add(theoreticPathAv_TF);
+		theoreticPathAv_TF.setColumns(10);
 
 		JButton buttonDefault = new JButton("Teoricos");
+		buttonDefault.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		buttonDefault.setFocusable(false);
+		buttonDefault.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		buttonDefault.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		buttonDefault.setEnabled(false);
 		buttonDefault.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				JFileChooser jfc = new JFileChooser(".");
-				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
-				jfc.setFileFilter(filter);
-				int returnValue = jfc.showOpenDialog(null);
+				if (buttonDefault.isEnabled()) {
+					JFileChooser jfc = new JFileChooser(".");
+					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					jfc.setFileFilter(new FileNameExtensionFilter("XLS files", "xlsx"));
 
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					csDefault = jfc.getSelectedFile().getAbsolutePath();
-					textFieldTeoricos.setText(csDefault);
+					if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+						theoreticPathAv_TF.setText(jfc.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
 
 		JLabel lblMtodos = new JLabel("Métodos");
-		lblMtodos.setBounds(563, 210, 51, 23);
+		lblMtodos.setHorizontalAlignment(SwingConstants.CENTER);
+		lblMtodos.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblMtodos.setBounds(520, 260, 400, 30);
 		avaliacaoRegras.add(lblMtodos);
-		buttonDefault.setBounds(709, 43, 109, 23);
+		buttonDefault.setBounds(738, 58, 182, 30);
 		avaliacaoRegras.add(buttonDefault);
 
-		textFieldCreated = new JTextField();
-		textFieldCreated.setEditable(false);
-		textFieldCreated.setColumns(10);
-		textFieldCreated.setBounds(91, 75, 594, 20);
-		avaliacaoRegras.add(textFieldCreated);
+		codeSmellsPathAv_TF = new JTextField();
+		codeSmellsPathAv_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		codeSmellsPathAv_TF.setEditable(false);
+		codeSmellsPathAv_TF.setColumns(10);
+		codeSmellsPathAv_TF.setBounds(26, 102, 700, 30);
+		avaliacaoRegras.add(codeSmellsPathAv_TF);
 
-		JButton buttonCreated = new JButton("Sem Bool");
+		JButton buttonCreated = new JButton("Code Smells");
+		buttonCreated.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		buttonCreated.setFocusable(false);
+		buttonCreated.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		buttonCreated.setEnabled(false);
 		buttonCreated.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				JFileChooser jfc = new JFileChooser(".");
-				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
-				jfc.setFileFilter(filter);
-				int returnValue = jfc.showOpenDialog(null);
+				if (buttonCreated.isEnabled()) {
+					JFileChooser jfc = new JFileChooser(".");
+					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					jfc.setFileFilter(new FileNameExtensionFilter("XLS files", "xlsx"));
 
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					csCreated = jfc.getSelectedFile().getAbsolutePath();
-					textFieldCreated.setText(csCreated);
+					if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+						codeSmellsPathAv_TF.setText(jfc.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
-		buttonCreated.setBounds(709, 74, 109, 23);
+		buttonCreated.setBounds(738, 101, 182, 30);
 		avaliacaoRegras.add(buttonCreated);
 
-		textFieldMetricas = new JTextField();
-		textFieldMetricas.setEditable(false);
-		textFieldMetricas.setColumns(10);
-		textFieldMetricas.setBounds(91, 107, 594, 20);
-		avaliacaoRegras.add(textFieldMetricas);
+		metricsPathAv_TF = new JTextField();
+		metricsPathAv_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		metricsPathAv_TF.setEditable(false);
+		metricsPathAv_TF.setColumns(10);
+		metricsPathAv_TF.setBounds(26, 145, 700, 30);
+		avaliacaoRegras.add(metricsPathAv_TF);
 
-		JButton metricsButton = new JButton("Metrics");
+		JButton metricsButton = new JButton("Métricas");
+		metricsButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		metricsButton.setFocusable(false);
+		metricsButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		metricsButton.setEnabled(false);
-		metricsButton.setBounds(709, 106, 109, 23);
+		metricsButton.setBounds(738, 144, 182, 30);
 		metricsButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				JFileChooser jfc = new JFileChooser(".");
-				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("XLS files", "xlsx");
-				jfc.setFileFilter(filter);
-				int returnValue = jfc.showOpenDialog(null);
+				if (metricsButton.isEnabled()) {
+					JFileChooser jfc = new JFileChooser(".");
+					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					jfc.setFileFilter(new FileNameExtensionFilter("XLS files", "xlsx"));
 
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					metricsFile = jfc.getSelectedFile().getAbsolutePath();
-					textFieldMetricas.setText(metricsFile);
-					if (metricsFile.endsWith(".xlsx")) {
-						metricsFile = metricsFile.replaceAll("\\.[^.]*$", "");
-					}
+					if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+						metricsPathAv_TF.setText(jfc.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
 		avaliacaoRegras.add(metricsButton);
 
-		textFieldRules = new JTextField();
-		textFieldRules.setEditable(false);
-		textFieldRules.setColumns(10);
-		textFieldRules.setBounds(91, 139, 594, 20);
-		avaliacaoRegras.add(textFieldRules);
+		rulePathAv_TF = new JTextField();
+		rulePathAv_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		rulePathAv_TF.setEditable(false);
+		rulePathAv_TF.setColumns(10);
+		rulePathAv_TF.setBounds(26, 188, 700, 30);
+		avaliacaoRegras.add(rulePathAv_TF);
 
-		JButton rulesButton = new JButton("Rules");
+		JButton rulesButton = new JButton("Regras");
+		rulesButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		rulesButton.setFocusable(false);
+		rulesButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		rulesButton.setEnabled(false);
-		rulesButton.setBounds(709, 138, 109, 23);
+		rulesButton.setBounds(738, 187, 182, 30);
 		rulesButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				JFileChooser jfc = new JFileChooser(".");
-				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt files", "txt");
-				jfc.setFileFilter(filter);
-				int returnValue = jfc.showOpenDialog(null);
+				if (rulesButton.isEnabled()) {
+					JFileChooser jfc = new JFileChooser(".");
+					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					jfc.setFileFilter(new FileNameExtensionFilter("txt files", "txt"));
 
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					rulesFile = jfc.getSelectedFile().getAbsolutePath();
-					textFieldRules.setText(rulesFile);
+					if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+						rulePathAv_TF.setText(jfc.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
 		avaliacaoRegras.add(rulesButton);
 
 		JButton buttonAvaliar = new JButton("Avaliar");
+		buttonAvaliar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		buttonAvaliar.setFocusable(false);
+		buttonAvaliar.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 
 		JRadioButton compare2 = new JRadioButton("Comparar 2");
-		compare2.setBounds(186, 14, 109, 23);
+		compare2.setHorizontalAlignment(SwingConstants.CENTER);
+		compare2.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		compare2.setBounds(91, 14, 380, 30);
 		compare2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				buttonDefault.setEnabled(true);
 				buttonCreated.setEnabled(true);
 				metricsButton.setEnabled(false);
-				textFieldMetricas.setText("");
+				metricsPathAv_TF.setText("");
 				rulesButton.setEnabled(false);
-				textFieldRules.setText("");
+				rulePathAv_TF.setText("");
 				buttonAvaliar.setEnabled(true);
 			}
 		});
@@ -978,13 +992,15 @@ public class GUI extends JFrame {
 		buttonGroup.add(compare2);
 
 		JRadioButton compare3 = new JRadioButton("Comparar 3");
-		compare3.setBounds(576, 14, 109, 23);
+		compare3.setHorizontalAlignment(SwingConstants.CENTER);
+		compare3.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		compare3.setBounds(475, 14, 380, 30);
 		compare3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				buttonDefault.setEnabled(true);
 				buttonCreated.setEnabled(false);
-				textFieldCreated.setText("");
+				codeSmellsPathAv_TF.setText("");
 				metricsButton.setEnabled(true);
 				rulesButton.setEnabled(true);
 				buttonAvaliar.setEnabled(true);
@@ -994,39 +1010,81 @@ public class GUI extends JFrame {
 		buttonGroup.add(compare3);
 
 		buttonAvaliar.setEnabled(false);
-		buttonAvaliar.setBounds(417, 170, 89, 23);
+		buttonAvaliar.setBounds(373, 232, 200, 30);
 		buttonAvaliar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				try {
-					if (compare2.isSelected()) {
-						CompareFiles comparef = new CompareFiles(csDefault, csCreated);
-						Quality quality = comparef.testQuality();
-						classesMap = quality.getIndicatorsPerClass();
-						methodsMap = quality.getIndicatorsPerMethod();
-						updateEvaluationInfo();
+				if (buttonAvaliar.isEnabled()) {
+					if (!isBarActive()) {
+						if (!theoreticPathAv_TF.getText().isEmpty()) {
+							if (compare2.isSelected() && codeSmellsPathAv_TF.getText().isEmpty())
+								errorMessage(
+										"Tem que selecionar um ficheiro code Smells para fazer avaliação das regras!");
+							else {
+								if (compare3.isSelected() && metricsPathAv_TF.getText().isEmpty())
+									errorMessage(
+											"Tem que selecionar as métricas para poder fazer avaliação das regras!");
+								else {
+									if (compare3.isSelected() && rulePathAv_TF.getText().isEmpty())
+										errorMessage(
+												"Tem que selecionar as regras para poder fazer avaliação das regras!");
+									else {
+										if (compare2.isSelected() || compare3.isSelected()) {
+											evaluateRule(compare2.isSelected(), theoreticPathAv_TF.getText(),
+													codeSmellsPathAv_TF.getText(), metricsPathAv_TF.getText(),
+													rulePathAv_TF.getText());
+										}
+									}
+								}
+							}
 
+						} else
+							errorMessage("Tem que selecionar um ficheiro teórico para fazer avaliação das regras!");
 					}
-					if (compare3.isSelected()) {
-						CompareFiles comparef = new CompareFiles(csDefault, metricsFile, rulesFile);
-						Quality quality = comparef.testQuality();
-						classesMap = quality.getIndicatorsPerClass();
-						methodsMap = quality.getIndicatorsPerMethod();
-						updateEvaluationInfo();
-					}
-				} catch (Exception e) {
-					// TODO Gerar erro e simplificar
-					e.printStackTrace();
 				}
+
 			}
 		});
 		avaliacaoRegras.add(buttonAvaliar);
 
 	}
 
+	private boolean isBarActive() {
+		return bar != null ? bar.isActive() : false;
+	}
+
+	private void readProject(String pathExcel, String pathProject) {
+		bar = new MyProgressBar(3);
+		SwingWorker<Boolean, Object> worker = new SwingWorker<Boolean, Object>() {
+			@Override
+			protected Boolean doInBackground() throws Exception {
+				try {
+					List<String[]> javaProjectList = ReadJavaProject.readJavaProject(pathProject);
+					javaProjectList.add(0, EXCEL_HEADER);
+					bar.updateProgressBar();
+					try {
+						ExcelDealer.createExcelFile(pathExcel, javaProjectList, "Metrics");
+						bar.updateProgressBar();
+						readExcel(pathExcel + ".xlsx");
+						bar.updateProgressBar();
+						bar.closeProgressBar();
+
+					} catch (Exception e) {
+						bar.closeProgressBar();
+						errorMessage("Ocorreu um erro ao tentar criar o Excel!");
+					}
+				} catch (Exception e1) {
+					bar.closeProgressBar();
+					errorMessage("Ocorreu um erro ao tentar analisar o Projeto java!");
+				}
+				return true;
+			}
+		};
+		worker.execute();
+	}
+
 	private void readExcel(String path) {
 		try {
-			fileName_TF.setText(path);
 			tableModel.setRowCount(0);
 			tableModel.setColumnCount(0);
 
@@ -1037,8 +1095,9 @@ public class GUI extends JFrame {
 				table.getColumnModel().getColumn(i).setResizable(false);
 
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
+			int counter = 1;
 			for (Object[] row : ExcelDealer.getAllRows(path, 0)) {
+				row[0] = counter++;
 				tableModel.addRow(row);
 			}
 
@@ -1048,43 +1107,74 @@ public class GUI extends JFrame {
 			Label_LOC.setText(String.valueOf(ExcelDealer.sumAllColumn(path, 0, 7)));
 			Label_Methods.setText(String.valueOf(ExcelDealer.getAllCellsOfColumn(path, 0, 3, true).size() - 1));
 		} catch (Exception e) {
-			// TODO Gerar erro
-			e.printStackTrace();
+			errorMessage("Ocorreu um erro ao tentar ler o Excel!");
 		}
 
 	}
 
-	private void readCodeSmells(ArrayList<ArrayList<String[]>> list) {
+	private void createCodeSmells(Boolean keepResult, String metricsPath, String rulePath, String savePath)
+			throws Exception {
+		bar = new MyProgressBar(keepResult ? 5 : 4);
+		SwingWorker<Boolean, Object> worker = new SwingWorker<Boolean, Object>() {
+			@Override
+			protected Boolean doInBackground() throws Exception {
 
-		tableModel1.setRowCount(0);
-		tableModel1.setColumnCount(0);
-		tableModel2.setRowCount(0);
-		tableModel2.setColumnCount(0);
-		for (int i = 0; i < list.get(0).get(0).length; i++) {
-			tableModel1.setColumnIdentifiers(list.get(0).get(0));
-			for (int j = 0; j != list.get(0).get(0).length; j++) {
-				table1.getColumnModel().getColumn(j).setResizable(false);
+				List<Rule> rules = Rule.allRules(rulePath);
+				bar.updateProgressBar();
+
+				List<MethodData> methodsData = MethodData.excelToMetricsMap(metricsPath);
+				bar.updateProgressBar();
+
+				MetricsRuleAnalysis mra = new MetricsRuleAnalysis(methodsData, rules);
+
+				List<List<String[]>> codeSmells = mra.getCodeSmellResults();
+				bar.updateProgressBar();
+
+				readCodeSmells(codeSmells);
+				bar.updateProgressBar();
+
+				resultsPanel.setEnabled(true);
+				if (keepResult) {
+					if (!savePath.isEmpty()) {
+						try {
+							mra.getResults().add(0, EXCEL_HEADER);
+							ExcelDealer.createExcelFile(savePath, mra.getResults(), "Rules");
+							resultsPanel.setEnabled(true);
+							bar.updateProgressBar();
+						} catch (Exception e) {
+							errorMessage("Ocorreu um erro ao tentar guardar os resultados!");
+						}
+					} else
+						errorMessage(
+								"Não foi possível guardar o ficheiro porque não especificou a localização onde o queria guardar!");
+				}
+				bar.closeProgressBar();
+				return true;
 			}
-		}
-		for (int i = 0; i < list.get(1).get(0).length; i++) {
-			tableModel2.setColumnIdentifiers(list.get(1).get(0));
-			for (int j = 0; j != list.get(1).get(0).length; j++) {
-				table2.getColumnModel().getColumn(j).setResizable(false);
-			}
+		};
+		worker.execute();
+	}
 
-		}
+	private void readCodeSmells(List<List<String[]>> list) {
+		tableClassesModel.setRowCount(0);
+		tableClassesModel.setColumnCount(0);
 
-		table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		tableClassesModel.setColumnIdentifiers(list.get(0).get(0));
+		for (int j = 0; j != list.get(0).get(0).length; j++)
+			tableCodeSmellsClasses.getColumnModel().getColumn(j).setResizable(false);
 
-		for (int i = 1; i < list.get(0).size(); i++) {
-			tableModel1.addRow(list.get(0).get(i));
-		}
+		tableMethodsModel.setRowCount(0);
+		tableMethodsModel.setColumnCount(0);
 
-		for (int i = 1; i < list.get(1).size(); i++) {
-			tableModel2.addRow(list.get(1).get(i));
-		}
+		tableMethodsModel.setColumnIdentifiers(list.get(1).get(0));
+		for (int j = 0; j != list.get(1).get(0).length; j++)
+			tableCodeSmellsMethods.getColumnModel().getColumn(j).setResizable(false);
 
+		for (int i = 1; i < list.get(0).size(); i++)
+			tableClassesModel.addRow(list.get(0).get(i));
+
+		for (int i = 1; i < list.get(1).size(); i++)
+			tableMethodsModel.addRow(list.get(1).get(i));
 	}
 
 	private void initiateConditionLongMethod() {
@@ -1321,15 +1411,15 @@ public class GUI extends JFrame {
 
 	public ArrayList<String> getRulesString() {
 		ArrayList<String> write = new ArrayList<>();
-		write.add("is_Long_Method");
+
 		String methodRule = getLongMethodFormat();
 		String classRule = getGodClassFormat();
 
-		if (methodRule.equals("SE ( )")) {
-			write.add("is_God_Class");
+		if (!methodRule.equals("SE ( )") && !methodRule.isEmpty()) {
+			write.add("is_Long_Method");
 			write.add(getLongMethodFormat());
 		}
-		if (classRule.equals("SE ( )")) {
+		if (!classRule.equals("SE ( )") && !classRule.isEmpty()) {
 			write.add("is_God_Class");
 			write.add(getGodClassFormat());
 		}
@@ -1388,137 +1478,100 @@ public class GUI extends JFrame {
 		return conditionBoxs + 1;
 	}
 
-	private void updateEvaluationInfo() {
-		if (chartFrame != null && chartFrame2 != null) {
-			avaliacaoRegras.remove(chartFrame);
-			avaliacaoRegras.remove(chartFrame2);
-		}
+	private void evaluateRule(boolean evaluateCodeSmell, String theoreticPath, String codeSmellsPath,
+			String metricsPath, String rulePath) {
+		bar = new MyProgressBar(6);
+		SwingWorker<Boolean, Object> worker = new SwingWorker<Boolean, Object>() {
+			@Override
+			protected Boolean doInBackground() {
+				try {
+					bar.updateProgressBar();
+					Quality quality = evaluateCodeSmell ? new CompareFiles(theoreticPath, codeSmellsPath).testQuality()
+							: new CompareFiles(theoreticPath, metricsPath, rulePath).testQuality();
+					bar.updateProgressBar();
+					classesMap = quality.getIndicatorsPerClass();
+					bar.updateProgressBar();
+					methodsMap = quality.getIndicatorsPerMethod();
+					bar.updateProgressBar();
+					updateEvaluationInfo(chartFrame, classesMap, nVP, nVN, nFP, nFN, 26, 360, 400, 230);
+					bar.updateProgressBar();
+					updateEvaluationInfo(chartFrame2, methodsMap, mVP, mVN, mFP, mFN, 520, 360, 400, 230);
+					bar.updateProgressBar();
+					bar.closeProgressBar();
+				} catch (Exception e) {
+					bar.closeProgressBar();
+					errorMessage("Ocorreu um erro ao tentar comparar os ficheiros!");
+				}
+				return true;
+			}
+		};
+		worker.execute();
+	}
 
-		int cVP = 0;
-		int cVN = 0;
-		int cFP = 0;
-		int cFN = 0;
-		int mVPs = 0;
-		int mVNs = 0;
-		int mFPs = 0;
-		int mFNs = 0;
+	private void updateEvaluationInfo(ChartPanel chartPanel, HashMap<String, Indicator> map, JTextField vP,
+			JTextField vN, JTextField fP, JTextField fN, int x, int y, int width, int height) {
+		if (chartPanel != null)
+			avaliacaoRegras.remove(chartPanel);
 
-		for (String key : classesMap.keySet()) {
-			Indicator indy = classesMap.get(key);
-			System.out.println("Na GUI " + indy);
-			switch (indy) {
+		int cVP = 0, cVN = 0, cFP = 0, cFN = 0;
+
+		for (String key : map.keySet()) {
+			switch (map.get(key)) {
 			case VP:
-				cVP = cVP + 1;
+				cVP++;
 				break;
 			case VN:
-				cVN = cVN + 1;
+				cVN++;
 				break;
 			case FP:
-				cFP = cFP + 1;
-				System.out.println("Encontrei " + cFP + " FP");
+				cFP++;
 				break;
 			case FN:
-				cFN = cFN + 1;
-				System.out.println("Encontrei " + cFN + " FN");
+				cFN++;
 				break;
 			}
 		}
 
-		for (String key : methodsMap.keySet()) {
-			Indicator indy = methodsMap.get(key);
-			System.out.println("Na GUI " + indy);
-			switch (indy) {
-			case VP:
-				mVPs = mVPs + 1;
-				break;
-			case VN:
-				mVNs = mVNs + 1;
-				break;
-			case FP:
-				mFPs = mFPs + 1;
-				break;
-			case FN:
-				mFNs = mFNs + 1;
-				break;
-			}
-		}
+		vP.setText(cVP + " Verdadeiros Positivos");
+		vN.setText(cVN + " Verdadeiros Negativos");
+		fP.setText(cFP + " Falsos Positivos");
+		fN.setText(cFN + " Falsos Negativos");
 
-		nVP.setText(cVP + " Verdadeiros Positivos");
-		nVN.setText(cVN + " Verdadeiros Negativos");
-		nFP.setText(cFP + " Falsos Positivos");
-		nFN.setText(cFN + " Falsos Negativos");
+		DefaultPieDataset pieDataSet = new DefaultPieDataset();
 
-		mVP.setText(mVPs + " Verdadeiros Positivos");
-		mVN.setText(mVNs + " Verdadeiros Negativos");
-		mFP.setText(mFPs + " Falsos Positivos");
-		mFN.setText(mFNs + " Falsos Negativos");
-
-		pieDataSet = new DefaultPieDataset();
-		pieDataSet2 = new DefaultPieDataset();
-		JFreeChart chart = ChartFactory.createPieChart("", pieDataSet, true, true, true);
-		JFreeChart chart2 = ChartFactory.createPieChart("", pieDataSet2, true, true, true);
-
-		PiePlot plot = (PiePlot) chart.getPlot();
-
-		if (cVP > 0) {
+		if (cVP > 0)
 			pieDataSet.setValue("VP", cVP);
-		}
 
-		if (cVN > 0) {
+		if (cVN > 0)
 			pieDataSet.setValue("VN", cVN);
-		}
 
-		if (cFP > 0) {
+		if (cFP > 0)
 			pieDataSet.setValue("FP", cFP);
-		}
-		if (cFN > 0) {
+
+		if (cFN > 0)
 			pieDataSet.setValue("FN", cFN);
-		}
 
-		if (mVPs > 0) {
-			pieDataSet2.setValue("VP", mVPs);
-		}
-
-		if (mVNs > 0) {
-			pieDataSet2.setValue("VN", mVNs);
-		}
-
-		if (mFPs > 0) {
-			pieDataSet2.setValue("FP", mFPs);
-		}
-		if (mFNs > 0) {
-			pieDataSet2.setValue("FN", mFNs);
-		}
-
+		JFreeChart chart = ChartFactory.createPieChart("", pieDataSet, true, true, true);
+		PiePlot plot = (PiePlot) chart.getPlot();
 		plot.setSectionPaint("VP", new Color(0, 255, 51));
 		plot.setSectionPaint("VN", new Color(0, 153, 0));
 		plot.setSectionPaint("FP", new Color(255, 51, 51));
 		plot.setSectionPaint("FN", new Color(204, 0, 0));
 
-		chartFrame = new ChartPanel(chart);
-		chartFrame.setBounds(26, 310, 354, 234);
-		chartFrame.setVisible(true);
+		chartPanel = new ChartPanel(chart);
+		chartPanel.setBounds(x, y, width, height);
+		chartPanel.setVisible(true);
 
-		avaliacaoRegras.add(chartFrame);
-
-		pieDataSet2.setValue("VP", mVPs);
-		pieDataSet2.setValue("VN", mVNs);
-		pieDataSet2.setValue("FP", mFPs);
-		pieDataSet2.setValue("FN", mFNs);
-
-		PiePlot plot2 = (PiePlot) chart2.getPlot();
-		plot2.setSectionPaint("VP", new Color(0, 255, 51));
-		plot2.setSectionPaint("VN", new Color(0, 153, 0));
-		plot2.setSectionPaint("FP", new Color(255, 51, 51));
-		plot2.setSectionPaint("FN", new Color(204, 0, 0));
-
-		chartFrame2 = new ChartPanel(chart2);
-		chartFrame2.setBounds(563, 310, 354, 234);
-		chartFrame2.setVisible(true);
-
-		avaliacaoRegras.add(chartFrame2);
-
+		avaliacaoRegras.add(chartPanel);
 		avaliacaoRegras.repaint();
 		avaliacaoRegras.revalidate();
+	}
+
+	private void errorMessage(String message) {
+		JOptionPane.showMessageDialog(null, message, "Error Message", JOptionPane.ERROR_MESSAGE);
+	}
+
+	private int warningMessage(String message) {
+		return JOptionPane.showConfirmDialog(null, message, "Warning", JOptionPane.YES_NO_OPTION);
 	}
 }
