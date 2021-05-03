@@ -75,6 +75,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.JCheckBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 
 public class GUI extends JFrame {
 
@@ -232,6 +233,8 @@ public class GUI extends JFrame {
 	 * Create the frame.
 	 */
 	public GUI() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage("images\\skunk2.png"));
+		setTitle("Code Quality Assessor");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			UIManager.put("TextField.inactiveBackground", new ColorUIResource(new Color(255, 255, 255)));
@@ -351,7 +354,7 @@ public class GUI extends JFrame {
 		filePath_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		filePath_TF.setColumns(10);
 
-		JButton btnChooseExcelLocation = new JButton("Escolha onde Guardar");
+		JButton btnChooseExcelLocation = new JButton("Escolha onde Guardar Métricas");
 		btnChooseExcelLocation.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnChooseExcelLocation.setBounds(695, 475, 246, 30);
 		excelPanel.add(btnChooseExcelLocation);
@@ -583,7 +586,7 @@ public class GUI extends JFrame {
 		metricsPath_TF = new JTextField();
 		metricsPath_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		metricsPath_TF.setEditable(false);
-		metricsPath_TF.setBounds(125, 11, 610, 30);
+		metricsPath_TF.setBounds(199, 11, 536, 30);
 		detecaoPanel.add(metricsPath_TF);
 		metricsPath_TF.setColumns(10);
 
@@ -608,7 +611,7 @@ public class GUI extends JFrame {
 		rulePath_TF.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		rulePath_TF.setEditable(false);
 		rulePath_TF.setColumns(10);
-		rulePath_TF.setBounds(125, 54, 610, 30);
+		rulePath_TF.setBounds(199, 54, 536, 30);
 		detecaoPanel.add(rulePath_TF);
 
 		resultMetricsPath_TF = new JTextField();
@@ -616,7 +619,7 @@ public class GUI extends JFrame {
 		resultMetricsPath_TF.setEnabled(false);
 		resultMetricsPath_TF.setEditable(false);
 		resultMetricsPath_TF.setColumns(10);
-		resultMetricsPath_TF.setBounds(125, 97, 610, 30);
+		resultMetricsPath_TF.setBounds(199, 97, 536, 30);
 		detecaoPanel.add(resultMetricsPath_TF);
 		bMetrics.setBounds(747, 11, 194, 30);
 		detecaoPanel.add(bMetrics);
@@ -660,7 +663,7 @@ public class GUI extends JFrame {
 		bLocation.setBounds(747, 97, 194, 30);
 		detecaoPanel.add(bLocation);
 
-		JCheckBox keepResults = new JCheckBox("Guardar\r\n");
+		JCheckBox keepResults = new JCheckBox("Guardar Code Smells\r\n");
 		keepResults.setHorizontalAlignment(SwingConstants.CENTER);
 		keepResults.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		keepResults.setFocusable(false);
@@ -672,12 +675,12 @@ public class GUI extends JFrame {
 				bLocation.setEnabled(keepResults.isSelected());
 			}
 		});
-		keepResults.setBounds(17, 97, 100, 30);
+		keepResults.setBounds(10, 96, 178, 30);
 		detecaoPanel.add(keepResults);
 
 		resultsPanel = new JTabbedPane(JTabbedPane.TOP);
 
-		JButton runRules = new JButton("Run");
+		JButton runRules = new JButton("Correr");
 		runRules.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		runRules.setFocusable(false);
 		runRules.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -757,9 +760,14 @@ public class GUI extends JFrame {
 
 		tableCodeSmellsMethods.getTableHeader().setReorderingAllowed(false);
 		sMetodos.setViewportView(tableCodeSmellsMethods);
+		
+		JLabel lblNewLabel_1 = new JLabel("New label");
+		lblNewLabel_1.setIcon(new ImageIcon("images\\skunk2.png"));
+		lblNewLabel_1.setBounds(35, 11, 120, 89);
+		detecaoPanel.add(lblNewLabel_1);
 
 		avaliacaoRegras = new JPanel();
-		tabbedPane.addTab("Avaliação Regras", null, avaliacaoRegras, null);
+		tabbedPane.addTab("Avaliar Regras", null, avaliacaoRegras, null);
 		avaliacaoRegras.setLayout(null);
 
 		// Avaliação Regras
@@ -769,6 +777,7 @@ public class GUI extends JFrame {
 		matrizConfusao.setLayout(new GridLayout(2, 2));
 
 		nVP = new JTextField("- Verdadeiros Positivos");
+		nVP.setForeground(Color.BLACK);
 		nVP.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		nVP.setHorizontalAlignment(JTextField.CENTER);
 		nVP.setEditable(false);
@@ -776,6 +785,7 @@ public class GUI extends JFrame {
 		matrizConfusao.add(nVP);
 
 		nFP = new JTextField("- Falsos Positivos");
+		nFP.setForeground(Color.BLACK);
 		nFP.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		nFP.setEditable(false);
 		nFP.setHorizontalAlignment(JTextField.CENTER);
@@ -783,6 +793,7 @@ public class GUI extends JFrame {
 		matrizConfusao.add(nFP);
 
 		nFN = new JTextField("- Falsos Negativos");
+		nFN.setForeground(Color.BLACK);
 		nFN.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		nFN.setEditable(false);
 		nFN.setHorizontalAlignment(JTextField.CENTER);
@@ -790,6 +801,7 @@ public class GUI extends JFrame {
 		matrizConfusao.add(nFN);
 
 		nVN = new JTextField("- Verdadeiros Negativos");
+		nVN.setForeground(Color.BLACK);
 		nVN.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		nVN.setEditable(false);
 		nVN.setHorizontalAlignment(JTextField.CENTER);
@@ -802,6 +814,7 @@ public class GUI extends JFrame {
 		matrizConfusao_2.setLayout(new GridLayout(2, 2));
 
 		mVP = new JTextField("- Verdadeiros Positivos");
+		mVP.setForeground(new Color(0, 0, 0));
 		mVP.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mVP.setHorizontalAlignment(SwingConstants.CENTER);
 		mVP.setEditable(false);
@@ -809,6 +822,7 @@ public class GUI extends JFrame {
 		matrizConfusao_2.add(mVP);
 
 		mFP = new JTextField("- Falsos Positivos");
+		mFP.setForeground(new Color(0, 0, 0));
 		mFP.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mFP.setHorizontalAlignment(SwingConstants.CENTER);
 		mFP.setEditable(false);
@@ -816,6 +830,7 @@ public class GUI extends JFrame {
 		matrizConfusao_2.add(mFP);
 
 		mFN = new JTextField("- Falsos Negativos");
+		mFN.setForeground(new Color(0, 0, 0));
 		mFN.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mFN.setHorizontalAlignment(SwingConstants.CENTER);
 		mFN.setEditable(false);
@@ -823,6 +838,7 @@ public class GUI extends JFrame {
 		matrizConfusao_2.add(mFN);
 
 		mVN = new JTextField("- Verdadeiros Negativos");
+		mVN.setForeground(new Color(0, 0, 0));
 		mVN.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mVN.setHorizontalAlignment(SwingConstants.CENTER);
 		mVN.setEditable(false);
@@ -842,7 +858,7 @@ public class GUI extends JFrame {
 		avaliacaoRegras.add(theoreticPathAv_TF);
 		theoreticPathAv_TF.setColumns(10);
 
-		JButton buttonDefault = new JButton("Teoricos");
+		JButton buttonDefault = new JButton("Teórico");
 		buttonDefault.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		buttonDefault.setFocusable(false);
 		buttonDefault.addActionListener(new ActionListener() {
@@ -964,7 +980,7 @@ public class GUI extends JFrame {
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 
-		JRadioButton compare2 = new JRadioButton("Comparar 2");
+		JRadioButton compare2 = new JRadioButton("Comparar com 2 ficheiros");
 		compare2.setHorizontalAlignment(SwingConstants.CENTER);
 		compare2.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		compare2.setBounds(91, 14, 380, 30);
@@ -983,7 +999,7 @@ public class GUI extends JFrame {
 		avaliacaoRegras.add(compare2);
 		buttonGroup.add(compare2);
 
-		JRadioButton compare3 = new JRadioButton("Comparar 3");
+		JRadioButton compare3 = new JRadioButton("Comparar com 3 ficheiros");
 		compare3.setHorizontalAlignment(SwingConstants.CENTER);
 		compare3.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		compare3.setBounds(475, 14, 380, 30);
