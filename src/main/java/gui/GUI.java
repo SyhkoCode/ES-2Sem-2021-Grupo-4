@@ -1110,20 +1110,41 @@ public class GUI extends JFrame {
 		SwingWorker<Boolean, Object> worker = new SwingWorker<Boolean, Object>() {
 			@Override
 			protected Boolean doInBackground() throws Exception {
+				List<Rule> rules;
+				try {
+					rules = Rule.allRules(rulePath);
+					bar.updateProgressBar();
+				} catch(Exception e) {
+					errorMessage("Ocorreu um erro ao ler o ficheiro com as regras!");
+					bar.closeProgressBar();
+					return true;
+				}
 
-				List<Rule> rules = Rule.allRules(rulePath);
-				bar.updateProgressBar();
+				List<MethodData> methodsData;
+				try {
+					methodsData = MethodData.excelToMetricsMap(metricsPath);
+					bar.updateProgressBar();
+				} catch(Exception e) {
+					errorMessage("Ocorreu um erro ao ler o ficheiro com as metricas!");
+					bar.closeProgressBar();
+					return true;
+				}
+				
+				MetricsRuleAnalysis mra;
+				try {
+					mra = new MetricsRuleAnalysis(methodsData, rules);
 
-				List<MethodData> methodsData = MethodData.excelToMetricsMap(metricsPath);
-				bar.updateProgressBar();
+					List<List<String[]>> codeSmells = mra.getCodeSmellResults();
+					bar.updateProgressBar();
 
-				MetricsRuleAnalysis mra = new MetricsRuleAnalysis(methodsData, rules);
-
-				List<List<String[]>> codeSmells = mra.getCodeSmellResults();
-				bar.updateProgressBar();
-
-				readCodeSmells(codeSmells);
-				bar.updateProgressBar();
+					readCodeSmells(codeSmells);
+					bar.updateProgressBar();
+				} catch(Exception e) {
+					errorMessage("Ocorreu um erro ao detetar code smells!");
+					bar.closeProgressBar();
+					return true;
+				}
+				
 
 				resultsPanel.setEnabled(true);
 				if (keepResult) {
