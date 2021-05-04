@@ -22,7 +22,7 @@ public class ReadJavaProject {
 	 *               method
 	 * @return String formatted containing just the arguments of the method
 	 */
-	public static String formatString(String method) {
+	private static String formatString(String method) {
 		String argumentsFormatted = "";
 		String strTemp = method.replaceAll(".*\\(|\\n|\\r|\\)", "");
 		String[] arrayTemp = strTemp.split(",");
@@ -33,7 +33,7 @@ public class ReadJavaProject {
 	}
 
 	/**
-	 * @param packageFile       is the java file that will by analysed
+	 * @param packageFile       is the java file that will be analysed
 	 * @param lines             is a String array that contains the information to
 	 *                          be inserted in each row of the excel sheet by the
 	 *                          ExcelDealer
@@ -46,7 +46,7 @@ public class ReadJavaProject {
 	 *                          value of each of them
 	 * @throws IOException If an I/O error occurs.
 	 */
-	public static void getMetricsForExcel(File packageFile, String[] lines, int counter,
+	private static void getMetricsForExcel(File packageFile, String[] lines, int counter,
 			LinkedHashMap<String, String> linesOfMethods, ArrayList<Integer> cycloOfAllMethods) throws IOException {
 		lines[3] = "" + Metrics.getNOM_class(packageFile);
 		lines[4] = "" + Metrics.getLOC_class(packageFile);
@@ -57,7 +57,7 @@ public class ReadJavaProject {
 
 	/**
 	 * @param current           represents the project directory
-	 * @param packageFile       is the java file that will by analysed
+	 * @param packageFile       is the java file that will be analysed
 	 * @param methods           is a LinkedHashSet that contains the names,
 	 *                          arguments and modifiers of the methods of the java
 	 *                          file in Strings
@@ -73,7 +73,7 @@ public class ReadJavaProject {
 	 *                          done with the ExcelDealer)
 	 * @throws IOException If an I/O error occurs.
 	 */
-	public static void getInformationForExcel(File current, File packageFile, LinkedHashSet<String> methods,
+	private static void getInformationForExcel(File current, File packageFile, LinkedHashSet<String> methods,
 			LinkedHashMap<String, String> linesOfMethods, ArrayList<Integer> cycloOfAllMethods, int counter,
 			List<String[]> result) throws IOException {
 
@@ -125,10 +125,8 @@ public class ReadJavaProject {
 						LinkedHashSet<String> methods = Metrics.methods(packageFile);
 						LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(packageFile, methods);
 						ArrayList<Integer> cycloOfAllMethods = Metrics.getCycloOfAllMethods(linesOfMethods);
-						int counter = 0;
 						if (current.getAbsolutePath().contains("\\src")) {
-							getInformationForExcel(current, packageFile, methods, linesOfMethods, cycloOfAllMethods,
-									counter, result);
+							getInformationForExcel(current, packageFile, methods, linesOfMethods, cycloOfAllMethods, 0, result);
 						}
 
 					}
