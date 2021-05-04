@@ -656,7 +656,7 @@ public class GUI extends JFrame {
 					jfc.setFileFilter(new FileNameExtensionFilter(".xlsx", "xlsx"));
 
 					if (jfc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
-						resultMetricsPath_TF.setText(jfc.getSelectedFile().getAbsolutePath().replaceAll(".xlsx", ""));
+						resultMetricsPath_TF.setText(jfc.getSelectedFile().getAbsolutePath());//.replaceAll(".xlsx", ""));
 				}
 			}
 		});
@@ -1529,6 +1529,7 @@ public class GUI extends JFrame {
 					bar.closeProgressBar();
 				} catch (Exception e) {
 					bar.closeProgressBar();
+					System.out.println(e.getMessage());
 					errorMessage("Ocorreu um erro ao tentar comparar os ficheiros!");
 				}
 				return true;

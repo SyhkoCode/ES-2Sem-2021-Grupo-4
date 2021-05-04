@@ -29,7 +29,7 @@ public class CompareFiles {
 	private String metricsFile;
 	private String rulesFile;
 	private boolean booleanColumnsFilled;
-	private final String[] titles = new String[]{"is_god_class","is_long_method"};
+	private final String[] titles = new String[]{"is_God_Class","is_Long_Method"};
 
 	/**
 	 * Constructor given two files This is for the situation when User chose to save
@@ -72,7 +72,8 @@ public class CompareFiles {
 	 */
 	private LinkedHashMap<String, Integer> getColIndexesByTitles() throws Exception {
 		LinkedHashMap<String, Integer> indexesMap = new LinkedHashMap<>();
-
+	//	System.out.println(csFileDefault);
+		//System.out.println(csFileCreated + " cretaed");
 		Object[] headerDefault = ExcelDealer.getRow(csFileDefault, 0, 0);
 		Object[] headerCreated = ExcelDealer.getRow(csFileCreated, 0, 0);
 
@@ -84,8 +85,12 @@ public class CompareFiles {
 				}
 			}
 			for (int i = 0; i < headerCreated.length; i++) {
+				//System.out.println("im here");
+				System.out.println(String.valueOf(headerCreated[i]));
 				if (String.valueOf(headerCreated[i]).equalsIgnoreCase(title)) {
+					//System.out.println("yolo");
 					indexesMap.put(String.valueOf(headerCreated[i]).toLowerCase(), i);
+					//System.out.println(String.valueOf(headerCreated[i]).toLowerCase());
 				}
 			}
 		}
@@ -127,41 +132,26 @@ public class CompareFiles {
 		HashMap<String, Indicator> saveIndsPerClass = new HashMap<>();
 
 		for (Object[] objDefaultExcel : ExcelDealer.getAllRows(csFileDefault, 0)) {
-
 			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
-
 			for (Object[] objCreatedExcel : ExcelDealer.getAllRows(csFileCreated, 0)) {
-
 				MethodData dataCreatedExcel = new MethodData(objCreatedExcel);
-
-				String created_package = dataCreatedExcel.getPackageName();
-				String created_class = dataCreatedExcel.getClassName();
-				String created_method = dataCreatedExcel.getMethodName();
-
-				if (dataDefaultExcel.getPackageName().equals(created_package)
-						&& dataDefaultExcel.getClassName().contains(created_class)
-						&& dataDefaultExcel.getMethodName().replaceFirst("\\(\\w+\\.", "(")
-								.replaceAll("\\,\\w+\\.", ",")
-								.equals(created_method.replaceFirst("\\(\\w+\\.", "(").replaceAll("\\,\\w+\\.", ","))) {
-
+				if(matchesFields(dataDefaultExcel,dataCreatedExcel,null,dataCreatedExcel.getPackageName(),dataCreatedExcel.getClassName(),dataCreatedExcel.getMethodName())) {
 					for (String title : titles) {
-
-						String cellTextDefault = String
-								.valueOf(objDefaultExcel[(int) indexesMap.get("default " + title.toLowerCase())]);
-						String cellTextCreated = String
-								.valueOf(objCreatedExcel[(int) indexesMap.get(title.toLowerCase())]);
-
+						String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + title.toLowerCase())]);
+						//System.out.println(indexesMap.keySet());
+						//System.out.println(title.toLowerCase());
+						//System.out.println(indexesMap.get(title.toLowerCase()));
+						String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.get(title.toLowerCase())]);
 						if (title.equalsIgnoreCase("is_god_class")
-								&& !saveIndsPerClass.containsKey(created_package + " " + created_class)) {
+								&& !saveIndsPerClass.containsKey(dataCreatedExcel.getPackageName() + " " + dataCreatedExcel.getClassName())) {
 							Indicator indicator_godclass = parseIndicator(cellTextDefault, cellTextCreated);
-							saveIndsPerClass.put(created_package + " " + created_class, indicator_godclass);
+							saveIndsPerClass.put(dataCreatedExcel.getPackageName() + " " + dataCreatedExcel.getClassName(), indicator_godclass);
 						} else if (title.equalsIgnoreCase("is_long_method")) {
 							Indicator indicator_longmethod = parseIndicator(cellTextDefault, cellTextCreated);
-							saveIndsPerMethod.put(created_package + " " + created_class + " " + created_method,
+							saveIndsPerMethod.put(dataCreatedExcel.getPackageName() + " " + dataCreatedExcel.getClassName() + " " + dataCreatedExcel.getMethodName(),
 									indicator_longmethod);
 						}
-
-					}
+					}	
 				}
 			}
 		}
@@ -177,43 +167,43 @@ public class CompareFiles {
 	 * @throws Exception Propagated Exception from ExcelDealer to be dealt with on the GUI.
 	 */
 	private Quality compareWith3Files() throws Exception {
+		HashMap<String, Integer> indexesMap = getColIndexesByTitles();
 		HashMap<String, Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String, Indicator> saveIndsPerClass = new HashMap<>();
-		MetricsRuleAnalysis mra = new MetricsRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),
-				Rule.allRules(rulesFile));
+		MetricsRuleAnalysis mra = new MetricsRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(rulesFile));
 
 		for (Object[] objDefaultExcel : ExcelDealer.getAllRows(csFileDefault, 0)) {
-
 			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
-
-			for (int i = 0; i < mra.getMethodsData().size(); i++) {
-				String god_class = String.valueOf(mra.getCodeSmellDetectedMap().get("is_God_Class").get(i)).toUpperCase();
-				String long_method = String.valueOf(mra.getCodeSmellDetectedMap().get("is_Long_Method").get(i)).toUpperCase();
-
-				String cellTextDefault_godclass = String.valueOf(objDefaultExcel[7]);
-				String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[10]);
-
-				String created_package = mra.getMethodsData().get(i).getPackageName();
-				String created_class = mra.getMethodsData().get(i).getClassName();
-				String created_method = mra.getMethodsData().get(i).getMethodName();
-
-				if (dataDefaultExcel.getPackageName().equals(created_package)
-						&& dataDefaultExcel.getClassName().contains(created_class)
-						&& dataDefaultExcel.getMethodName().replaceFirst("\\(\\w+\\.", "(")
-								.replaceAll("\\,\\w+\\.", ",")
-								.equals(created_method.replaceFirst("\\(\\w+\\.", "(").replaceAll("\\,\\w+\\.", ","))) {
-					if (!saveIndsPerClass.containsKey(created_package + " " + created_class)) {
-						Indicator indicator_godclass = parseIndicator(cellTextDefault_godclass, god_class);
-						saveIndsPerClass.put(created_package + " " + created_class, indicator_godclass);
+				for (int i = 0; i < mra.getMethodsData().size(); i++) {
+					String god_class = String.valueOf(mra.getCodeSmellDetectedMap().get("is_God_Class").get(i)).toUpperCase();
+					String long_method = String.valueOf(mra.getCodeSmellDetectedMap().get("is_Long_Method").get(i)).toUpperCase();
+					String cellTextDefault_godclass = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + "is_god_class")]);
+					String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + "is_long_method")]);
+					if(matchesFields(dataDefaultExcel,mra.getMethodsData().get(i),mra,mra.getMethodsData().get(i).getPackageName(),mra.getMethodsData().get(i).getClassName(),mra.getMethodsData().get(i).getMethodName())) {
+						if (!saveIndsPerClass.containsKey(mra.getMethodsData().get(i).getPackageName() + " " + mra.getMethodsData().get(i).getClassName())) {
+							Indicator indicator_godclass = parseIndicator(cellTextDefault_godclass, god_class);
+							saveIndsPerClass.put(mra.getMethodsData().get(i).getPackageName() + " " + mra.getMethodsData().get(i).getClassName(), indicator_godclass);
+						}
+							Indicator indicator_longmethod = parseIndicator(cellTextDefault_longmethod, long_method);
+							saveIndsPerMethod.put(mra.getMethodsData().get(i).getPackageName() + " " + mra.getMethodsData().get(i).getClassName() + " " + mra.getMethodsData().get(i).getMethodName(),indicator_longmethod);
 					}
-
-					Indicator indicator_longmethod = parseIndicator(cellTextDefault_longmethod, long_method);
-					saveIndsPerMethod.put(created_package + " " + created_class + " " + created_method,
-							indicator_longmethod);
 				}
 			}
-		}
 		return new Quality(saveIndsPerMethod, saveIndsPerClass);
+	}
+	
+	
+	private boolean matchesFields(MethodData dataDefaultExcel, MethodData dataCreatedExcel, MetricsRuleAnalysis mra,String created_package,String created_class,String created_method) {
+		boolean matches = false;
+		String default_package = dataDefaultExcel.getPackageName();
+		String default_class = dataDefaultExcel.getClassName();
+		String default_method = dataDefaultExcel.getMethodName();
+		if (default_package.equals(created_package) && default_class.contains(created_class)
+					&& default_method.replaceFirst("\\(\\w+\\.", "(").replaceAll("\\,\\w+\\.", ",")
+							.equals(created_method.replaceFirst("\\(\\w+\\.", "(").replaceAll("\\,\\w+\\.", ","))) {
+				matches = true;
+			}
+		return matches;
 	}
 
 	/**
@@ -231,4 +221,16 @@ public class CompareFiles {
 			return compareWith3Files();
 		}
 	}
+	
+	public static void main(String[] args) throws Exception {
+		
+		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Desktop\\jasml_0.10_metrics.xlsx", "C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt");
+		Quality result = cf.testQuality();
+	result.getIndicatorsPerClass();	
+	result.getIndicatorsPerMethod();	
+	System.out.println(result.getIndicatorsPerMethod());
+	System.out.println(result.getIndicatorsPerClass());
+	System.out.println("No de FPs: "+result.countIndicatorInMethods(Indicator.FP)+" em "+ result.getIndicatorsPerMethod().size());
+	}
+	
 }
