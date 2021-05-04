@@ -1,9 +1,11 @@
 package metrics;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -21,7 +23,9 @@ class MetricsTest {
 	File emptyTestFile = new File(getClass().getResource("/empty.java").getFile());
 	
 	File GrammerExceptionExtraTestFile = new File(getClass().getResource("/GrammerExceptionExtra.java").getFile());
-	File ClassOnlyOpeningFile = new File(getClass().getResource("/ClassOnlyOpening.java").getFile());
+	File ClassOnlyOpeningTest = new File(getClass().getResource("/ClassOnlyOpening.java").getFile());
+	File DoubleClassDeclarationTest = new File(getClass().getResource("/DoubleClassDeclarationTest.java").getFile());
+
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -40,35 +44,43 @@ class MetricsTest {
 	}
 
 	@Test
-	final void testGetLOC_class() throws Exception {
+	final void testGetLOC_class() throws IOException {
 		Exception exception = assertThrows(NullPointerException.class, ()->{Metrics.getLOC_class(null);});
 		String expectedMessage = "Ficheiro nao pode ser nulo.";
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 
-//		assertEquals(0, Metrics.getLines(emptyTestFile));		
+		assertEquals(0, Metrics.getLOC_class(emptyTestFile));		
 		assertEquals(18, Metrics.getLOC_class(GrammerExceptionTestFile)); // LOC_class[GrammerException]=18
 		assertEquals(50, Metrics.getLOC_class(ParsingExceptionTestFile)); // LOC_class[ParsingException]=50
 		assertEquals(1371, Metrics.getLOC_class(SourceCodeParserTestFile)); // LOC_class[SourceCodeParser]=1371	
 		
 		assertEquals(18, Metrics.getLOC_class(GrammerExceptionExtraTestFile)); // LOC_class[GrammerException]=18
-		assertEquals(0, Metrics.getLOC_class(ClassOnlyOpeningFile));
+		assertEquals(0, Metrics.getLOC_class(ClassOnlyOpeningTest));
+		assertEquals(3, Metrics.getLOC_class(DoubleClassDeclarationTest));
 	}
 
 	@Test
-	final void testCountMethods() {
+	final void testMethods() {
 		assertThrows(NullPointerException.class, ()->{Metrics.methods(null);});
 		Exception exception = assertThrows(IllegalArgumentException.class, ()->{Metrics.methods(new File("/naoexiste"));});
 		String expectedMessage = "Ficheiro especificado nao existe.";
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 		
-		System.out.println(Metrics.methods(GrammerExceptionTestFile));
 		
 		assertEquals(0, Metrics.methods(emptyTestFile).size());
 		assertEquals(4, Metrics.methods(GrammerExceptionTestFile).size()); // NOM_class[GrammerException]=4
 		assertEquals(6, Metrics.methods(ParsingExceptionTestFile).size()); // NOM_class[ParsingException]=6
 		assertEquals(32, Metrics.methods(SourceCodeParserTestFile).size()); // NOM_class[SourceCodeParser]=29 + 3 inner classes = 32
+	}
+
+	@Test
+	final void testGetNOM_class() {	
+		assertEquals(0, Metrics.getNOM_class(emptyTestFile));
+		assertEquals(4, Metrics.getNOM_class(GrammerExceptionTestFile)); // NOM_class[GrammerException]=4
+		assertEquals(6, Metrics.getNOM_class(ParsingExceptionTestFile)); // NOM_class[ParsingException]=6
+		assertEquals(32, Metrics.getNOM_class(SourceCodeParserTestFile)); // NOM_class[SourceCodeParser]=29 + 3 inner classes = 32
 	}
 
 	@Test
@@ -94,176 +106,70 @@ class MetricsTest {
 		
 		assertEquals(6, (Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile))).size());
 		assertEquals(32, (Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile))).size());	
-		
-//		map.clear();
-//		map.put("public ParsingException(int offset, int line, int column, String msg) ", "	public ParsingException(int offset, int line, int column, String msg) {\n" + 
-//				"		super(msg);\n" + System.lineSeparator() + 
-//				"		this.offset = offset;\n" + 
-//				"		this.line = line;n" + 
-//				"		this.column = column;\n" + 
-//				"	}");
-//		
-//		assertEquals(map.get(0).contains(System.lineSeparator()), (Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.countMethods(ParsingExceptionTestFile))).get(0).contains(System.lineSeparator()));
 	}
 
 	@Test
-	final void testNOfClyclo() {
-		String teste = "";
-		
-		Exception exceptionStringNull = assertThrows(IllegalArgumentException.class, ()->{Metrics.nOfCyclo(null);});
-		Exception exceptionStringEmpty = assertThrows(IllegalArgumentException.class, ()->{Metrics.nOfCyclo("");});
-		String expectedMessage = "Empty or null String";
-		String actualMessageStringNull = exceptionStringNull.getMessage();
-		assertTrue(actualMessageStringNull.contains(expectedMessage));
-		String actualMessageStringEmpty = exceptionStringEmpty.getMessage();
-		assertTrue(actualMessageStringEmpty.contains(expectedMessage));
-		assertEquals(actualMessageStringEmpty,actualMessageStringNull);
+	final void testGetCYCLO_method() throws FileNotFoundException {
 
-		teste = "public int getConstantPoolCount() {\r\n"
-				+ "        return poolItems.length;\r\n"
-				+ "    }";
-		assertEquals(1, Metrics.nOfCyclo(teste));
+		LinkedHashMap<String, String> emptylinesOfMethods = new LinkedHashMap<>();
+		emptylinesOfMethods.put("", "");
+		assertThrows(IllegalArgumentException.class, ()->{Metrics.getCYCLO_method(Metrics.getCycloOfAllMethods(emptylinesOfMethods), 0);});
 		
-		teste = "JavaClass ret = null;\r\n"
-				+ "		try {\r\n"
-				+ "			FileInputStream fsin = new FileInputStream(classFile);\r\n"
-				+ "			in = new DataInputStream(fsin);\r\n"
-				+ "\r\n"
-				+ "			readMagic();\r\n"
-				+ "			readVersion();\r\n"
-				+ "			readConstant_Pool_Count();\r\n"
-				+ "			readConstantPool();\r\n"
-				+ "			// prt(constantPool); // \r\n"
-				+ "			readAccess_flags();\r\n"
-				+ "			readThis_class();\r\n"
-				+ "			readSuper_class();\r\n"
-				+ "			readInterfaces();\r\n"
-				+ "			readFields();\r\n"
-				+ "			readMethods();\r\n"
-				+ "			readAttributes();\r\n"
-				+ "\r\n"
-				+ "			ret = new JavaClass();\r\n"
-				+ "			ret.magic = magic;\r\n"
-				+ "			ret.minor_version = minor_Version;\r\n"
-				+ "			ret.major_version = major_Version;\r\n"
-				+ "			ret.constant_pool_count = constant_Pool_Count;\r\n"
-				+ "			ret.constantPool = constantPool;\r\n"
-				+ "			ret.access_flags = access_flags;\r\n"
-				+ "			ret.this_class = this_class;\r\n"
-				+ "			ret.super_class = super_class;\r\n"
-				+ "			ret.interfaces_count = interfaces_count;\r\n"
-				+ "			ret.interfaces = interfaces;\r\n"
-				+ "			ret.fields_count = fields_count;\r\n"
-				+ "			ret.fields = fields;\r\n"
-				+ "			ret.methods_count = methods_count;\r\n"
-				+ "			ret.methods = methods;\r\n"
-				+ "			ret.attributes_count = attributes_count;\r\n"
-				+ "			ret.attributes = attributes;\r\n"
-				+ "		} finally {\r\n"
-				+ "			try {\r\n"
-				+ "				in.close();\r\n"
-				+ "			} catch (Exception e) {\r\n"
-				+ "\r\n"
-				+ "			}\r\n"
-				+ "		}\r\n"
-				+ "		return ret;\r\n"
-				+ "	}";
-		assertEquals(2, Metrics.nOfCyclo(teste));
-		
-		teste = "public String toString() {\r\n"
-				+ "        StringBuffer buf = new StringBuffer();\r\n"
-				+ "        ConstantPoolItem item;\r\n"
-				+ "        for (int i = 0; i < poolItems.length; i++) {\r\n"
-				+ "            item = poolItems[i];\r\n"
-				+ "            if (item != null) {\r\n"
-				+ "                buf.append(i + \" : \" + item.toString() + \"\\r\\n\");\r\n"
-				+ "                if (item instanceof Constant_Double || item instanceof Constant_Long) {\r\n"
-				+ "                    i++;\r\n"
-				+ "                }\r\n"
-				+ "            } else {\r\n"
-				+ "                buf.append(i + \" : N/A\\r\\n\");\r\n"
-				+ "            }\r\n"
-				+ "        }\r\n"
-				+ "        return buf.toString();\r\n"
-				+ "    }";
-		assertEquals(5, Metrics.nOfCyclo(teste));
+		LinkedHashMap<String, String> nulllinesOfMethods = new LinkedHashMap<>();
+		nulllinesOfMethods.put(null, null);
+
+		assertThrows(IllegalArgumentException.class, ()->{Metrics.getCYCLO_method(Metrics.getCycloOfAllMethods(nulllinesOfMethods), 0);});
+
+		LinkedHashMap<String, String> linesOfMethodsEmptyFile = Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile));
+		assertThrows(IllegalArgumentException.class, ()->{Metrics.getCYCLO_method(Metrics.getCycloOfAllMethods(linesOfMethodsEmptyFile), 0);});
+
+
+		LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile));
+		ArrayList<Integer> cycloOfAllMethods = Metrics.getCycloOfAllMethods(linesOfMethods);
+		assertEquals(1, Metrics.getCYCLO_method(cycloOfAllMethods , 0)); // CYCLO_method[SourceCodeParser(File)] = 1
+		assertEquals(19, Metrics.getCYCLO_method(cycloOfAllMethods , 7)); // CYCLO_method[parseField()] = 19
 	}
 
 	@Test
-	final void testWmc() throws FileNotFoundException {
-		ArrayList<Integer> numbersToSum = new ArrayList<>();
-		assertEquals(0, Metrics.wmc(numbersToSum));
+	final void testGetWMC_class() throws FileNotFoundException {
+		LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile));
+		ArrayList<Integer> cycloOfAllMethods = Metrics.getCycloOfAllMethods(linesOfMethods);
+		assertEquals(0, Metrics.getWMC_class(cycloOfAllMethods));
 		
-		numbersToSum.add(5);
-		numbersToSum.add(10);
-		assertEquals(15, Metrics.wmc(numbersToSum));
+		linesOfMethods.clear();
+		cycloOfAllMethods.clear();
+		linesOfMethods = Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.methods(GrammerExceptionTestFile));
+		cycloOfAllMethods = Metrics.getCycloOfAllMethods(linesOfMethods);
+		assertEquals(4, Metrics.getWMC_class(cycloOfAllMethods)); // WMC_class[GrammerException]=4
 		
-		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
-		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile)));		
-		ArrayList<Integer> none = Metrics.allCyclos(map);
-		assertEquals(0, Metrics.wmc(none));
+		linesOfMethods.clear();
+		cycloOfAllMethods.clear();
+		linesOfMethods = Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile));	
+		cycloOfAllMethods = Metrics.getCycloOfAllMethods(linesOfMethods);
+		assertEquals(13, Metrics.getWMC_class(cycloOfAllMethods)); // WMC_class[ParsingException]=13
 		
-		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.methods(GrammerExceptionTestFile)));		
-		ArrayList<Integer> GrammerExceptionCyclos = Metrics.allCyclos(map);
-		assertEquals(4, Metrics.wmc(GrammerExceptionCyclos)); // WMC_class[GrammerException]=4
-		
-		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile)));		
-		ArrayList<Integer> ParsingExceptionCyclos = Metrics.allCyclos(map);
-		assertEquals(13, Metrics.wmc(ParsingExceptionCyclos)); // WMC_class[ParsingException]=13
-		
-		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile)));		
-		ArrayList<Integer> SourceCodeParserCyclos = Metrics.allCyclos(map);
-		assertEquals(331, Metrics.wmc(SourceCodeParserCyclos)); // WMC_class[SourceCodeParser]=328 + 3 inner classes = 331		
+		linesOfMethods.clear();
+		cycloOfAllMethods.clear();
+		linesOfMethods = Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile));
+		cycloOfAllMethods = Metrics.getCycloOfAllMethods(linesOfMethods);
+		assertEquals(331, Metrics.getWMC_class(cycloOfAllMethods)); // WMC_class[SourceCodeParser]=328+ 3 inner classes=331
 	}
 
 	@Test
-	final void testCountLinesOfMethods() throws FileNotFoundException {
-		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
-		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.methods(GrammerExceptionTestFile)));
-		assertEquals(3, Metrics.countLinesOfMethods(map).get(0)); // LOC_method[GrammerException(int,String)]=3
-		assertEquals(3, Metrics.countLinesOfMethods(map).get(1)); // LOC_method[GrammerException(int,int,int,String)]=3
-		assertEquals(3, Metrics.countLinesOfMethods(map).get(2)); // LOC_method[GrammerException(String,Exception)]=3
-		assertEquals(3, Metrics.countLinesOfMethods(map).get(3)); // LOC_method[GrammerException(int,int,String)]=3
-		
-		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile)));
-		assertEquals(6, Metrics.countLinesOfMethods(map).get(0)); // LOC_method[ParsingException(int,int,int,String)]=6
-		assertEquals(21, Metrics.countLinesOfMethods(map).get(5)); // LOC_method[getMessage()]=21
-		
-		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile)));
-		assertEquals(40, Metrics.countLinesOfMethods(map).get(5)); // LOC_method[parseClassSignature()]=40
-		assertEquals(76, Metrics.countLinesOfMethods(map).get(7)); // LOC_method[parseField()]=76
-		
-		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile)));
-		ArrayList<Integer> empty = new ArrayList<Integer>();
-		assertEquals(empty, Metrics.countLinesOfMethods(map));
-	}
+	final void testGetLOC_method() throws FileNotFoundException {	
+		assertThrows(IllegalArgumentException.class, ()->{Metrics.getLOC_method(Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile)), 0);});
 
-	@Test
-	final void testAllCyclos() throws FileNotFoundException {
-		LinkedHashMap<String, String> map = new LinkedHashMap<>();	
-		map.putAll(Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.methods(GrammerExceptionTestFile)));
-		assertEquals(1, Metrics.allCyclos(map).get(0)); // CYCLO_method[GrammerException(int,String)]=1
+		LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(GrammerExceptionTestFile, Metrics.methods(GrammerExceptionTestFile));
+		assertEquals(3, Metrics.getLOC_method(linesOfMethods, 0)); // LOC_method[GrammerException(int,String)]=3
 		
-		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile)));
-		assertEquals(1, Metrics.allCyclos(map).get(0)); // CYCLO_method[ParsingException(int,int,int,String)]=1
-		assertEquals(8, Metrics.allCyclos(map).get(5)); // CYCLO_method[getMessage()]=8
+		linesOfMethods.clear();
+		linesOfMethods = Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile));
+		assertEquals(21, Metrics.getLOC_method(linesOfMethods, 5)); // LOC_method[getMessage()]=21
 		
-		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile)));
-		assertEquals(10, Metrics.allCyclos(map).get(5)); // CYCLO_method[parseClassSignature()]=10
-		assertEquals(19, Metrics.allCyclos(map).get(7)); // CYCLO_method[parseField()]=19
-		
-		map.clear();
-		map.putAll(Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile)));
-		ArrayList<Integer> empty = new ArrayList<Integer>();
-		assertEquals(empty, Metrics.allCyclos(map));
+		linesOfMethods.clear();
+		linesOfMethods = Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile));
+		assertEquals(40, Metrics.getLOC_method(linesOfMethods, 5)); // LOC_method[parseClassSignature()]=40
 	}
 
 }
+
