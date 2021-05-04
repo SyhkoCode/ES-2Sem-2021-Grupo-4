@@ -518,7 +518,7 @@ public class GUI extends JFrame {
 					if (!ruleToSave.isEmpty())
 						FileDealer.createFile(path, ruleToSave);
 					else
-						errorMessage("Não é possível guardar regras vazias!");
+						errorMessage("Não foi possível guardar as regras!");
 				}
 			}
 		});
@@ -1443,15 +1443,21 @@ public class GUI extends JFrame {
 
 		String methodRule = getLongMethodFormat();
 		String classRule = getGodClassFormat();
-
-		if (!methodRule.equals("SE ( )") && !methodRule.isEmpty()) {
-			write.add("is_Long_Method");
-			write.add(getLongMethodFormat());
-		}
-		if (!classRule.equals("SE ( )") && !classRule.isEmpty()) {
-			write.add("is_God_Class");
-			write.add(getGodClassFormat());
-		}
+		if(countChar(methodRule, '(') == countChar(methodRule, ')')) {
+			if(countChar(classRule, '(') == countChar(classRule, ')')) {
+				if (!methodRule.equals("SE ( )") && !methodRule.isEmpty()) {
+					write.add("is_Long_Method");
+					write.add(methodRule);
+				}
+				if (!classRule.equals("SE ( )") && !classRule.isEmpty()) {
+					write.add("is_God_Class");
+					write.add(classRule);
+				}
+			} else
+			errorMessage("Regra method com formato inválido! Número de parênteses ( tem que ser o igual ao numero de )");
+		} else 
+			errorMessage("Regra method com formato inválido! Número de parênteses ( tem que ser o igual ao numero de )");
+		
 		return write;
 	}
 
@@ -1594,6 +1600,15 @@ public class GUI extends JFrame {
 		avaliacaoRegras.add(chartPanel);
 		avaliacaoRegras.repaint();
 		avaliacaoRegras.revalidate();
+	}
+	
+	private int countChar(String s, char c) {
+		int count = 0;
+		for (int i = 0; i < s.length(); i++) 
+		    if (s.charAt(i) == c) 
+		        count++;
+		    
+		return count;
 	}
 
 	private void errorMessage(String message) {
