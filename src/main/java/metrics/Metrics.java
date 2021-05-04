@@ -44,15 +44,12 @@ public class Metrics {
 		Integer min = null;
 		Integer max = null;
 
-		// List<String> lines = FileUtils.readLines(file, "UTF-8"); //funcionou com tds
-		// os projetos q testei mas n sei ate q ponto funcionara pa projetos sem serem
-		// UTF-8
+		 List<String> lines = FileUtils.readLines(file, "Cp1252");
 
-		// abaixo tb funciona mas sao mais linhas, mas parece ser o mais seguro
-		List<String> lines = new ArrayList<>();
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-			lines = br.lines().collect(Collectors.toList());
-		}
+//		List<String> lines = new ArrayList<>();
+//		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+//			lines = br.lines().collect(Collectors.toList());
+//		}
 
 		String classRegExp = "(((|public|final|abstract|private|static|protected)(\\s+))?(class)(\\s+)(\\w+)(<.*>)?(\\s+extends\\s+\\w+)?(<.*>)?(\\s+implements\\s+)?(.*)?(<.*>)?(\\s*))\\{$";
 		Pattern classDeclarationPattern = Pattern.compile(classRegExp);
@@ -140,7 +137,7 @@ public class Metrics {
 			throws FileNotFoundException {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 		Scanner scanner = new Scanner(file, "Cp1252");
-		ArrayList<String> descartar = new ArrayList<>();
+		ArrayList<String> discard = new ArrayList<>();
 		for (String m : methods) {
 			String method = new String("");
 			boolean foundMethod = false;
@@ -177,7 +174,7 @@ public class Metrics {
 				}
 			}
 			if (!foundMethod) {
-				descartar.add(m);
+				discard.add(m);
 				scanner.close();
 				scanner = new Scanner(file, "Cp1252");
 			}
@@ -185,7 +182,7 @@ public class Metrics {
 		}
 		scanner.close();
 
-		for (String s : descartar)
+		for (String s : discard)
 			methods.remove(s);
 
 		return map;
@@ -193,7 +190,8 @@ public class Metrics {
 
 	/**
 	 * Auxiliary method that calculates the sum of the Cyclomatic Complexity for the
-	 * required method. Useful for the extraction of CYCLO_method metric.
+	 * required method. Useful for the extraction of CYCLO_method metric. 
+	 * Starts with 1 and adds 1 for each "if" , "for", "while", "catch", "? :", "case", "continue", "&&" and "||" in the code lines.
 	 * 
 	 * @param method This is the given String that represents the method name.
 	 * @return The Sum of the Cyclomatic Complexity for the method.
@@ -273,7 +271,7 @@ public class Metrics {
 	 *                       code.
 	 * @param methodIndex    This is the receiving counter which represents the
 	 *                       index for the wanted method.
-	 * @return The Number of Lines of Code in the corresponding method.
+	 * @return The Number of Lines of Code in the corresponding method, including blank lines and comments.
 	 * @throws IllegalArgumentException If given LinkedHashMap<String, String>
 	 *                                  linesOfMethods is empty.
 	 */
