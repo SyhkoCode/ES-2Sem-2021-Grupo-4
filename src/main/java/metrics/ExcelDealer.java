@@ -167,9 +167,6 @@ public class ExcelDealer {
 	 * @throws Exception we throw exceptions to be dealt with on the GUI
 	 */
 	public static Object[] getRow(String path, int sheet_Index, int row_Index) throws Exception {
-		//System.out.println(path);
-		//File file = ;
-		//System.out.println(file.canRead());
 		XSSFWorkbook wb = new XSSFWorkbook(OPCPackage.open(new File(path)));
 		XSSFSheet sheet = wb.getSheetAt(sheet_Index);
 

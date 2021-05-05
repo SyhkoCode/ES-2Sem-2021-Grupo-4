@@ -76,7 +76,12 @@ public class CompareFiles {
 		LinkedHashMap<String, Integer> indexesMap = new LinkedHashMap<>();
 
 		Object[] headerDefault = ExcelDealer.getRow(csFileDefault, 0, 0);
-		Object[] headerCreated = ExcelDealer.getRow(csFileCreated, 0, 0);
+		Object[] headerCreated;
+		if(booleanColumnsFilled){
+			headerCreated = ExcelDealer.getRow(csFileCreated, 0, 0);
+		}else{
+			headerCreated = ExcelDealer.getRow(metricsFile, 0, 0);
+		}
 
 		for (String title : titles) {
 
@@ -164,6 +169,7 @@ public class CompareFiles {
 	 * @throws Exception Propagated Exception from ExcelDealer to be dealt with on the GUI.
 	 */
 	private Quality compareWith3Files() throws Exception {
+		HashMap<String, Integer> indexesMap = getColIndexesByTitles();
 		HashMap<String, Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String, Indicator> saveIndsPerClass = new HashMap<>();
 		MetricsRuleAnalysis mra = new MetricsRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(rulesFile));
@@ -173,8 +179,8 @@ public class CompareFiles {
 				for (int i = 0; i < mra.getMethodsData().size(); i++) {
 					String god_class = String.valueOf(mra.getCodeSmellDetectedMap().get("is_God_Class").get(i)).toUpperCase();
 					String long_method = String.valueOf(mra.getCodeSmellDetectedMap().get("is_Long_Method").get(i)).toUpperCase();
-					String cellTextDefault_godclass = String.valueOf(objDefaultExcel[7]);
-					String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[10]);
+					String cellTextDefault_godclass = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + "is_god_class")]);
+					String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + "is_long_method")]);
 					String created_package = mra.getMethodsData().get(i).getPackageName();
 					String created_class = mra.getMethodsData().get(i).getClassName();
 					String created_method = mra.getMethodsData().get(i).getMethodName();
