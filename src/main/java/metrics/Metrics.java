@@ -44,12 +44,7 @@ public class Metrics {
 		Integer min = null;
 		Integer max = null;
 
-		 List<String> lines = FileUtils.readLines(file, "Cp1252");
-
-//		List<String> lines = new ArrayList<>();
-//		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-//			lines = br.lines().collect(Collectors.toList());
-//		}
+		List<String> lines = FileUtils.readLines(file, "Cp1252");
 
 		String classRegExp = "(((|public|final|abstract|private|static|protected)(\\s+))?(class)(\\s+)(\\w+)(<.*>)?(\\s+extends\\s+\\w+)?(<.*>)?(\\s+implements\\s+)?(.*)?(<.*>)?(\\s*))\\{$";
 		Pattern classDeclarationPattern = Pattern.compile(classRegExp);
@@ -80,7 +75,7 @@ public class Metrics {
 	 * @throws IllegalArgumentException If file not found.
 	 */
 	public static LinkedHashSet<String> methods(File file) {
-		String regexMethods = "((public|protected|private|static)+\\n*\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;]))|(^(?!\\s*(public|private|protected))\\s*(abstract)?\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;]))";
+		String regexMethods = "((public|protected|private|static)+\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n*\\s*(\\w+)\\n*\\s*\\([^\\)]*\\) *(\\{?|[^;]))|(^(?!\\s*(public|private|protected))\\s*\\n*\\s*[\\w\\<\\>\\[\\]\\.]+\\n* \\s*(\\w+) *\\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;]))";
 		String regexNotMethods = "(if|else|for|while|switch|catch)\\n* \\s*(\\w+) \\n*\\s*\\([^\\)]*\\)* *(\\{?|[^;])|((^|\\s*)return )|((^|\\s*)(new ))";
 
 		Pattern patternMethods = Pattern.compile(regexMethods, Pattern.MULTILINE);

@@ -127,30 +127,16 @@ public class CompareFiles {
 		HashMap<String, Indicator> saveIndsPerClass = new HashMap<>();
 
 		for (Object[] objDefaultExcel : ExcelDealer.getAllRows(csFileDefault, 0)) {
-
 			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
-
 			for (Object[] objCreatedExcel : ExcelDealer.getAllRows(csFileCreated, 0)) {
-
 				MethodData dataCreatedExcel = new MethodData(objCreatedExcel);
-
 				String created_package = dataCreatedExcel.getPackageName();
 				String created_class = dataCreatedExcel.getClassName();
 				String created_method = dataCreatedExcel.getMethodName();
-
-				if (dataDefaultExcel.getPackageName().equals(created_package)
-						&& dataDefaultExcel.getClassName().contains(created_class)
-						&& dataDefaultExcel.getMethodName().replaceFirst("\\(\\w+\\.", "(")
-								.replaceAll("\\,\\w+\\.", ",")
-								.equals(created_method.replaceFirst("\\(\\w+\\.", "(").replaceAll("\\,\\w+\\.", ","))) {
-
+				if(matchesFields(dataDefaultExcel,dataCreatedExcel,created_package,created_class,created_method)) {
 					for (String title : titles) {
-
-						String cellTextDefault = String
-								.valueOf(objDefaultExcel[(int) indexesMap.get("default " + title.toLowerCase())]);
-						String cellTextCreated = String
-								.valueOf(objCreatedExcel[(int) indexesMap.get(title.toLowerCase())]);
-
+						String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + title.toLowerCase())]);
+						String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.get(title.toLowerCase())]);
 						if (title.equalsIgnoreCase("is_god_class")
 								&& !saveIndsPerClass.containsKey(created_package + " " + created_class)) {
 							Indicator indicator_godclass = parseIndicator(cellTextDefault, cellTextCreated);
@@ -160,14 +146,14 @@ public class CompareFiles {
 							saveIndsPerMethod.put(created_package + " " + created_class + " " + created_method,
 									indicator_longmethod);
 						}
-
-					}
+					}	
 				}
 			}
 		}
 		return new Quality(saveIndsPerMethod, saveIndsPerClass);
 	}
 
+	
 	/**
 	 * When CompareFiles receives 3 files, this is the method that allows the
 	 * comparison between them and the code smell detection quality evaluation.
@@ -179,41 +165,43 @@ public class CompareFiles {
 	private Quality compareWith3Files() throws Exception {
 		HashMap<String, Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String, Indicator> saveIndsPerClass = new HashMap<>();
-		MetricsRuleAnalysis mra = new MetricsRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),
-				Rule.allRules(rulesFile));
+		MetricsRuleAnalysis mra = new MetricsRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(rulesFile));
 
 		for (Object[] objDefaultExcel : ExcelDealer.getAllRows(csFileDefault, 0)) {
-
 			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
-
-			for (int i = 0; i < mra.getMethodsData().size(); i++) {
-				String god_class = String.valueOf(mra.getCodeSmellDetectedMap().get("is_God_Class").get(i)).toUpperCase();
-				String long_method = String.valueOf(mra.getCodeSmellDetectedMap().get("is_Long_Method").get(i)).toUpperCase();
-
-				String cellTextDefault_godclass = String.valueOf(objDefaultExcel[7]);
-				String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[10]);
-
-				String created_package = mra.getMethodsData().get(i).getPackageName();
-				String created_class = mra.getMethodsData().get(i).getClassName();
-				String created_method = mra.getMethodsData().get(i).getMethodName();
-
-				if (dataDefaultExcel.getPackageName().equals(created_package)
-						&& dataDefaultExcel.getClassName().contains(created_class)
-						&& dataDefaultExcel.getMethodName().replaceFirst("\\(\\w+\\.", "(")
-								.replaceAll("\\,\\w+\\.", ",")
-								.equals(created_method.replaceFirst("\\(\\w+\\.", "(").replaceAll("\\,\\w+\\.", ","))) {
-					if (!saveIndsPerClass.containsKey(created_package + " " + created_class)) {
-						Indicator indicator_godclass = parseIndicator(cellTextDefault_godclass, god_class);
-						saveIndsPerClass.put(created_package + " " + created_class, indicator_godclass);
+				for (int i = 0; i < mra.getMethodsData().size(); i++) {
+					String god_class = String.valueOf(mra.getCodeSmellDetectedMap().get("is_God_Class").get(i)).toUpperCase();
+					String long_method = String.valueOf(mra.getCodeSmellDetectedMap().get("is_Long_Method").get(i)).toUpperCase();
+					String cellTextDefault_godclass = String.valueOf(objDefaultExcel[7]);
+					String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[10]);
+					String created_package = mra.getMethodsData().get(i).getPackageName();
+					String created_class = mra.getMethodsData().get(i).getClassName();
+					String created_method = mra.getMethodsData().get(i).getMethodName();
+					if(matchesFields(dataDefaultExcel,mra.getMethodsData().get(i),created_package,created_class,created_method)) {
+						if (!saveIndsPerClass.containsKey(created_package + " " + created_class)) {
+							Indicator indicator_godclass = parseIndicator(cellTextDefault_godclass, god_class);
+							saveIndsPerClass.put(created_package + " " + created_class, indicator_godclass);
+						}
+							Indicator indicator_longmethod = parseIndicator(cellTextDefault_longmethod, long_method);
+							saveIndsPerMethod.put(created_package + " " + created_class + " " + created_method,indicator_longmethod);
 					}
-
-					Indicator indicator_longmethod = parseIndicator(cellTextDefault_longmethod, long_method);
-					saveIndsPerMethod.put(created_package + " " + created_class + " " + created_method,
-							indicator_longmethod);
 				}
 			}
-		}
 		return new Quality(saveIndsPerMethod, saveIndsPerClass);
+	}
+	
+	
+	private boolean matchesFields(MethodData dataDefaultExcel, MethodData dataCreatedExcel,String created_package,String created_class,String created_method) {
+		boolean matches = false;
+		String default_package = dataDefaultExcel.getPackageName();
+		String default_class = dataDefaultExcel.getClassName();
+		String default_method = dataDefaultExcel.getMethodName();
+		if (default_package.equals(created_package) && default_class.contains(created_class)
+					&& default_method.replaceFirst("\\(\\w+\\.", "(").replaceAll("\\,\\w+\\.", ",")
+							.equals(created_method.replaceFirst("\\(\\w+\\.", "(").replaceAll("\\,\\w+\\.", ","))) {
+				matches = true;
+			}
+		return matches;
 	}
 
 	/**
