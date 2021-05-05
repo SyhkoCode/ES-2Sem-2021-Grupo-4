@@ -518,7 +518,7 @@ public class GUI extends JFrame {
 					if (!ruleToSave.isEmpty())
 						FileDealer.createFile(path, ruleToSave);
 					else
-						errorMessage("Não é possível guardar regras vazias!");
+						errorMessage("Não foi possível guardar as regras!");
 				}
 			}
 		});
@@ -656,7 +656,7 @@ public class GUI extends JFrame {
 					jfc.setFileFilter(new FileNameExtensionFilter(".xlsx", "xlsx"));
 
 					if (jfc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
-						resultMetricsPath_TF.setText(jfc.getSelectedFile().getAbsolutePath());//.replaceAll(".xlsx", ""));
+						resultMetricsPath_TF.setText(jfc.getSelectedFile().getAbsolutePath().replaceAll(".xlsx", ""));
 				}
 			}
 		});
@@ -760,7 +760,7 @@ public class GUI extends JFrame {
 
 		tableCodeSmellsMethods.getTableHeader().setReorderingAllowed(false);
 		sMetodos.setViewportView(tableCodeSmellsMethods);
-		
+
 		JLabel lblNewLabel_1 = new JLabel("New label");
 		lblNewLabel_1.setIcon(new ImageIcon("images\\skunk2.png"));
 		lblNewLabel_1.setBounds(35, 11, 120, 89);
@@ -1130,7 +1130,7 @@ public class GUI extends JFrame {
 				try {
 					rules = Rule.allRules(rulePath);
 					bar.updateProgressBar();
-				} catch(Exception e) {
+				} catch (Exception e) {
 					errorMessage("Ocorreu um erro ao ler o ficheiro com as regras!");
 					bar.closeProgressBar();
 					return true;
@@ -1140,12 +1140,12 @@ public class GUI extends JFrame {
 				try {
 					methodsData = MethodData.excelToMetricsMap(metricsPath);
 					bar.updateProgressBar();
-				} catch(Exception e) {
+				} catch (Exception e) {
 					errorMessage("Ocorreu um erro ao ler o ficheiro com as metricas!");
 					bar.closeProgressBar();
 					return true;
 				}
-				
+
 				MetricsRuleAnalysis mra;
 				try {
 					mra = new MetricsRuleAnalysis(methodsData, rules);
@@ -1155,12 +1155,11 @@ public class GUI extends JFrame {
 
 					readCodeSmells(codeSmells);
 					bar.updateProgressBar();
-				} catch(Exception e) {
+				} catch (Exception e) {
 					errorMessage("Ocorreu um erro ao detetar code smells!");
 					bar.closeProgressBar();
 					return true;
 				}
-				
 
 				resultsPanel.setEnabled(true);
 				if (keepResult) {
@@ -1234,16 +1233,10 @@ public class GUI extends JFrame {
 	}
 
 	private void addNewConditionBox(int number, boolean append) {
+		if (!append)
+			clearConditions();
 		GroupLayout layout = isLongMethod ? conditions_IsLongMethod_GL : conditions_IsGodClass_GL;
 		ArrayList<ConditionsInfo> components = isLongMethod ? conditionsLongMethod : conditionsGodClass;
-
-		if (!append) {
-			JPanel panel = isLongMethod ? conditions_isLongMethod_Panel : conditions_isGodClass_Panel;
-			panel.removeAll();
-			layout = new GroupLayout(panel);
-			panel.setLayout(layout);
-			components.clear();
-		}
 
 		ParallelGroup hGroup = layout.createParallelGroup(Alignment.LEADING);
 		SequentialGroup vGroup = layout.createSequentialGroup();
@@ -1262,7 +1255,8 @@ public class GUI extends JFrame {
 			hGroup.addComponent(conditionPanel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE);
 			vGroup.addComponent(conditionPanel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE);
 		}
-		hGroup.addComponent(addConditionPanel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE);
+		if (!append)
+			hGroup.addComponent(addConditionPanel, GroupLayout.PREFERRED_SIZE, 922, GroupLayout.PREFERRED_SIZE);
 		vGroup.addComponent(addConditionPanel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE);
 		addComponentsToGroupLayouts(layout, hGroup, vGroup);
 	}
@@ -1443,15 +1437,23 @@ public class GUI extends JFrame {
 
 		String methodRule = getLongMethodFormat();
 		String classRule = getGodClassFormat();
+		if (countChar(methodRule, '(') == countChar(methodRule, ')')) {
+			if (countChar(classRule, '(') == countChar(classRule, ')')) {
+				if (!methodRule.equals("SE ( )") && !methodRule.isEmpty()) {
+					write.add("is_Long_Method");
+					write.add(methodRule);
+				}
+				if (!classRule.equals("SE ( )") && !classRule.isEmpty()) {
+					write.add("is_God_Class");
+					write.add(classRule);
+				}
+			} else
+				errorMessage(
+						"Regra method com formato inválido! Número de parênteses ( tem que ser o igual ao numero de )");
+		} else
+			errorMessage(
+					"Regra method com formato inválido! Número de parênteses ( tem que ser o igual ao numero de )");
 
-		if (!methodRule.equals("SE ( )") && !methodRule.isEmpty()) {
-			write.add("is_Long_Method");
-			write.add(getLongMethodFormat());
-		}
-		if (!classRule.equals("SE ( )") && !classRule.isEmpty()) {
-			write.add("is_God_Class");
-			write.add(getGodClassFormat());
-		}
 		return write;
 	}
 
@@ -1466,9 +1468,15 @@ public class GUI extends JFrame {
 	private void loadRule(String[] rule) {
 		boolean help = isLongMethod;
 		isLongMethod = true;
-		addConditionsBox(rule[0]);
+		if (rule[0] != null)
+			addConditionsBox(rule[0]);
+		else
+			clearConditions();
 		isLongMethod = false;
-		addConditionsBox(rule[1]);
+		if (rule[1] != null)
+			addConditionsBox(rule[1]);
+		else
+			clearConditions();
 		isLongMethod = help;
 		updateTA();
 	}
@@ -1594,6 +1602,15 @@ public class GUI extends JFrame {
 		avaliacaoRegras.add(chartPanel);
 		avaliacaoRegras.repaint();
 		avaliacaoRegras.revalidate();
+	}
+
+	private int countChar(String s, char c) {
+		int count = 0;
+		for (int i = 0; i < s.length(); i++)
+			if (s.charAt(i) == c)
+				count++;
+
+		return count;
 	}
 
 	private void errorMessage(String message) {
