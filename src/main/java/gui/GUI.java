@@ -1529,7 +1529,6 @@ public class GUI extends JFrame {
 					bar.closeProgressBar();
 				} catch (Exception e) {
 					bar.closeProgressBar();
-					System.out.println(e.getMessage());
 					errorMessage("Ocorreu um erro ao tentar comparar os ficheiros!");
 				}
 				return true;

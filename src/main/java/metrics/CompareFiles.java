@@ -29,7 +29,7 @@ public class CompareFiles {
 	private String metricsFile;
 	private String rulesFile;
 	private boolean booleanColumnsFilled;
-	private final String[] titles = new String[]{"is_God_Class","is_Long_Method"};
+	private final String[] titles = new String[]{"is_god_class","is_long_method"};
 
 	/**
 	 * Constructor given two files This is for the situation when User chose to save
@@ -72,8 +72,7 @@ public class CompareFiles {
 	 */
 	private LinkedHashMap<String, Integer> getColIndexesByTitles() throws Exception {
 		LinkedHashMap<String, Integer> indexesMap = new LinkedHashMap<>();
-	//	System.out.println(csFileDefault);
-		//System.out.println(csFileCreated + " cretaed");
+
 		Object[] headerDefault = ExcelDealer.getRow(csFileDefault, 0, 0);
 		Object[] headerCreated = ExcelDealer.getRow(csFileCreated, 0, 0);
 
@@ -85,12 +84,8 @@ public class CompareFiles {
 				}
 			}
 			for (int i = 0; i < headerCreated.length; i++) {
-				//System.out.println("im here");
-				System.out.println(String.valueOf(headerCreated[i]));
 				if (String.valueOf(headerCreated[i]).equalsIgnoreCase(title)) {
-					//System.out.println("yolo");
 					indexesMap.put(String.valueOf(headerCreated[i]).toLowerCase(), i);
-					//System.out.println(String.valueOf(headerCreated[i]).toLowerCase());
 				}
 			}
 		}
@@ -138,12 +133,10 @@ public class CompareFiles {
 				if(matchesFields(dataDefaultExcel,dataCreatedExcel,null,dataCreatedExcel.getPackageName(),dataCreatedExcel.getClassName(),dataCreatedExcel.getMethodName())) {
 					for (String title : titles) {
 						String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + title.toLowerCase())]);
-						//System.out.println(indexesMap.keySet());
-						//System.out.println(title.toLowerCase());
-						//System.out.println(indexesMap.get(title.toLowerCase()));
 						String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.get(title.toLowerCase())]);
 						if (title.equalsIgnoreCase("is_god_class")
 								&& !saveIndsPerClass.containsKey(dataCreatedExcel.getPackageName() + " " + dataCreatedExcel.getClassName())) {
+							System.out.println("hhhh");
 							Indicator indicator_godclass = parseIndicator(cellTextDefault, cellTextCreated);
 							saveIndsPerClass.put(dataCreatedExcel.getPackageName() + " " + dataCreatedExcel.getClassName(), indicator_godclass);
 						} else if (title.equalsIgnoreCase("is_long_method")) {
@@ -158,6 +151,7 @@ public class CompareFiles {
 		return new Quality(saveIndsPerMethod, saveIndsPerClass);
 	}
 
+	
 	/**
 	 * When CompareFiles receives 3 files, this is the method that allows the
 	 * comparison between them and the code smell detection quality evaluation.
@@ -167,7 +161,7 @@ public class CompareFiles {
 	 * @throws Exception Propagated Exception from ExcelDealer to be dealt with on the GUI.
 	 */
 	private Quality compareWith3Files() throws Exception {
-		HashMap<String, Integer> indexesMap = getColIndexesByTitles();
+		//HashMap<String, Integer> indexesMap = getColIndexesByTitles();
 		HashMap<String, Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String, Indicator> saveIndsPerClass = new HashMap<>();
 		MetricsRuleAnalysis mra = new MetricsRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(rulesFile));
@@ -177,8 +171,8 @@ public class CompareFiles {
 				for (int i = 0; i < mra.getMethodsData().size(); i++) {
 					String god_class = String.valueOf(mra.getCodeSmellDetectedMap().get("is_God_Class").get(i)).toUpperCase();
 					String long_method = String.valueOf(mra.getCodeSmellDetectedMap().get("is_Long_Method").get(i)).toUpperCase();
-					String cellTextDefault_godclass = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + "is_god_class")]);
-					String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + "is_long_method")]);
+					String cellTextDefault_godclass = String.valueOf(objDefaultExcel[7]);
+					String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[10]);
 					if(matchesFields(dataDefaultExcel,mra.getMethodsData().get(i),mra,mra.getMethodsData().get(i).getPackageName(),mra.getMethodsData().get(i).getClassName(),mra.getMethodsData().get(i).getMethodName())) {
 						if (!saveIndsPerClass.containsKey(mra.getMethodsData().get(i).getPackageName() + " " + mra.getMethodsData().get(i).getClassName())) {
 							Indicator indicator_godclass = parseIndicator(cellTextDefault_godclass, god_class);
@@ -221,16 +215,4 @@ public class CompareFiles {
 			return compareWith3Files();
 		}
 	}
-	
-	public static void main(String[] args) throws Exception {
-		
-		CompareFiles cf = new CompareFiles("C:\\Users\\Pedro Pinheiro\\Downloads\\Code_Smells.xlsx", "C:\\Users\\Pedro Pinheiro\\Desktop\\jasml_0.10_metrics.xlsx", "C:\\Users\\Pedro Pinheiro\\Desktop\\rules.txt");
-		Quality result = cf.testQuality();
-	result.getIndicatorsPerClass();	
-	result.getIndicatorsPerMethod();	
-	System.out.println(result.getIndicatorsPerMethod());
-	System.out.println(result.getIndicatorsPerClass());
-	System.out.println("No de FPs: "+result.countIndicatorInMethods(Indicator.FP)+" em "+ result.getIndicatorsPerMethod().size());
-	}
-	
 }
