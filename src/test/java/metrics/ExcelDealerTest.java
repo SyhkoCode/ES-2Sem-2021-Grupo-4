@@ -56,14 +56,15 @@ class ExcelDealerTest {
 	@Test
 	final void testGetAllCellsOfColumn() throws Exception {
 		assertNotNull(ExcelDealer.getAllCellsOfColumn(excelMetricsPath,0,0,false));
-		assertEquals(246,ExcelDealer.getAllCellsOfColumn(excelMetricsPath,0,0,false).size()); // Col[0]=MethodID=246 rows
+		assertEquals(246,ExcelDealer.getAllCellsOfColumn(excelMetricsPath,0,0,false).size()); // Col[0]=MethodID=246 rows including title
+		assertEquals(0,ExcelDealer.getAllCellsOfColumn(excelMetricsPath,0,15,false).size()); // Col[15]=nada
 	}	
 
 
 	@Test
 	final void testGetAllRows() throws Exception {
 		assertNotNull(ExcelDealer.getAllRows(excelMetricsPath,0));
-		assertEquals(11,ExcelDealer.getRow(excelMetricsPath, 0, 0).length); // Total Number of Columns in this excel
+		assertEquals(245,ExcelDealer.getAllRows(excelMetricsPath, 0).size()); // Number of Rows in this excel excluding title
 	}
 
 	@Test
@@ -78,6 +79,7 @@ class ExcelDealerTest {
 	final void testsumAllColumn() throws Exception {
 		assertNotNull(ExcelDealer.sumAllColumn(excelMetricsPath,0,5));
 		assertEquals(129240,ExcelDealer.sumAllColumn(excelMetricsPath,0,5)); // Total Sum of col LOC_class in this excel
+		assertEquals(0,ExcelDealer.sumAllColumn(excelMetricsPath,0,15)); // Col[15]=nada
 	}
 
 }
