@@ -16,7 +16,6 @@ public class FileDealer {
 				myWriter.write(str + "\n");
 			myWriter.close();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 	}

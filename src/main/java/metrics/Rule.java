@@ -82,7 +82,6 @@ public class Rule {
 			return (boolean) se.eval(booleanExpression);
 
 		} catch (ScriptException e) {
-			e.printStackTrace();
 			throw new IllegalStateException("Regra invalida, verifique o ficheiro");
 		}
 	}
