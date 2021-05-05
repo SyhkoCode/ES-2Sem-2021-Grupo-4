@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -93,29 +94,29 @@ class RuleTest {
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 		
+		String[] metrics = new String[]{ "NOM_class", "LOC_class", "WMC_class"};		
+		Object[] parameter = new Object[7];
+		parameter[1] = "metrics";
+		parameter[2] = "ExcelDealer";
+		parameter[3] = "main";
+		parameter[4] = 7;
+		parameter[5] = 15;
+		parameter[6] = 50;
 		
-		
-		MethodData m = new MethodData("package", "class", "metodo");
-
-////		m.put("NOM_class", 7);
-////		m.addMetric("LOC_class", 15);
-////		m.addMetric("WMC_class", 50);
-//		
-//		ArrayList<MethodData> test = MethodData.excelToMetricsMap(csFileCreated_metrics);
-////		
-//		assertEquals(false, r.smellDetected(m));
-//		assertEquals(true, r2.smellDetected(m));
-//		assertEquals(false, r3.smellDetected(m));
-//		assertEquals(true, r4.smellDetected(m));
-//		assertEquals(true, r5.smellDetected(m));
-//		assertEquals(true, r6.smellDetected(m));
+		MethodData m = new MethodData(parameter,metrics);
+	
+		assertEquals(false, r.smellDetected(m));
+		assertEquals(true, r2.smellDetected(m));
+		assertEquals(false, r3.smellDetected(m));
+		assertEquals(true, r4.smellDetected(m));
+		assertEquals(true, r5.smellDetected(m));
+		assertEquals(true, r6.smellDetected(m));
 		
 		Rule wrong = new Rule("fail_pls", "shdjsdfhjdfhdf");
 		exception = assertThrows(IllegalStateException.class, ()->{wrong.smellDetected(m);});
 		expectedMessage = "Regra invalida, verifique o ficheiro";
 		actualMessage = exception.getMessage();
-		assertTrue(actualMessage.contains(expectedMessage));
-		
+		assertTrue(actualMessage.contains(expectedMessage));	
 	}
 
 	@Test
