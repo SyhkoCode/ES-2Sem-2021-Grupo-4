@@ -47,12 +47,14 @@ class ExcelDealerTest {
 
 	@Test
 	final void testCreateExcelFile() throws Exception {
+		File input = tempFolder.newFile("jasml_0.10_metrics");
+		String inputPath = input.getAbsolutePath();
 		File output = tempFolder.newFile("jasml_0.10_metrics.xlsx");
-		String outputPath = output.getAbsolutePath();
-
+		output.delete();
+		
 		List<String[]> rows = ReadJavaProject.readJavaProject("src\\test\\resources\\jasml_0.10");
-			ExcelDealer.createExcelFile(outputPath, rows, "Teste2");
-			assertTrue(output.exists());
+		ExcelDealer.createExcelFile(inputPath, rows, "jasml_0.10_metrics.xlsx");
+		assertTrue(output.exists());
 		
 	}
 	
