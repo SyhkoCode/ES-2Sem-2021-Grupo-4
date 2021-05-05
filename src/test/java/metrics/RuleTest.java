@@ -138,8 +138,8 @@ class RuleTest {
 		
 		File givesNull = new File(getClass().getResource("/wrongRules.txt/").getFile());
 		assertEquals(null, Rule.allRules(givesNull.getAbsolutePath()));
-//		File givesNull2 = new File(getClass().getResource("/wrongRules2.txt/").getFile());
-//		assertEquals(null, Rule.allRules(givesNull2.getAbsolutePath()));
+		File givesNull2 = new File(getClass().getResource("/wrongRules2.txt/").getFile());
+		assertEquals(null, Rule.allRules(givesNull2.getAbsolutePath()));
 
 	}
 

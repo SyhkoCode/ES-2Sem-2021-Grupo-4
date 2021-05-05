@@ -96,16 +96,19 @@ public class Rule {
 	 * @param file File with several rules
 	 * @return ArrayList of all rules in a file, if there's an error reading the
 	 *         file or no rules then it returns null
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException if file not found.
+	 * @throws NoSuchElementException if line not found.
 	 */
 	public static ArrayList<Rule> allRules(String path) throws FileNotFoundException {
 		ArrayList<Rule> rulesList = new ArrayList<>();
-
 		Scanner scanner = new Scanner(new File(path));
-		while (scanner.hasNext())
-			rulesList.add(new Rule(scanner.nextLine(), scanner.nextLine()));
-		scanner.close();
-
+		try {
+			while (scanner.hasNext())
+				rulesList.add(new Rule(scanner.nextLine(), scanner.nextLine()));
+			scanner.close();
+		} catch (NoSuchElementException e ) {
+			return null;
+		}
 		if (rulesList.size() == 0)
 			return null;
 		return rulesList;
