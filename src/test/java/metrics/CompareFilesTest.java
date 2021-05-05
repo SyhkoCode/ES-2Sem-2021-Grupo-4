@@ -12,14 +12,14 @@ import org.junit.jupiter.api.Test;
 
 class CompareFilesTest {
 		
-	File excelDefault = new File(getClass().getResource("/jasml_0.10_metrics.xlsx").getFile());
+	File excelDefault = new File(getClass().getResource("/jasml_0.10_teorico.xlsx").getFile()); // Teórico, tb podia ser o Code_Smells.xlsx da UC
 	String csFileDefault = excelDefault.getAbsolutePath();
 	
-	File excelCreatedCSBooleans = new File(getClass().getResource("/jasml_csbooleans.xlsx").getFile());
-	String csFileCreatedBooleans = excelCreatedCSBooleans.getAbsolutePath();
+	File excelCreatedCodeSmells = new File(getClass().getResource("/jasml_CodeSmells.xlsx").getFile()); // Code Smells gerado pela app
+	String csFileCreated = excelCreatedCodeSmells.getAbsolutePath();
 	
-	File excelCreated = new File(getClass().getResource("/jasml_0.10_metrics_created.xlsx").getFile());
-	String csFileCreated_metrics = excelCreated.getAbsolutePath();
+	File metricsFile = new File(getClass().getResource("/jasml_0.10_metrics.xlsx").getFile());
+	String metricsFilePath = metricsFile.getAbsolutePath();
 	
 	File testeregras = new File(getClass().getResource("/testeregras.txt").getFile());
 	String testeregrasPath = testeregras.getAbsolutePath();
@@ -27,9 +27,9 @@ class CompareFilesTest {
 	File excel_MalFormatado = new File(getClass().getResource("/Code_Smells_MalFormatado.xlsx").getFile());
 	String csFile_MalFormatado = excel_MalFormatado.getAbsolutePath();
 	
-	CompareFiles cfSS = new CompareFiles(csFileDefault, csFileCreatedBooleans);
-	CompareFiles cfSSS = new CompareFiles(csFileDefault, csFileCreated_metrics, testeregrasPath);
-	CompareFiles cfSSMalFormatado = new CompareFiles(csFileDefault, csFile_MalFormatado);
+	CompareFiles cf2Files = new CompareFiles(csFileDefault, csFileCreated);
+	CompareFiles cf3Files = new CompareFiles(csFileDefault, metricsFilePath, testeregrasPath);
+	CompareFiles cf2MalFormatado = new CompareFiles(csFileDefault, csFile_MalFormatado);
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -49,21 +49,14 @@ class CompareFilesTest {
 	}
 
 	@Test
-	final void testCompareFilesStringString() {
-		assertNotNull(cfSS);
-	}
-
-	@Test
-	final void testCompareFilesStringStringString() {
-		assertNotNull(cfSSS);
-	}
-
-	@Test
 	final void testTestQuality() throws Exception {
-		assertNotNull(cfSS.testQuality());
-		assertNotNull(cfSSS.testQuality());
+		assertNotNull(cf2Files);
+		assertNotNull(cf2Files.testQuality());
 		
-		Exception exception = assertThrows(IllegalStateException.class, ()->{cfSSMalFormatado.testQuality();});
+		assertNotNull(cf3Files);
+		assertNotNull(cf3Files.testQuality());
+		
+		Exception exception = assertThrows(IllegalStateException.class, ()->{cf2MalFormatado.testQuality();});
 		String expectedMessage = "Ficheiro mal formatado";
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));

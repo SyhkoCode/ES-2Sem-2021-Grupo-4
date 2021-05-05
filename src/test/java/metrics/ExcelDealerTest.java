@@ -17,8 +17,6 @@ import org.junit.rules.TemporaryFolder;
 class ExcelDealerTest {
 
 	File testeregras = new File(getClass().getResource("/testeregras.txt").getFile());
-	File excel = new File(getClass().getResource("/Code_Smells.xlsx").getFile());
-	String excelPath = excel.getAbsolutePath();
 	File excelMetrics = new File(getClass().getResource("/jasml_0.10_metrics.xlsx").getFile());
 	String excelMetricsPath = excelMetrics.getAbsolutePath();
 	static TemporaryFolder tempFolder;
@@ -56,7 +54,7 @@ class ExcelDealerTest {
 	@Test
 	final void testGetAllCellsOfColumn() throws Exception {
 		assertNotNull(ExcelDealer.getAllCellsOfColumn(excelMetricsPath,0,0,false));
-		assertEquals(246,ExcelDealer.getAllCellsOfColumn(excelMetricsPath,0,0,false).size()); // Col[0]=MethodID=246 rows including title
+		assertEquals(254,ExcelDealer.getAllCellsOfColumn(excelMetricsPath,0,0,false).size()); // Col[0]=MethodID=254 rows including title
 		assertEquals(0,ExcelDealer.getAllCellsOfColumn(excelMetricsPath,0,15,false).size()); // Col[15]=nada
 	}	
 
@@ -64,21 +62,21 @@ class ExcelDealerTest {
 	@Test
 	final void testGetAllRows() throws Exception {
 		assertNotNull(ExcelDealer.getAllRows(excelMetricsPath,0));
-		assertEquals(245,ExcelDealer.getAllRows(excelMetricsPath, 0).size()); // Number of Rows in this excel excluding title
+		assertEquals(253,ExcelDealer.getAllRows(excelMetricsPath, 0).size()); // Number of Rows in this excel excluding title
 	}
 
 	@Test
 	final void testGetRow() throws Exception {
 		assertNotNull(ExcelDealer.getRow(excelMetricsPath, 0, 0));
-		Object[] row = new Object[]{"MethodID", "package", "class", "method", "NOM_class", "LOC_class", "WMC_class", "is_God_Class", "LOC_method", "CYCLO_method", "is_Long_Method"};
+		Object[] row = new Object[]{"MethodID", "package", "class", "method", "NOM_class", "LOC_class", "WMC_class", "LOC_method", "CYCLO_method"};
 		assertEquals(row[0].toString(),ExcelDealer.getRow(excelMetricsPath, 0, 0)[0].toString()); // MethodID
-		assertEquals(row.length,ExcelDealer.getRow(excelMetricsPath, 0, 0).length);
+		assertEquals(row.length,ExcelDealer.getRow(excelMetricsPath, 0, 0).length); //9 colunas na row 0
 	}
 
 	@Test
 	final void testsumAllColumn() throws Exception {
 		assertNotNull(ExcelDealer.sumAllColumn(excelMetricsPath,0,5));
-		assertEquals(129240,ExcelDealer.sumAllColumn(excelMetricsPath,0,5)); // Total Sum of col LOC_class in this excel
+		assertEquals(130872,ExcelDealer.sumAllColumn(excelMetricsPath,0,5)); // Total Sum of col LOC_class in this excel
 		assertEquals(0,ExcelDealer.sumAllColumn(excelMetricsPath,0,15)); // Col[15]=nada
 	}
 

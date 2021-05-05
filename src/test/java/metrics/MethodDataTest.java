@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 class MethodDataTest {
 
 	String[] metrics = {"NOM_class","LOC_class","WMC_class","LOC_method","CYCLO_method"};
-	File excelCreated = new File(getClass().getResource("/jasml_0.10_metrics_created.xlsx").getFile());
+	File excelCreated = new File(getClass().getResource("/jasml_0.10_metrics.xlsx").getFile());
 	String csFileCreated_metrics = excelCreated.getAbsolutePath();
 	
 	@BeforeAll

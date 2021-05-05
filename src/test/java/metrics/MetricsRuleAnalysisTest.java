@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 class MetricsRuleAnalysisTest {
 
-	File excelMetrics = new File(getClass().getResource("/jasml_0.10_metrics_created.xlsx").getFile());
+	File excelMetrics = new File(getClass().getResource("/jasml_0.10_metrics.xlsx").getFile());
 	String csFileMetrics = excelMetrics.getAbsolutePath();
 	
 	File testeregras = new File(getClass().getResource("/testeregras.txt").getFile());

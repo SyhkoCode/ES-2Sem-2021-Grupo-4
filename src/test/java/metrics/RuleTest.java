@@ -14,9 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class RuleTest {
-	
-	File excelCreated = new File(getClass().getResource("/jasml_0.10_metrics_created.xlsx").getFile());
-	String csFileCreated_metrics = excelCreated.getAbsolutePath();
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -71,7 +68,7 @@ class RuleTest {
 		assertEquals("is_God_Class", test.getName());
 		assertEquals("SE ( NOM_class > 5 )", test.getExpression());
 		
-	}
+	} 
 
 	@Test
 	final void testSmellDetected() throws Exception {
