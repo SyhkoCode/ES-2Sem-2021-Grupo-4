@@ -130,13 +130,12 @@ public class CompareFiles {
 			MethodData dataDefaultExcel = new MethodData(objDefaultExcel);
 			for (Object[] objCreatedExcel : ExcelDealer.getAllRows(csFileCreated, 0)) {
 				MethodData dataCreatedExcel = new MethodData(objCreatedExcel);
-				if(matchesFields(dataDefaultExcel,dataCreatedExcel,null,dataCreatedExcel.getPackageName(),dataCreatedExcel.getClassName(),dataCreatedExcel.getMethodName())) {
+				if(matchesFields(dataDefaultExcel,dataCreatedExcel,dataCreatedExcel.getPackageName(),dataCreatedExcel.getClassName(),dataCreatedExcel.getMethodName())) {
 					for (String title : titles) {
 						String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + title.toLowerCase())]);
 						String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.get(title.toLowerCase())]);
 						if (title.equalsIgnoreCase("is_god_class")
 								&& !saveIndsPerClass.containsKey(dataCreatedExcel.getPackageName() + " " + dataCreatedExcel.getClassName())) {
-							System.out.println("hhhh");
 							Indicator indicator_godclass = parseIndicator(cellTextDefault, cellTextCreated);
 							saveIndsPerClass.put(dataCreatedExcel.getPackageName() + " " + dataCreatedExcel.getClassName(), indicator_godclass);
 						} else if (title.equalsIgnoreCase("is_long_method")) {
@@ -161,7 +160,6 @@ public class CompareFiles {
 	 * @throws Exception Propagated Exception from ExcelDealer to be dealt with on the GUI.
 	 */
 	private Quality compareWith3Files() throws Exception {
-		//HashMap<String, Integer> indexesMap = getColIndexesByTitles();
 		HashMap<String, Indicator> saveIndsPerMethod = new HashMap<>();
 		HashMap<String, Indicator> saveIndsPerClass = new HashMap<>();
 		MetricsRuleAnalysis mra = new MetricsRuleAnalysis(MethodData.excelToMetricsMap(metricsFile),Rule.allRules(rulesFile));
@@ -173,7 +171,7 @@ public class CompareFiles {
 					String long_method = String.valueOf(mra.getCodeSmellDetectedMap().get("is_Long_Method").get(i)).toUpperCase();
 					String cellTextDefault_godclass = String.valueOf(objDefaultExcel[7]);
 					String cellTextDefault_longmethod = String.valueOf(objDefaultExcel[10]);
-					if(matchesFields(dataDefaultExcel,mra.getMethodsData().get(i),mra,mra.getMethodsData().get(i).getPackageName(),mra.getMethodsData().get(i).getClassName(),mra.getMethodsData().get(i).getMethodName())) {
+					if(matchesFields(dataDefaultExcel,mra.getMethodsData().get(i),mra.getMethodsData().get(i).getPackageName(),mra.getMethodsData().get(i).getClassName(),mra.getMethodsData().get(i).getMethodName())) {
 						if (!saveIndsPerClass.containsKey(mra.getMethodsData().get(i).getPackageName() + " " + mra.getMethodsData().get(i).getClassName())) {
 							Indicator indicator_godclass = parseIndicator(cellTextDefault_godclass, god_class);
 							saveIndsPerClass.put(mra.getMethodsData().get(i).getPackageName() + " " + mra.getMethodsData().get(i).getClassName(), indicator_godclass);
@@ -187,7 +185,7 @@ public class CompareFiles {
 	}
 	
 	
-	private boolean matchesFields(MethodData dataDefaultExcel, MethodData dataCreatedExcel, MetricsRuleAnalysis mra,String created_package,String created_class,String created_method) {
+	private boolean matchesFields(MethodData dataDefaultExcel, MethodData dataCreatedExcel,String created_package,String created_class,String created_method) {
 		boolean matches = false;
 		String default_package = dataDefaultExcel.getPackageName();
 		String default_class = dataDefaultExcel.getClassName();
