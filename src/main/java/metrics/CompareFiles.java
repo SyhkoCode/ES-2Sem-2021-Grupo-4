@@ -32,13 +32,14 @@ public class CompareFiles {
 	private final String[] titles = new String[]{"is_god_class","is_long_method"};
 
 	/**
-	 * Constructor given two files This is for the situation when User chose to save
-	 * an Excel file with his rules.
+	 * Constructor given two files.
+	 * <p>
+	 * This is for the situation when User already has chosen to save an Excel file with his rules.
 	 * 
-	 * @param csFileDefault Path of Excel file after User submits project.
-	 * @param csFileCreated Path of Excel file created when User also submitted and
+	 * @param csFileDefault Path of Excel file which contains code smells columns filled. We call this "Teórico" on the GUI. 
+	 * @param csFileCreated Path of Excel file created when User already submitted metricsFile and
 	 *                      saved rules, which will have code smells columns filled
-	 *                      accordingly.
+	 *                      accordingly. We call this "Code Smells" on the GUI.
 	 */
 	public CompareFiles(String csFileDefault, String csFileCreated) {
 		this.csFileDefault = csFileDefault;
@@ -47,12 +48,13 @@ public class CompareFiles {
 	}
 
 	/**
-	 * Constructor given three files This is for the situation when User chose not
-	 * to save an Excel file with his rules.
+	 * Constructor given three files. 
+	 * <p>
+	 * This is for the situation when User chose not to save an Excel file with his rules.
 	 * 
-	 * @param csFileDefault Path of Excel file after User submits project.
-	 * @param metricsFile   Path of Excel file with code smells columns not filled.
-	 * @param rulesFile     Path of text file after User submits rules.
+	 * @param csFileDefault Path of Excel file which contains code smells columns filled. We call this "Teórico" on the GUI. 
+	 * @param metricsFile   Path of Excel file after User submits project to be analysed which won't have any code smells columns. We call this "Métricas" on the GUI.
+	 * @param rulesFile     Path of text file after User submits and saves rules.  We call this "Regras" on the GUI.
 	 */
 	public CompareFiles(String csFileDefault, String metricsFile, String rulesFile) {
 		this.csFileDefault = csFileDefault;
@@ -63,11 +65,11 @@ public class CompareFiles {
 
 	/**
 	 * Gets the corresponding Column Indexes of titles (code smells) that represent Column
-	 * Titles in two Excel files
+	 * Titles in two Excel files.
 	 * 
 	 * @return LinkedHashMap<String, Integer> in which the String is the Column
 	 *         Title and the Integer is the corresponding Column Index per Excel
-	 *         file
+	 *         file.
 	 * @throws Exception Propagated Exception from ExcelDealer to be dealt with on the GUI.
 	 */
 	private LinkedHashMap<String, Integer> getColIndexesByTitles() throws Exception {
@@ -114,7 +116,7 @@ public class CompareFiles {
 	}
 
 	/**
-	 * When CompareFiles receives 2 Excel files, this is the method that allows the
+	 * When CompareFiles receives 2 Excel files ("Teórico" and "Code Smells"), this is the method that allows the
 	 * comparison between them and the code smell detection quality evaluation.
 	 * 
 	 * @return Quality object that contains both HashMaps with Indicators per Method
@@ -133,7 +135,7 @@ public class CompareFiles {
 				String created_package = dataCreatedExcel.getPackageName();
 				String created_class = dataCreatedExcel.getClassName();
 				String created_method = dataCreatedExcel.getMethodName();
-				if(matchesFields(dataDefaultExcel,dataCreatedExcel,created_package,created_class,created_method)) {
+				if(matchesFields(dataDefaultExcel,created_package,created_class,created_method)) {
 					for (String title : titles) {
 						String cellTextDefault = String.valueOf(objDefaultExcel[(int) indexesMap.get("default " + title.toLowerCase())]);
 						String cellTextCreated = String.valueOf(objCreatedExcel[(int) indexesMap.get(title.toLowerCase())]);
@@ -155,7 +157,7 @@ public class CompareFiles {
 
 	
 	/**
-	 * When CompareFiles receives 3 files, this is the method that allows the
+	 * When CompareFiles receives 3 files ("Teórico","Métricas" and "Regras"), this is the method that allows the
 	 * comparison between them and the code smell detection quality evaluation.
 	 * 
 	 * @return Quality object that contains both HashMaps with Indicators per Method
@@ -177,7 +179,7 @@ public class CompareFiles {
 					String created_package = mra.getMethodsData().get(i).getPackageName();
 					String created_class = mra.getMethodsData().get(i).getClassName();
 					String created_method = mra.getMethodsData().get(i).getMethodName();
-					if(matchesFields(dataDefaultExcel,mra.getMethodsData().get(i),created_package,created_class,created_method)) {
+					if(matchesFields(dataDefaultExcel,created_package,created_class,created_method)) {
 						if (!saveIndsPerClass.containsKey(created_package + " " + created_class)) {
 							Indicator indicator_godclass = parseIndicator(cellTextDefault_godclass, god_class);
 							saveIndsPerClass.put(created_package + " " + created_class, indicator_godclass);
@@ -191,7 +193,16 @@ public class CompareFiles {
 	}
 	
 	
-	private boolean matchesFields(MethodData dataDefaultExcel, MethodData dataCreatedExcel,String created_package,String created_class,String created_method) {
+	/**
+	 * Overall, allows to know if package, class and method are the same between two files. 
+	 * This is an auxiliary method to avoid code repetition on CompareWith2Files and CompareWith3Files.
+	 * @param dataDefaultExcel Given MethodData object from DefaultExcel
+	 * @param created_package Given String that should be the package name from CreatedExcel
+	 * @param created_class Given String that should be the class name from CreatedExcel
+	 * @param created_method Given String that should be the method name from CreatedExcel
+	 * @return Boolean
+	 */
+	private boolean matchesFields(MethodData dataDefaultExcel,String created_package,String created_class,String created_method) {
 		boolean matches = false;
 		String default_package = dataDefaultExcel.getPackageName();
 		String default_class = dataDefaultExcel.getClassName();
