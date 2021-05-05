@@ -1,4 +1,0 @@
-is_God_Class
-SE ( NOM_class > 5 OU LOC_class > 100 )
-is_Long_Method
-SE ( ( LOC_method > 15 E CYCLO_method > 4 ) )
