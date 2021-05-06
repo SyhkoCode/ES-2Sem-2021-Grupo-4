@@ -37,15 +37,15 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
-import metrics.CompareFiles;
-import metrics.ExcelDealer;
-import metrics.FileDealer;
-import metrics.Indicator;
-import metrics.MethodData;
-import metrics.MetricsRuleAnalysis;
-import metrics.Quality;
-import metrics.ReadJavaProject;
-import metrics.Rule;
+import classes.CompareFiles;
+import classes.ExcelDealer;
+import classes.FileDealer;
+import classes.Indicator;
+import classes.MethodData;
+import classes.MetricsRuleAnalysis;
+import classes.Quality;
+import classes.ReadJavaProject;
+import classes.Rule;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;

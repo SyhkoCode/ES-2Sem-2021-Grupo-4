@@ -1,4 +1,4 @@
-package metrics;
+package classes;
 
 /**
  * Represents all the possible indicators to evaluate the quality of code smell detection 
