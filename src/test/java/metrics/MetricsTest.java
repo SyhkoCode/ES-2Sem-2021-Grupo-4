@@ -57,7 +57,7 @@ class MetricsTest {
 		
 		assertEquals(18, Metrics.getLOC_class(GrammerExceptionExtraTestFile)); // LOC_class[GrammerException]=18
 		assertEquals(0, Metrics.getLOC_class(ClassOnlyOpeningTest));
-		assertEquals(3, Metrics.getLOC_class(DoubleClassDeclarationTest));
+		assertEquals(3, Metrics.getLOC_class(DoubleClassDeclarationTest)); 
 	}
 
 	@Test
@@ -104,8 +104,8 @@ class MetricsTest {
 		map.clear();
 		assertEquals(map, Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile)));
 		
-		assertEquals(6, (Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile))).size());
-		assertEquals(32, (Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile))).size());	
+		assertEquals(6, (Metrics.getLinesOfMethods(ParsingExceptionTestFile, Metrics.methods(ParsingExceptionTestFile))).size()); //[ParsingException]=6
+		assertEquals(32, (Metrics.getLinesOfMethods(SourceCodeParserTestFile, Metrics.methods(SourceCodeParserTestFile))).size());	// [SourceCodeParser]=29 + 3 inner classes = 32
 	}
 
 	@Test
@@ -134,7 +134,7 @@ class MetricsTest {
 	final void testGetWMC_class() throws FileNotFoundException {
 		LinkedHashMap<String, String> linesOfMethods = Metrics.getLinesOfMethods(emptyTestFile, Metrics.methods(emptyTestFile));
 		ArrayList<Integer> cycloOfAllMethods = Metrics.getCycloOfAllMethods(linesOfMethods);
-		assertEquals(0, Metrics.getWMC_class(cycloOfAllMethods));
+		assertEquals(0, Metrics.getWMC_class(cycloOfAllMethods)); //empty
 		
 		linesOfMethods.clear();
 		cycloOfAllMethods.clear();
