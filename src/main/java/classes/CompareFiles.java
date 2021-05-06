@@ -36,7 +36,7 @@ public class CompareFiles {
 	 * <p>
 	 * This is for the situation when User already has chosen to save an Excel file with his rules.
 	 * 
-	 * @param csFileDefault Path of Excel file which contains code smells columns filled. We call this "Teórico" on the GUI. 
+	 * @param csFileDefault Path of Excel file which contains code smells columns filled. We call this "Teorico" on the GUI. 
 	 * @param csFileCreated Path of Excel file created when User already submitted metricsFile and
 	 *                      saved rules, which will have code smells columns filled
 	 *                      accordingly. We call this "Code Smells" on the GUI.
@@ -52,8 +52,8 @@ public class CompareFiles {
 	 * <p>
 	 * This is for the situation when User chose not to save an Excel file with his rules.
 	 * 
-	 * @param csFileDefault Path of Excel file which contains code smells columns filled. We call this "Teórico" on the GUI. 
-	 * @param metricsFile   Path of Excel file after User submits project to be analysed which won't have any code smells columns. We call this "Métricas" on the GUI.
+	 * @param csFileDefault Path of Excel file which contains code smells columns filled. We call this "Teorico" on the GUI. 
+	 * @param metricsFile   Path of Excel file after User submits project to be analyzed which won't have any code smells columns. We call this "Metricas" on the GUI.
 	 * @param rulesFile     Path of text file after User submits and saves rules.  We call this "Regras" on the GUI.
 	 */
 	public CompareFiles(String csFileDefault, String metricsFile, String rulesFile) {
@@ -120,7 +120,7 @@ public class CompareFiles {
 	}
 
 	/**
-	 * When CompareFiles receives 2 Excel files ("Teórico" and "Code Smells"), this is the method that allows the
+	 * When CompareFiles receives 2 Excel files ("Teorico" and "Code Smells"), this is the method that allows the
 	 * comparison between them and the code smell detection quality evaluation.
 	 * 
 	 * @return Quality object that contains both HashMaps with Indicators per Method
@@ -161,7 +161,7 @@ public class CompareFiles {
 
 	
 	/**
-	 * When CompareFiles receives 3 files ("Teórico","Métricas" and "Regras"), this is the method that allows the
+	 * When CompareFiles receives 3 files ("Teorico","Metricas" and "Regras"), this is the method that allows the
 	 * comparison between them and the code smell detection quality evaluation.
 	 * 
 	 * @return Quality object that contains both HashMaps with Indicators per Method

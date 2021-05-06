@@ -11,6 +11,7 @@ import java.util.Stack;
 import gui.MyProgressBar;
 
 /**
+ * Allows to analyze a Java project
  * @author Pedro Pereira, Pedro Pinheiro, Tiago Mendes
  * @version 2.0
  * 
@@ -33,7 +34,7 @@ public class ReadJavaProject {
 	}
 
 	/**
-	 * @param packageFile       is the java file that will be analysed
+	 * @param packageFile       is the java file that will be analyzed
 	 * @param lines             is a String array that contains the information to
 	 *                          be inserted in each row of the excel sheet by the
 	 *                          ExcelDealer
@@ -57,7 +58,7 @@ public class ReadJavaProject {
 
 	/**
 	 * @param current           represents the project directory
-	 * @param packageFile       is the java file that will be analysed
+	 * @param packageFile       is the java file that will be analyzed
 	 * @param methods           is a LinkedHashSet that contains the names,
 	 *                          arguments and modifiers of the methods of the java
 	 *                          file in Strings

@@ -1,7 +1,7 @@
 package classes;
 
 /**
- * Represents all the possible indicators to evaluate the quality of code smell detection 
+ * Represents all the possible indicators to evaluate the quality of code smell detection. 
  * @author Sofia Chaves
  * @version 1.0
  * @since   2021-04-15 
