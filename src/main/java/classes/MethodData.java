@@ -3,6 +3,13 @@ package classes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Allows to store method data from an Excel file to MethodData object.
+ * @author Tiago Mendes
+ * @author Susana Polido
+ * @author Pedro Pinheiro 
+ *
+ */
 public class MethodData {
 	private final static String[] METRICS = new String[] { "NOM_class", "LOC_class", "WMC_class", "LOC_method",
 			"CYCLO_method" };

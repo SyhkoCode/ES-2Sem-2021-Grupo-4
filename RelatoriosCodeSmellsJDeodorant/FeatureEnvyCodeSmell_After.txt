@@ -1,0 +1,2 @@
+Refactoring Type	Source Entity	Target Class	Source/Target accessed members	Rate it!
+Move Method	classes.CompareFiles::matchesFields(classes.MethodData, java.lang.String, java.lang.String, java.lang.String):boolean	classes.MethodData	0/3	
