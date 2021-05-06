@@ -1530,9 +1530,13 @@ public class GUI extends JFrame {
 					bar.updateProgressBar();
 					methodsMap = quality.getIndicatorsPerMethod();
 					bar.updateProgressBar();
-					updateEvaluationInfo(chartFrame, classesMap, nVP, nVN, nFP, nFN, 26, 360, 400, 230);
+					if (chartFrame != null)
+						avaliacaoRegras.remove(chartFrame);
+					chartFrame = updateEvaluationInfo(classesMap, nVP, nVN, nFP, nFN, 26, 360, 400, 230);
 					bar.updateProgressBar();
-					updateEvaluationInfo(chartFrame2, methodsMap, mVP, mVN, mFP, mFN, 520, 360, 400, 230);
+					if (chartFrame2 != null)
+						avaliacaoRegras.remove(chartFrame2);
+					chartFrame2 = updateEvaluationInfo(methodsMap, mVP, mVN, mFP, mFN, 520, 360, 400, 230);
 					bar.updateProgressBar();
 					bar.closeProgressBar();
 				} catch (Exception e) {
@@ -1545,10 +1549,8 @@ public class GUI extends JFrame {
 		worker.execute();
 	}
 
-	private void updateEvaluationInfo(ChartPanel chartPanel, HashMap<String, Indicator> map, JTextField vP,
-			JTextField vN, JTextField fP, JTextField fN, int x, int y, int width, int height) {
-		if (chartPanel != null)
-			avaliacaoRegras.remove(chartPanel);
+	private ChartPanel updateEvaluationInfo(HashMap<String, Indicator> map, JTextField vP, JTextField vN, JTextField fP,
+			JTextField fN, int x, int y, int width, int height) {
 
 		int cVP = 0, cVN = 0, cFP = 0, cFN = 0;
 
@@ -1595,21 +1597,22 @@ public class GUI extends JFrame {
 		plot.setSectionPaint("FP", new Color(255, 51, 51));
 		plot.setSectionPaint("FN", new Color(204, 0, 0));
 
-		chartPanel = new ChartPanel(chart);
+		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setBounds(x, y, width, height);
 		chartPanel.setVisible(true);
 
 		avaliacaoRegras.add(chartPanel);
 		avaliacaoRegras.repaint();
 		avaliacaoRegras.revalidate();
+		return chartPanel;
 	}
-	
+
 	private int countChar(String s, char c) {
 		int count = 0;
-		for (int i = 0; i < s.length(); i++) 
-		    if (s.charAt(i) == c) 
-		        count++;
-		    
+		for (int i = 0; i < s.length(); i++)
+			if (s.charAt(i) == c)
+				count++;
+
 		return count;
 	}
 
