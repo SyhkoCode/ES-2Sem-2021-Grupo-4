@@ -1,0 +1,1 @@
+metrics.CompareFiles	[metrics.CompareFiles::java.lang.String csFileDefault, metrics.CompareFiles::java.lang.String csFileCreated, metrics.CompareFiles::java.lang.String[] titles, metrics.CompareFiles::getColIndexesByTitles():java.util.LinkedHashMap<java.lang.String,java.lang.Integer>, metrics.CompareFiles::compareWith2Files():metrics.Quality]
