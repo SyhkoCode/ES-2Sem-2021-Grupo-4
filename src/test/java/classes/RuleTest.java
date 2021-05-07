@@ -123,18 +123,18 @@ class RuleTest {
 	final void testAllRules() throws FileNotFoundException {
 		assertThrows(NullPointerException.class, ()->{Rule.allRules(null);});
 		
-		ArrayList<Rule> teorical = new ArrayList<>();
-		teorical.add(new Rule("is_God_Class", "SE ( NOM_class > 5 OU LOC_class > 100 )"));
-		teorical.add(new Rule("is_Long_Method", "SE ( ( LOC_method > 15 E CYCLO_method > 4 ) )"));
+		ArrayList<Rule> expected = new ArrayList<>();
+		expected.add(new Rule("is_God_Class", "SE ( NOM_class > 5 OU LOC_class > 100 )"));
+		expected.add(new Rule("is_Long_Method", "SE ( ( LOC_method > 15 E CYCLO_method > 4 ) )"));
 		
 		File rules = new File(getClass().getResource("/testeregras.txt/").getFile());
-		ArrayList<Rule> test = Rule.allRules(rules.getAbsolutePath());
+		ArrayList<Rule> actual = Rule.allRules(rules.getAbsolutePath());
 
-		assertEquals(teorical.size(), test.size());
+		assertEquals(expected.size(), actual.size());
 		
-		for(int i = 0; i < teorical.size(); i++) {
-			assertEquals(teorical.get(i).getName(), test.get(i).getName());
-			assertEquals(teorical.get(i).getExpression(), test.get(i).getExpression());
+		for(int i = 0; i < expected.size(); i++) {
+			assertEquals(expected.get(i).getName(), actual.get(i).getName());
+			assertEquals(expected.get(i).getExpression(), actual.get(i).getExpression());
 		}		
 		
 		File givesNull = new File(getClass().getResource("/wrongRules.txt/").getFile());

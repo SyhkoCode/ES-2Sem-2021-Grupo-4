@@ -197,15 +197,14 @@ class MethodDataTest {
 
 	@Test
 	final void testToString() {
-		MethodData test = new MethodData("metrics", "ExcelDealer", "main");
+		MethodData actual = new MethodData("metrics", "ExcelDealer", "main");
 		HashMap<String, Integer> map = new HashMap<>();
-		String teorical = "MethodData [map=" + map + ", packageName=metrics, className=ExcelDealer, methodName=main]";
-		assertEquals(teorical, test.toString());
+		String expected = "MethodData [map=" + map + ", packageName=metrics, className=ExcelDealer, methodName=main]";
+		assertEquals(expected, actual.toString());
 		
-		test = new MethodData("package", "class", "method");
-		teorical = "MethodData [map=" + map + ", packageName=package, className=class, methodName=method]";
-
-		assertEquals(teorical, test.toString());	
+		actual = new MethodData("package", "class", "method");
+		expected = "MethodData [map=" + map + ", packageName=package, className=class, methodName=method]";
+		assertEquals(expected, actual.toString());	
 	}
 
 }
