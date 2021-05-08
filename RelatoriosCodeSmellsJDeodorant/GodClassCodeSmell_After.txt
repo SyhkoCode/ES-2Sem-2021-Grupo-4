@@ -1,0 +1,1 @@
+classes.MetricsRuleAnalysis	[classes.MetricsRuleAnalysis::getClassSmells():java.util.ArrayList<java.lang.String>, classes.MetricsRuleAnalysis::getMethodSmells():java.util.ArrayList<java.lang.String>, classes.MetricsRuleAnalysis::getClassHeader():java.lang.String[], classes.MetricsRuleAnalysis::getMethodHeader():java.lang.String[]]

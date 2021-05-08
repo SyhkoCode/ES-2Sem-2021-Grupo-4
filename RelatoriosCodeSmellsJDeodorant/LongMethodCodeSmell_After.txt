@@ -1,0 +1,50 @@
+classes.CompareFiles	private classes.Quality compareWith2Files() throws java.lang.Exception	saveIndsPerMethod	B2	0/17
+classes.CompareFiles	private classes.Quality compareWith2Files() throws java.lang.Exception	saveIndsPerMethod	B3	0/16
+classes.CompareFiles	private classes.Quality compareWith2Files() throws java.lang.Exception	saveIndsPerMethod	B4	0/15
+classes.CompareFiles	private classes.Quality compareWith2Files() throws java.lang.Exception	saveIndsPerMethod	B5	0/14
+classes.CompareFiles	private classes.Quality compareWith2Files() throws java.lang.Exception	saveIndsPerMethod	B6	0/9
+classes.CompareFiles	private classes.Quality compareWith2Files() throws java.lang.Exception	saveIndsPerMethod	B7	0/8
+classes.CompareFiles	private classes.Quality compareWith2Files() throws java.lang.Exception	saveIndsPerMethod	B9	0/3
+classes.CompareFiles	private classes.Quality compareWith2Files() throws java.lang.Exception	saveIndsPerMethod	B10	0/2
+classes.ReadJavaProject	private static void getInformationForExcel(java.io.File, java.io.File, LinkedHashSet<java.lang.String>, LinkedHashMap<java.lang.String,java.lang.String>, ArrayList<java.lang.Integer>, int, List<java.lang.String[]>) throws java.io.IOException	lines	B2	0/13
+classes.MetricsRuleAnalysis	public ArrayList<java.lang.String[]> getResults() 	methodLine	B6	0/8
+classes.Rule	public boolean smellDetected(classes.MethodData) 	booleanExpression	B3	0/7
+classes.Rule	public boolean smellDetected(classes.MethodData) 	booleanExpression	B4	0/5
+classes.ExcelDealer	public static List<java.lang.String> getAllCellsOfColumn(java.lang.String, int, int, boolean) throws java.lang.Exception	row	B3	0/6
+classes.ReadJavaProject	public static List<java.lang.String[]> readJavaProject(java.lang.String) throws java.lang.Exception	linesOfMethods	B7	0/5
+classes.CompareFiles	private LinkedHashMap<java.lang.String,java.lang.Integer> getColIndexesByTitles() throws java.lang.Exception	headerCreated	B1	0/4
+classes.MetricsRuleAnalysis	public ArrayList<java.lang.String[]> getResults() 	codeSmellsNames	B1	0/4
+classes.MetricsRuleAnalysis	public ArrayList<java.lang.String[]> getResults() 	codeSmellsNames	B2	0/2
+classes.ExcelDealer	private static void createRow(org.apache.poi.xssf.usermodel.XSSFRow, java.lang.String[], int, org.apache.poi.ss.usermodel.CellStyle) 	cell	B4	0/3
+classes.Metrics	public static LinkedHashMap<java.lang.String,java.lang.String> getLinesOfMethods(java.io.File, LinkedHashSet<java.lang.String>) throws java.io.FileNotFoundException	toCheck	B3	0/3
+classes.Metrics	public static ArrayList<java.lang.Integer> getCycloOfAllMethods(LinkedHashMap<java.lang.String,java.lang.String>) 	linesOfMethods	B2	0/2
+classes.Metrics	public static LinkedHashSet<java.lang.String> methods(java.io.File) 	text	B2	0/2
+classes.FileDealer	public static void createFile(java.lang.String, List<java.lang.String>) 	myWriter	B2	0/2
+classes.ExcelDealer	public static List<java.lang.Object[]> getAllRows(java.lang.String, int) throws java.lang.Exception	rowList	B3	2/5
+classes.ExcelDealer	public static List<java.lang.Object[]> getAllRows(java.lang.String, int) throws java.lang.Exception	rowList	B4	0/2
+classes.Metrics	public static LinkedHashMap<java.lang.String,java.lang.String> getLinesOfMethods(java.io.File, LinkedHashSet<java.lang.String>) throws java.io.FileNotFoundException	methods	B1	27/31
+classes.Metrics	public static LinkedHashMap<java.lang.String,java.lang.String> getLinesOfMethods(java.io.File, LinkedHashSet<java.lang.String>) throws java.io.FileNotFoundException	methods	B18	0/2
+classes.Metrics	public static int getLOC_class(java.io.File) throws java.io.IOException	min	B3	3/9
+classes.Metrics	public static int getLOC_class(java.io.File) throws java.io.IOException	min	B4	2/5
+classes.Metrics	public static int getLOC_class(java.io.File) throws java.io.IOException	min	B5	1/4
+classes.Metrics	public static int getLOC_class(java.io.File) throws java.io.IOException	max	B3	3/6
+classes.Metrics	public static int getLOC_class(java.io.File) throws java.io.IOException	max	B4	2/4
+classes.Metrics	public static int getLOC_class(java.io.File) throws java.io.IOException	max	B5	1/3
+classes.Metrics	public static int getLOC_class(java.io.File) throws java.io.IOException	max	B7	0/2
+classes.CompareFiles	private classes.Quality compareWith3Files() throws java.lang.Exception	saveIndsPerMethod	B2	7/11
+classes.CompareFiles	private classes.Quality compareWith3Files() throws java.lang.Exception	saveIndsPerMethod	B3	6/10
+classes.CompareFiles	private classes.Quality compareWith3Files() throws java.lang.Exception	saveIndsPerMethod	B4	5/9
+classes.CompareFiles	private classes.Quality compareWith3Files() throws java.lang.Exception	saveIndsPerMethod	B5	4/8
+classes.CompareFiles	private classes.Quality compareWith3Files() throws java.lang.Exception	saveIndsPerMethod	B8	0/2
+classes.CompareFiles	private classes.Quality compareWith3Files() throws java.lang.Exception	saveIndsPerClass	B2	7/12
+classes.CompareFiles	private classes.Quality compareWith3Files() throws java.lang.Exception	saveIndsPerClass	B3	6/11
+classes.CompareFiles	private classes.Quality compareWith3Files() throws java.lang.Exception	saveIndsPerClass	B4	5/10
+classes.CompareFiles	private classes.Quality compareWith3Files() throws java.lang.Exception	saveIndsPerClass	B5	4/9
+classes.CompareFiles	private classes.Quality compareWith3Files() throws java.lang.Exception	saveIndsPerClass	B6	0/3
+classes.Metrics	public static LinkedHashMap<java.lang.String,java.lang.String> getLinesOfMethods(java.io.File, LinkedHashSet<java.lang.String>) throws java.io.FileNotFoundException	discard	B15	1/2
+classes.ReadJavaProject	private static void getInformationForExcel(java.io.File, java.io.File, LinkedHashSet<java.lang.String>, LinkedHashMap<java.lang.String,java.lang.String>, ArrayList<java.lang.Integer>, int, List<java.lang.String[]>) throws java.io.IOException	linesOfMethods	B1	9/11
+classes.ReadJavaProject	private static void getInformationForExcel(java.io.File, java.io.File, LinkedHashSet<java.lang.String>, LinkedHashMap<java.lang.String,java.lang.String>, ArrayList<java.lang.Integer>, int, List<java.lang.String[]>) throws java.io.IOException	linesOfMethods	B2	8/9
+classes.ReadJavaProject	private static void getInformationForExcel(java.io.File, java.io.File, LinkedHashSet<java.lang.String>, LinkedHashMap<java.lang.String,java.lang.String>, ArrayList<java.lang.Integer>, int, List<java.lang.String[]>) throws java.io.IOException	linesOfMethods	B5	7/8
+classes.ReadJavaProject	private static void getInformationForExcel(java.io.File, java.io.File, LinkedHashSet<java.lang.String>, LinkedHashMap<java.lang.String,java.lang.String>, ArrayList<java.lang.Integer>, int, List<java.lang.String[]>) throws java.io.IOException	result	B1	9/10
+classes.ReadJavaProject	private static void getInformationForExcel(java.io.File, java.io.File, LinkedHashSet<java.lang.String>, LinkedHashMap<java.lang.String,java.lang.String>, ArrayList<java.lang.Integer>, int, List<java.lang.String[]>) throws java.io.IOException	result	B2	8/9
+classes.ReadJavaProject	private static void getInformationForExcel(java.io.File, java.io.File, LinkedHashSet<java.lang.String>, LinkedHashMap<java.lang.String,java.lang.String>, ArrayList<java.lang.Integer>, int, List<java.lang.String[]>) throws java.io.IOException	result	B5	7/8

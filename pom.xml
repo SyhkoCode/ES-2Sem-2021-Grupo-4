@@ -7,6 +7,7 @@
 	<groupId>ES-2Sem-2021-Grupo-4</groupId>
 	<artifactId>ES-2Sem-2021-Grupo-4</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>ES-2Sem-2021-Grupo-4</name>
 	<description>ES-2Sem-2021-Grupo-4</description>
 
@@ -57,6 +58,25 @@
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.8.2</version>
 				</plugin>
+				<plugin>
+
+	<artifactId>exec-maven-plugin</artifactId>
+	<groupId>org.codehaus.mojo</groupId>
+	<executions>
+		<execution>
+			<id>runScript</id>
+			<phase>package</phase>
+			<goals>
+				<goal>exec</goal>
+			</goals>
+			<configuration>
+				<workingDirectory>${basedir}/src/main/scripts/</workingDirectory>
+				<executable>./script.sh</executable>
+			</configuration>
+		</execution>
+	</executions>
+</plugin>
+				
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -67,6 +87,13 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.0.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/jfree/jfreechart -->
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.13</version>
 		</dependency>
 
 	</dependencies>
