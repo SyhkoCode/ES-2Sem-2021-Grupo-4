@@ -201,11 +201,11 @@ public class CompareFiles {
 	/**
 	 * Overall, allows to know if package, class and method are the same between two files. 
 	 * This is an auxiliary method to avoid code repetition on CompareWith2Files and CompareWith3Files.
-	 * @param dataDefaultExcel Given MethodData object from DefaultExcel
-	 * @param created_package Given String that should be the package name from CreatedExcel
-	 * @param created_class Given String that should be the class name from CreatedExcel
-	 * @param created_method Given String that should be the method name from CreatedExcel
-	 * @return Boolean
+	 * @param dataDefaultExcel Given MethodData object obtained from DefaultExcel.
+	 * @param created_package Given String that should be the package name from CreatedExcel.
+	 * @param created_class Given String that should be the class name from CreatedExcel.
+	 * @param created_method Given String that should be the method name from CreatedExcel.
+	 * @return Returns true if package, class and method are the same between two files.
 	 */
 	private boolean matchesFields(MethodData dataDefaultExcel,String created_package,String created_class,String created_method) {
 		boolean matches = false;
@@ -225,7 +225,7 @@ public class CompareFiles {
 	 * comparison method.
 	 * 
 	 * @return Quality object that contains both HashMaps with Indicators per Method
-	 *         and per Class
+	 *         and per Class.
 	 * @throws Exception Propagated Exception from ExcelDealer to be dealt with on the GUI.
 	 */
 	public Quality testQuality() throws Exception {
