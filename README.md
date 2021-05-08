@@ -1,13 +1,13 @@
 ### Projeto realizado para a UC Engenharia de Software pelo **Grupo 4**:
 
-Nome do aluno | Número do aluno
------------- | -------------
-Diogo Graça |	87938
-Pedro Pereira	| 88721
-Pedro Pinheiro | 88657
-Sofia Chaves | 73433
-Susana Polido |	87871
-Tiago Mendes |	88647
+GitHub Username | Nome do aluno | Número do aluno
+------------ | ------------ | -------------
+dcgraca | Diogo Graça |	87938
+pmmpa2-iscte | Pedro Pereira	| 88721
+PedroPinheiroLX | Pedro Pinheiro | 88657
+SyhkoCode | Sofia Chaves | 73433
+lunayue | Susana Polido |	87871
+TiagoMendes234 | Tiago Mendes |	88647
 
 #### **Trello:** https://trello.com/es2sem2021grupo4/
 
@@ -115,7 +115,7 @@ escolhida pelo utilizador. São apresentados na GUI, de forma textual e gráfica
 Para instalar a aplicação, o utilizador pode fazer uma das seguintes maneiras:
 * simplesmente clicar no CodeQualityAssessor.jar apresentado. 
 * correr na linha de comandos: `java -jar CodeQualityAssessor.jar`. 
-* construir a imagem do Dockerfile apresentado (fazendo `docker build -t CodeQualityAssessor/APP .`) e criar o respetivo container (fazendo` docker run --name CodeQualityAssessorAPP -d -it -e DISPLAY=$USERIP CodeQualityAssessor/APP`) onde poderá testar o CodeQualityAssessor.jar num ambiente controlado, fazendo partido de um X11 display server, como por exemplo o Xming ou XLauncher.
+* construir a imagem do Dockerfile apresentado (fazendo `docker build -t CodeQualityAssessor .`) e criar o respetivo container (fazendo` docker run --name CodeQualityAssessorAPP -d -it -e DISPLAY=$USERIP CodeQualityAssessor`) onde poderá testar o CodeQualityAssessor.jar num ambiente controlado assegurado pelo Docker, fazendo partido de um X11 display server, como por exemplo o Xming ou XLauncher.
 
 O utilizador ao abrir a aplicação depara-se com menu em baixo ilustrado, onde poderá então indicar o projeto Java e onde pretende guardar o ficheiro Excel com as métricas extraídas gerado, de acordo com o ponto 1 das funcionalidades implementadas. Além disso, consegue também visualizar imediatamente o Excel gerado no próprio submenu onde se encontra e o resumo das características no submenu Resumo, cumprindo o ponto 2 das funcionalidades implementadas.
 
