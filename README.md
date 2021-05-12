@@ -113,9 +113,11 @@ escolhida pelo utilizador. São apresentados na GUI, de forma textual e gráfica
 ## [Manual do Utilizador](#userguide)
 
 Para instalar a aplicação, o utilizador pode fazer uma das seguintes maneiras:
-* simplesmente clicar no CodeQualityAssessor.jar apresentado. 
-* correr na linha de comandos: `java -jar CodeQualityAssessor.jar`. 
-* construir a imagem do Dockerfile apresentado (fazendo `docker build -t CodeQualityAssessor .`) e criar o respetivo container (fazendo` docker run --name CodeQualityAssessorAPP -d -it -e DISPLAY=$USERIP CodeQualityAssessor`) onde poderá testar o CodeQualityAssessor.jar num ambiente controlado assegurado pelo Docker, fazendo partido de um X11 display server, como por exemplo o Xming ou XLauncher.
+*  Simplesmente clicar no CodeQualityAssessor.jar apresentado. 
+*  Correr na linha de comandos: `java -jar CodeQualityAssessor.jar`. 
+*  Construir a imagem do Dockerfile apresentado: `docker build -t codequalityassessor .` 
+ Criar o respetivo container: ` docker run --name cqaContainer -d -it -e DISPLAY=$USERIP codequalityassessor`
+(onde poderá testar o CodeQualityAssessor.jar num ambiente controlado assegurado pelo Docker, fazendo partido de um X11 display server, como por exemplo o [XLauncher](https://sourceforge.net/projects/vcxsrv/) ou [Xming](https://sourceforge.net/projects/xming/)).
 
 O utilizador ao abrir a aplicação depara-se com menu em baixo ilustrado, onde poderá então indicar o projeto Java e onde pretende guardar o ficheiro Excel com as métricas extraídas gerado, de acordo com o ponto 1 das funcionalidades implementadas. Além disso, consegue também visualizar imediatamente o Excel gerado no próprio submenu onde se encontra e o resumo das características no submenu Resumo, cumprindo o ponto 2 das funcionalidades implementadas.
 
